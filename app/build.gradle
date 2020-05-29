@@ -1,0 +1,98 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+kapt {
+    generateStubs = true
+    arguments {
+        arg("AROUTER_MODULE_NAME", project.getName())
+    }
+}
+android {
+    compileSdkVersion 28
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.haife.app.nobles.spirits.kotlin"
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
+        versionCode rootProject.ext.android["versionCode"]
+        versionName rootProject.ext.android["versionName"]
+
+    }
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "true"
+
+
+        }
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            buildConfigField "boolean", "USE_CANARY", "false"
+
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+
+    }
+}
+
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //support
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'me.jessyan:arms:2.4.1'
+
+    implementation rootProject.ext.dependencies["appcompat"]
+    implementation rootProject.ext.dependencies["material"]
+    implementation rootProject.ext.dependencies["gson"]
+    implementation rootProject.ext.dependencies["design"]
+//    implementation rootProject.ext.dependencies["recyclerview"]
+    /*view*/
+    implementation rootProject.ext.dependencies["autolayout"]
+    implementation rootProject.ext.dependencies["constraint-layout"]
+    implementation rootProject.ext.dependencies["rippleeffect"]
+    implementation rootProject.ext.dependencies["magicindicator"]
+    implementation rootProject.ext.dependencies["banner"]
+    implementation rootProject.ext.dependencies["roundedimageview"]
+    implementation rootProject.ext.dependencies["smartrefreshlayout"]
+    implementation rootProject.ext.dependencies["sneaker"]
+    implementation rootProject.ext.dependencies["readmoretextview"]
+    implementation rootProject.ext.dependencies["citypicker"]
+    implementation rootProject.ext.dependencies["qmui"]
+
+    //tool lib
+    kapt rootProject.ext.dependencies["dagger2-compiler"]
+    implementation rootProject.ext.dependencies["fragmentation"]
+    implementation rootProject.ext.dependencies["fragmentation-code"]
+    implementation rootProject.ext.dependencies["fragmentation-swipeback"]
+    implementation rootProject.ext.dependencies["bottomnavigationviewex"]
+    implementation rootProject.ext.dependencies["glide"]
+    kapt rootProject.ext.dependencies["glide-compiler"]
+    implementation rootProject.ext.dependencies["autosize"]
+    implementation rootProject.ext.dependencies["utilcode"]
+    implementation rootProject.ext.dependencies["qmuiteam-arch"]
+    /*ARouter*/
+    implementation rootProject.ext.dependencies["arouter"]
+    kapt rootProject.ext.dependencies["arouter-compiler"]
+    //Butterknife 插件,很多人因为没加这个而报错,切记!!!
+    implementation rootProject.ext.dependencies["butterknife"]
+    kapt rootProject.ext.dependencies["butterknife-compiler"]
+    implementation rootProject.ext.dependencies["base-recyclerview-adapter"]
+    //test
+    testImplementation rootProject.ext.dependencies["junit"]
+    /*内存泄露检测 AppLifecyclesImpl 中初始化*/
+    debugImplementation rootProject.ext.dependencies["canary-debug"]
+    releaseImplementation rootProject.ext.dependencies["canary-release"]
+    testImplementation rootProject.ext.dependencies["canary-release"]
+
+}

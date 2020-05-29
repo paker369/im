@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="black">#FF000000</color>
+    <color name="write">#FFFFFF</color>
+    <color name="window_bg_color">#F9F9F9</color>
+    <color name="common_pressed_bg_color">#BEBEBE</color>
+    <color name="main_bottom_navigation_menu_normal_color">#909090</color>
+    <color name="main_bottom_navigation_menu_checked_color">#BF9377</color>
+    <color name="app_primary_color">#CEB173</color>
+    <color name="ripple_status_color">#DE000000</color>
+    <color name="magic_indicator_text_color">#FFB87C51</color>
+    <color name="common_text_color">#333333</color>
+    <color name="common_text_color_tint">#888888</color>
+    <color name="home_recommend_indicator_select_color">#666666</color>
+    <color name="home_recommend_line_split_color">#707070</color>
+    <color name="home_recommend_subtitle_color">#898989</color>
+    <color name="flash_sale_number_of_people">#C7987B</color>
+    <!--TextColor-->
+    <color name="home_recommend_restaurant_name_color">#FF060202</color>
+    <color name="flash_sale_product_original_price_color">#B6B6B6</color>
+    <color name="home_week_special_product_name_en_color">#373737</color>
+    <color name="home_new_restaurant_average_price_color">#C19477</color>
+    <color name="home_new_restaurant_content_color">#828282</color>
+    <color name="home_union_restaurant_label_color">#C09A7F</color>
+
+    <!--DivideColor-->
+    <color name="home_recycle_view_divide_color">#FFF0F0F0</color>
+    <color name="new_enter_restaurant_color">#FFF09428</color>
+
+
+    <!--QMUI COLOR-->
+    <!-- common -->
+    <color name="app_color_blue">#00A8E1</color>
+    <color name="app_color_blue_disabled">#8000A8E1</color>
+    <color name="app_color_blue_pressed">#c000A8E1</color>
+
+    <color name="app_color_blue_2">#31BDF3</color>
+    <color name="app_color_blue_2_disabled">#7F31BDF3</color>
+    <color name="app_color_blue_2_pressed">#7F31BDF3</color>
+
+    <color name="app_color_blue_3">#EBF9FF</color>
+    <color name="app_color_blue_3_disabled">#7FEBF9FF</color>
+    <color name="app_color_blue_3_pressed">#7FEBF9FF</color>
+
+    <color name="app_color_theme_1">#EF5362</color> <!-- Grapefruit -->
+    <color name="app_color_theme_2">#FE6D4B</color> <!-- Bittersweet -->
+    <color name="app_color_theme_3">#FFCF47</color> <!-- Sunflower -->
+    <color name="app_color_theme_4">#9FD661</color> <!-- Grass -->
+    <color name="app_color_theme_5">#3FD0AD</color> <!-- Mint -->
+    <color name="app_color_theme_6">#2BBDF3</color> <!-- Aqua -->
+    <color name="app_color_theme_7">#5A9AEF</color> <!-- Blue Jeans -->
+    <color name="app_color_theme_8">#AC8FEF</color> <!-- Lavender -->
+    <color name="app_color_theme_9">#EE85C1</color> <!-- Pink Rose -->
+
+    <color name="app_color_description">@color/qmui_config_color_gray_5</color>
+
+    <color name="bar_divider">#D4D6D8</color>
+    <color name="tab_panel_bg">#ffffff</color>
+    <color name="tab_panel_divider">@color/bar_divider</color>
+
+    <!-- Components 组件 -->
+    <color name="radiusImageView_border_color">@color/app_color_theme_2</color>
+    <color name="radiusImageView_selected_border_color">@color/app_color_theme_1</color>
+    <color name="radiusImageView_selected_mask_color">#7FEF5362</color>
+
+    <!-- Helper 系列界面 -->
+
+    <!-- ColorHelper 颜色工具 -->
+    <color name="colorHelper_square_alpha_background">@color/app_color_theme_4</color>
+    <color name="colorHelper_square_from_ratio_background">@color/app_color_blue</color>
+    <color name="colorHelper_square_to_ratio_background">@color/app_color_theme_3</color>
+    <!--QMUI COLOR-->
+</resources>
