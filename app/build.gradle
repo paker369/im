@@ -94,5 +94,19 @@ dependencies {
     debugImplementation rootProject.ext.dependencies["canary-debug"]
     releaseImplementation rootProject.ext.dependencies["canary-release"]
     testImplementation rootProject.ext.dependencies["canary-release"]
+//版本更新和下载apk框架适配安卓5.0，dex的特性
+    implementation 'com.android.support:multidex:1.0.1'
 
+    //指示器
+    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+
+    //工具类
+    implementation 'com.abrahamcaijin.commonutil:CommonUtil:1.0.3'
+
+    //websocket
+    implementation project(path: ':websocketlib')
+
+    //沉浸式状态栏
+    // 基础依赖包，必须要依赖
+    implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
 }

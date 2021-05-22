@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/common_title_bar"
+       />
+    <EditText
+        android:id="@+id/edt_acc"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginTop="@dimen/dp_100"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_40"
+        android:background="@null"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="请输入你的用户名"
+        android:inputType="textPassword"
+        android:maxLength="20"
+        android:paddingLeft="29dp"
+        android:textCursorDrawable="@drawable/my_cursor"
+        android:textSize="@dimen/sp_10" />
+
+    <EditText
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_40"
+        android:id="@+id/edt_pwd"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:background="@null"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="请输入你的密码"
+        android:inputType="textPassword"
+        android:maxLength="20"
+        android:paddingLeft="29dp"
+        android:textCursorDrawable="@drawable/my_cursor"
+        android:textSize="@dimen/sp_10" />
+
+    <TextView
+        android:id="@+id/tv_login"
+        android:layout_width="178dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/rlt_pass"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+
+        android:layout_marginBottom="19dp"
+        android:background="@drawable/shape_nologin_button"
+        android:gravity="center"
+        android:text="注册"
+        android:textSize="@dimen/sp_10" />
+
+
+
+</LinearLayout>

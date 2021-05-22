@@ -1,5 +1,6 @@
 package com.haife.app.nobles.spirits.kotlin.app.constant;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.entity.bean.CityBean;
 
 import java.util.List;
@@ -22,4 +23,10 @@ public class SPConstant {
     public static final String SP_CITY_LIST = "SP_CITY_LIST";
     /*当前城市*/
     public static final String CURRENT_CITY = "CURRENT_CITY";
+    public static final String SID ="TOKEN" ;
+    public static final String UID = "USER_ID";
+    public static final String USERNAME = "USERNAME";
+    public final  static String qianzhui="/api";
+    public   static String MYSID= SPUtils.getInstance().getString(SID,"");
+    public   static int MYUID=SPUtils.getInstance().getInt(UID,0);
 }

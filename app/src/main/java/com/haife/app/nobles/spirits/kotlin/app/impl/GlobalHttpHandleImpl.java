@@ -3,6 +3,8 @@ package com.haife.app.nobles.spirits.kotlin.app.impl;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.jess.arms.http.GlobalHttpHandler;
 import com.jess.arms.http.log.RequestInterceptor;
 
@@ -52,6 +54,6 @@ public class GlobalHttpHandleImpl implements GlobalHttpHandler {
      */
     @Override
     public Request onHttpRequestBefore(Interceptor.Chain chain, Request request) {
-        return chain.request().newBuilder().addHeader("Content-Type", "application/json").build();
+        return chain.request().newBuilder().addHeader("Content-Type", "application/json; charset=utf-8").addHeader("Cookie","UID=" +SPUtils.getInstance().getString(SPConstant.UID, "")+"; SID="+SPUtils.getInstance().getString(SPConstant.SID, "")).build();
     }
 }
