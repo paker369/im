@@ -1,6 +1,8 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
-public class MessageBean {
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+
+public class MessageBean implements MultiItemEntity {
 
     /**
      * msgId : 116
@@ -19,6 +21,15 @@ public class MessageBean {
     private int msgType;
     private String msgContent;
     private String createTime;
+
+    public MessageBean(int uid, int toUid, int senderUid, int msgType, String msgContent, String createTime) {
+        this.uid = uid;
+        this.toUid = toUid;
+        this.senderUid = senderUid;
+        this.msgType = msgType;
+        this.msgContent = msgContent;
+        this.createTime = createTime;
+    }
 
     public int getMsgId() {
         return msgId;
@@ -74,5 +85,18 @@ public class MessageBean {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    @Override
+    public int getItemType() {
+        int type = 1;
+        switch (msgType) {
+            case 0:
+                type = 1;
+                break;
+            case 1:
+                type = 2;
+        }
+        return type;
     }
 }

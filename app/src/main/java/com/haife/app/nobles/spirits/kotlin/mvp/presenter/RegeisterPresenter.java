@@ -7,6 +7,7 @@ import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_loginBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_regeisterBean;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
@@ -59,8 +60,8 @@ public class RegeisterPresenter extends BasePresenter<RegeisterContract.Model, R
         this.mImageLoader = null;
         this.mApplication = null;
     }
-    public void registerUser(int uid,String pwd) {
-        R_loginBean userInfoBean = new R_loginBean(uid, pwd);
+    public void registerUser(String name,String pwd) {
+        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.registerUser(body)
                 .compose(RxUtils.applySchedulers(mRootView))

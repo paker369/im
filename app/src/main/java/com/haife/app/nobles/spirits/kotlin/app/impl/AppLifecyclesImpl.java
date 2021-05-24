@@ -5,12 +5,24 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.haife.app.nobles.spirits.kotlin.BuildConfig;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.utils.ArmsUtils;
 import com.qmuiteam.qmui.arch.QMUISwipeBackActivityManager;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshInitializer;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -27,6 +39,48 @@ public class AppLifecyclesImpl implements AppLifecycles {
     private RefWatcher mRefWatcher;
     private LocationManager mLocationManager;
 
+    static {
+        //启用矢量图兼容
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        //设置全局默认配置（优先级最低，会被其他设置覆盖）
+        SmartRefreshLayout.setDefaultRefreshInitializer(new DefaultRefreshInitializer() {
+            @Override
+            public void initialize(@NonNull Context context, @NonNull RefreshLayout layout) {
+                //全局设置（优先级最低）https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
+                layout.setEnableAutoLoadMore(false);//使上拉加载具有弹性效果/在列表滚动到底部时自动加载更多
+                layout.setEnableOverScrollDrag(false);//禁止越界拖动（1.0.4以上版本）
+                layout.setEnableOverScrollBounce(false);//关闭越界回弹功能
+                layout.setEnableLoadMoreWhenContentNotFull(true);//是否在列表不满一页时候开启上拉加载功能
+                layout.setEnableScrollContentWhenRefreshed(false);//是否在全部加载结束之后Footer跟随内容1.0.4
+
+
+            }
+        });
+
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
+            @NonNull
+            @Override
+            public RefreshHeader createRefreshHeader(@NonNull Context context, @NonNull RefreshLayout layout) {
+//                //全局设置主题颜色（优先级第二低，可以覆盖 DefaultRefreshInitializer 的配置，与下面的ClassicsHeader绑定）
+//                layout.setPrimaryColorsId(android.R.color.white, R.color.white);
+
+                return new ClassicsHeader(context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));
+//                return new GifRefreshHeader(context);
+            }
+
+        });
+
+        //设置全局的Footer构建器
+        SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
+            @Override
+            public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
+                //指定为经典Footer，默认是 BallPulseFooter
+//                layout.setPrimaryColorsId(android.R.color.white, R.color.white);
+
+                return new ClassicsFooter(context).setDrawableSize(18);
+            }
+        });
+    }
     @Override
     public void attachBaseContext(Context base) {
 //      MultiDex.install(base);  //这里比 onCreate 先执行,常用于 MultiDex 初始化,插件化框架的初始化

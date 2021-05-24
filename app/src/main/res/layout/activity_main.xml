@@ -3,6 +3,7 @@
     xmlns:tl="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+   android:background="@mipmap/ic_home_bg_light"
     android:orientation="vertical">
 
     <View
@@ -68,6 +69,8 @@
         tl:tl_indicator_style="BLOCK"
         tl:tl_tab_space_equal="true"
         tl:tl_textsize="@dimen/dp_12"
+        tl:tl_textSelectColor="@color/white"
+        tl:tl_textUnselectColor="@color/black"
         tl:tl_underline_color="#00000000" />
 
     <View

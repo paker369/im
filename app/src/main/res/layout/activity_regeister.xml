@@ -17,7 +17,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="请输入你的用户名"
-        android:inputType="textPassword"
         android:maxLength="20"
         android:paddingLeft="29dp"
         android:textCursorDrawable="@drawable/my_cursor"

@@ -1,2 +1,3 @@
+include ':emojilibrary'
 include ':websocketlib'
 include ':app'

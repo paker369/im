@@ -5,21 +5,18 @@ import android.app.Application;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.contract.MainContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
-import com.jess.arms.integration.AppManager;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.jess.arms.di.scope.ActivityScope;
-import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.http.imageloader.ImageLoader;
-
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
+import com.jess.arms.integration.AppManager;
+import com.jess.arms.mvp.BasePresenter;
 
 import javax.inject.Inject;
 
-import com.haife.app.nobles.spirits.kotlin.mvp.contract.MainContract;
-
-import java.io.File;
-import java.util.List;
+import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 
 
 /**
@@ -58,6 +55,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         this.mImageLoader = null;
         this.mApplication = null;
     }
+
     public void loginInfo() {
         mModel.loginInfo(SPConstant.MYUID,SPConstant.MYSID)
                 .compose(RxUtils.applySchedulers(mRootView))
@@ -67,6 +65,42 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
                         if (aboutBeanBaseResponse.isSuccess()) {
 
                             mRootView.loginInfoSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void addFriend(int uid, String remark) {
+
+        mModel.addFriend(SPConstant.MYUID, SPConstant.MYSID, uid, remark)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.addFriendSuccess();
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void addGroup(int uid) {
+
+        mModel.addGroup(SPConstant.MYUID, SPConstant.MYSID, uid)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<MyGroup>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<MyGroup> aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.addGroupSuccess(aboutBeanBaseResponse.getData());
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

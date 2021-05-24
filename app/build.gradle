@@ -109,4 +109,13 @@ dependencies {
     //沉浸式状态栏
     // 基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
+
+
+    //pop
+    implementation 'com.github.razerdp:BasePopup:2.2.20'
+//对话框
+    implementation 'com.kongzue.dialog:dialog:2.5.2'
+
+    implementation project(path: ':emojilibrary')
+
 }

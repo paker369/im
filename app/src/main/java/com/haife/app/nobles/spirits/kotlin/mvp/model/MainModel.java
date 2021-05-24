@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.api.service.AppService;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
 
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MainContract;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
+import retrofit2.http.Query;
 
 
 /**
@@ -52,5 +55,16 @@ public class MainModel extends BaseModel implements MainContract.Model {
     @Override
     public Observable<BaseResponse<LoginInfoBean>> loginInfo(int uId, String sId) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).loginInfo(uId, sId);
+    }
+
+    @Override
+    public Observable<BaseResponse> addFriend(int uId, String sId, int friendUid,  String remark) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).addFriend( uId, sId, friendUid, remark);
+    }
+
+    @Override
+    public Observable<BaseResponse<MyGroup>> addGroup(int uId, String sId,int groupId) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).addGroup(uId, sId, groupId);
+
     }
 }

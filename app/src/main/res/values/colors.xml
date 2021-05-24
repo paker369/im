@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="interval_color">#e7e5e5</color>
     <color name="dialogButtonGrayDark">#14dfdfdf</color>
     <color name="color_009AFC">#009AFC</color>
     <color name="colorAccent">#03DAC5</color>

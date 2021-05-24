@@ -54,6 +54,6 @@ public class GlobalHttpHandleImpl implements GlobalHttpHandler {
      */
     @Override
     public Request onHttpRequestBefore(Interceptor.Chain chain, Request request) {
-        return chain.request().newBuilder().addHeader("Content-Type", "application/json; charset=utf-8").addHeader("Cookie","UID=" +SPUtils.getInstance().getString(SPConstant.UID, "")+"; SID="+SPUtils.getInstance().getString(SPConstant.SID, "")).build();
+        return chain.request().newBuilder().addHeader("Content-Type", "application/json; charset=utf-8").addHeader("Cookie","UID=" +SPUtils.getInstance().getInt(SPConstant.UID, 0)+"; SID="+SPUtils.getInstance().getString(SPConstant.SID, "")).build();
     }
 }

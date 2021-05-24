@@ -26,7 +26,9 @@ public class SPConstant {
     public static final String SID ="TOKEN" ;
     public static final String UID = "USER_ID";
     public static final String USERNAME = "USERNAME";
+    public static final String HEADER = "HEADER";
     public final  static String qianzhui="/api";
+    public static final String KEYBOARD = "KEYBOARD";
     public   static String MYSID= SPUtils.getInstance().getString(SID,"");
     public   static int MYUID=SPUtils.getInstance().getInt(UID,0);
 }

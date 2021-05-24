@@ -37,7 +37,7 @@ public interface AppService {
     /*
      * 用户注册
      */
-    @GET(SPConstant.qianzhui + "/user/login/registerUser")
+    @POST(SPConstant.qianzhui + "/user/login/registerUser")
     Observable<BaseResponse<LoginBean>> registerUser(@Body RequestBody requestBody);
 
 
@@ -52,14 +52,14 @@ public interface AppService {
      * 读取用户
      */
     @GET(SPConstant.qianzhui + "/user/read")
-    Observable<BaseResponse<ReadOtherInfoBean>> read(@Query("UID") int uId, @Query("SID") String sId, @Query("uid") int uid);
+    Observable<BaseResponse<ReadOtherInfoBean>> read( @Query("uid") int uid);
 
 
     /*
      * 私聊列表
      */
     @GET(SPConstant.qianzhui + "/user/friendMsg/lists")
-    Observable<BaseResponse<List<MessageBean>>> friendMsgList(@Query("UID") int uId, @Query("SID") String sId, @Query("senderUid") int senderUid);
+    Observable<BaseResponse<List<MessageBean>>> friendMsgList(@Query("page") int page, @Query("limit") int limit, @Query("senderUid") int senderUid);
 
 
     /*
@@ -72,8 +72,8 @@ public interface AppService {
     /*
      * 好友列表
      */
-    @POST(SPConstant.qianzhui + "/user/friend/lists")
-    Observable<BaseResponse<List<FriendBean>>> friendList(@Body RequestBody requestBody);
+    @GET(SPConstant.qianzhui + "/user/friend/lists")
+    Observable<BaseResponse<List<FriendBean>>> friendList(@Query("page") int page, @Query("limit") int limit);
 
 
     /*
@@ -87,13 +87,13 @@ public interface AppService {
      * 添加好友
      */
     @POST(SPConstant.qianzhui + "/user/friendAsk/create")
-    Observable<BaseResponse> addFriend(@Body RequestBody requestBody);
+    Observable<BaseResponse> addFriend(@Query("UID") int uId, @Query("SID") String sId,@Query("friendUid") int friendUid, @Query("remark") String remark);
 
 
     /*
      * 好友申请列表
      */
-    @GET(SPConstant.qianzhui + "/user/friendAsk/lists")
+    @POST(SPConstant.qianzhui + "/user/friendAsk/lists")
     Observable<BaseResponse<List<FriendAskBean>>> addFriendList(@Body RequestBody requestBody);
 
 
@@ -108,14 +108,14 @@ public interface AppService {
      * 我的群组列表
      */
     @GET(SPConstant.qianzhui + "/group/user/lists")
-    Observable<BaseResponse<List<MyGroup>>> myGroupList(@Body RequestBody requestBody);
+    Observable<BaseResponse<List<MyGroup>>> myGroupList(@Query("page") int page, @Query("limit") int limit);
 
 
     /*
      * 加入群组
      */
     @POST(SPConstant.qianzhui + "/group/user/create")
-    Observable<BaseResponse<MyGroup>> addGroup(@Body RequestBody requestBody);
+    Observable<BaseResponse<MyGroup>> addGroup(@Query("UID") int uId, @Query("SID") String sId,@Query("groupId") int groupId);
 
 
     /*

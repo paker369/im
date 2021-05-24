@@ -2,16 +2,29 @@ package com.haife.app.nobles.spirits.kotlin.mvp.presenter;
 
 import android.app.Application;
 
+import com.google.gson.Gson;
+import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_SimpleBean;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.FragmentScope;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.http.imageloader.ImageLoader;
 
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import javax.inject.Inject;
 
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendContract;
+
+import java.util.List;
 
 
 /**
@@ -49,5 +62,23 @@ public class FriendPresenter extends BasePresenter<FriendContract.Model, FriendC
         this.mAppManager = null;
         this.mImageLoader = null;
         this.mApplication = null;
+    }
+    public void friendList(int page,int limit) {
+        R_SimpleBean userInfoBean = new R_SimpleBean(page, limit);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.friendList(page, limit)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<List<FriendBean>>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<List<FriendBean>> aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.friendListSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
     }
 }
