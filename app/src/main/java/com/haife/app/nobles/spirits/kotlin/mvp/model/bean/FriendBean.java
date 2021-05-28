@@ -2,55 +2,48 @@ package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
 public class FriendBean {
 
+
     /**
-     * uid : 10037
-     * friendUid : 10035
-     * remark :
-     * unMsgCount : 0
-     * lastMsgContent : hdiusahduj
-     * modifiedTime : 2021-05-22T02:17:05.000+0000
-     * user : {"uid":10035,"name":"火星人1OBLR5X","avatar":"http://prbsvykmy.bkt.clouddn.com/static/image/user-2-default.png","remark":"你今生有没有坚定不移地相信过一件事或一个人？是那种至死不渝的相信？"}
+     * uid : 10015
+     * friendUid : 101102103118
+     * remark : null
+     * unMsgCount : 8
+     * lastMsgContent : tdytdtryd
+     * modifiedTime : 2021-05-27T12:45:43.000+0000
+     * user : {"uid":101102103118,"name":"火星人JFKMP6W","avatar":"http://prbsvykmy.bkt.clouddn.com/static/image/user-1-default.png","remark":"你今生有没有坚定不移地相信过一件事或一个人？是那种至死不渝的相信？"}
      * isFriend : null
      */
 
-    private int uid;
-    private int friendUid;
-    private String remark;
+    private long uid;
+    private long friendUid;
+    private Object remark;
     private int unMsgCount;
     private String lastMsgContent;
     private String modifiedTime;
     private UserBean user;
-    private int isFriend;
+    private Object isFriend;
 
-    public int getIsFriend() {
-        return isFriend;
-    }
-
-    public void setIsFriend(int isFriend) {
-        this.isFriend = isFriend;
-    }
-
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
-    public int getFriendUid() {
+    public long getFriendUid() {
         return friendUid;
     }
 
-    public void setFriendUid(int friendUid) {
+    public void setFriendUid(long friendUid) {
         this.friendUid = friendUid;
     }
 
-    public String getRemark() {
+    public Object getRemark() {
         return remark;
     }
 
-    public void setRemark(String remark) {
+    public void setRemark(Object remark) {
         this.remark = remark;
     }
 
@@ -86,7 +79,57 @@ public class FriendBean {
         this.user = user;
     }
 
+    public Object getIsFriend() {
+        return isFriend;
+    }
 
+    public void setIsFriend(Object isFriend) {
+        this.isFriend = isFriend;
+    }
 
+    public static class UserBean {
+        /**
+         * uid : 101102103118
+         * name : 火星人JFKMP6W
+         * avatar : http://prbsvykmy.bkt.clouddn.com/static/image/user-1-default.png
+         * remark : 你今生有没有坚定不移地相信过一件事或一个人？是那种至死不渝的相信？
+         */
 
+        private long uid;
+        private String name;
+        private String avatar;
+        private String remark;
+
+        public long getUid() {
+            return uid;
+        }
+
+        public void setUid(long uid) {
+            this.uid = uid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
+        }
+
+        public String getRemark() {
+            return remark;
+        }
+
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+    }
 }

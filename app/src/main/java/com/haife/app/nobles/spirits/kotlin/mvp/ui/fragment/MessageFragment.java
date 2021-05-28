@@ -22,6 +22,7 @@ import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -45,8 +46,10 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
 public class MessageFragment extends BaseFragment<MessagePresenter> implements MessageContract.View, OnLoadMoreListener, OnRefreshListener {
     @BindView(R.id.srl_layout)
     SmartRefreshLayout srl_layout;
-    @BindView(R.id.rv_message_list)
-    RecyclerView rv_message_list;
+    @BindView(R.id.rv_message_list1)
+    RecyclerView rv_message_list1;
+    @BindView(R.id.rv_message_list2)
+    RecyclerView rv_message_list2;
     int page = 1;
     int limit = 20;
     public static MessageFragment newInstance() {
@@ -131,7 +134,17 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
 
     @Override
     public void hideLoading() {
+        try {
+            if (srl_layout.getState() == RefreshState.Refreshing) {
+                srl_layout.finishRefresh();
+            } else if (srl_layout.getState() == RefreshState.Loading) {
+                srl_layout.finishLoadMore();
+            } else {
 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

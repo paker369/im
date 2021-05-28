@@ -5,6 +5,7 @@ import android.app.Application;
 import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.api.service.AppService;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.jess.arms.integration.IRepositoryManager;
@@ -56,5 +57,16 @@ public class FriendModel extends BaseModel implements FriendContract.Model {
     @Override
     public Observable<BaseResponse<List<FriendBean>>> friendList(int page,  int limit) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).friendList(page, limit);
+    }
+
+    @Override
+    public Observable<BaseResponse<List<FriendAskBean>>> addFriendList(int page, int limit) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).addFriendList(page, limit);
+
+    }
+
+    @Override
+    public Observable<BaseResponse> deleteFriend(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteFriend(body);
     }
 }

@@ -2,15 +2,15 @@ package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
 public class FriendAskBean {
 
-    private int id;
-    private int uid;
-    private int friendUid;
+    private long id;
+    private long uid;
+    private long friendUid;
     private String remark;
     private int status;
     private String creatTime;
     private UserBean user;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -18,15 +18,15 @@ public class FriendAskBean {
         this.id = id;
     }
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
-    public int getFriendUid() {
+    public long getFriendUid() {
         return friendUid;
     }
 

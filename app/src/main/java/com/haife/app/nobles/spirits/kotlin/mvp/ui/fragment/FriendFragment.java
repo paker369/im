@@ -13,23 +13,29 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.haife.app.nobles.spirits.kotlin.app.view.SlideRecyclerView;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+import com.jess.arms.utils.LogUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -51,6 +57,12 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     SmartRefreshLayout srl_layout;
     @BindView(R.id.rv_message_list)
     RecyclerView rv_message_list;
+    @BindView(R.id.tv_new_friend)
+    TextView tv_new_friend;
+    @BindView(R.id.center_num)
+    TextView center_num;
+
+
     int page = 1;
     int limit = 20;
     FriendListAdapter friendListAdapter;
@@ -80,7 +92,15 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     public void initData(@Nullable Bundle savedInstanceState) {
         initRefreshLayout();
         initRecyclerView();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         mPresenter.friendList(page, limit);
+        mPresenter.addFriendList(page, limit);
     }
 
     /**
@@ -116,7 +136,15 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
 
 
     }
+    @OnClick({R.id.rl_new_friend})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
 
+            case R.id.rl_new_friend:
+                launchActivity(new Intent(getActivity(), AskFriendListActivity.class));
+                break;
+        }
+    }
     @Override
     public void setData(@Nullable Object data) {
 
@@ -129,7 +157,17 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
 
     @Override
     public void hideLoading() {
+        try {
+            if (srl_layout.getState() == RefreshState.Refreshing) {
+                srl_layout.finishRefresh();
+            } else if (srl_layout.getState() == RefreshState.Loading) {
+                srl_layout.finishLoadMore();
+            } else {
 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -166,11 +204,30 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
         tv_empty.setText("暂无数据");
         friendListAdapter.setEmptyView(emptyView_noinfo);
-        if(page==1){
+
+        if (page == 1) {
+            LogUtils.debugInfo("11测试得到数据");
             friendListAdapter.setNewData(data);
-        }else {
+        } else {
+            LogUtils.debugInfo("22测试得到数据");
             friendListAdapter.addData(data);
         }
         page++;
+    }
+
+    @Override
+    public void addFriendListSuccess(List<FriendAskBean> data) {
+        if (data != null && data.size() > 0) {
+            center_num.setText(data.size()+"");
+            center_num.setVisibility(View.VISIBLE);
+        } else {
+            center_num.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void deleteFriendSuccess() {
+        page = 1;
+        mPresenter.friendList(page, limit);
     }
 }

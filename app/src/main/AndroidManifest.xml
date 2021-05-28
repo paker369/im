@@ -24,23 +24,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+        <activity android:name=".mvp.ui.activity.AskFriendListActivity" />
         <activity android:name=".mvp.ui.activity.FriendAskListActivity" />
         <activity android:name=".mvp.ui.activity.FriendChatActivity" />
         <activity android:name=".mvp.ui.activity.GroupChatActivity" />
         <activity android:name=".mvp.ui.activity.EditMyGroupCardActivity" />
         <activity android:name=".mvp.ui.activity.RegeisterActivity" />
         <activity android:name=".mvp.ui.activity.LoginActivity" />
-        <activity android:name=".mvp.ui.activity.MainActivity"
-            >
+        <activity android:name=".mvp.ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mvp.ui.activity.TestActivity">
-
-        </activity>
+        <activity android:name=".mvp.ui.activity.TestActivity"></activity>
 
         <meta-data
             android:name="com.haife.app.nobles.spirits.kotlin.app.impl.GlobalConfiguration"

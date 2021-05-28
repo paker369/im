@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@mipmap/ic_home_bg_light"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
     <View
@@ -44,6 +43,17 @@
             android:maxLines="1"
             android:text="hahaha"
             android:textSize="@dimen/dp_10" />
+
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:src="@mipmap/delete_friend" />
+
 
     </RelativeLayout>
     <com.haife.app.nobles.spirits.kotlin.app.view.ChatMsgRootLayout

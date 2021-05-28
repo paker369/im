@@ -9,15 +9,15 @@ public class LoginBean {
      * loginCode : null
      */
 
-    private int uid;
+    private long uid;
     private String sid;
     private int loginCode;
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 

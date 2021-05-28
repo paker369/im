@@ -1,9 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_new_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/qmui_drawable_color_list_separator"
+            android:gravity="center"
+            android:paddingLeft="@dimen/dp_20"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:text="创建群组"
+             />
+
+        <LinearLayout
+            android:id="@+id/ll_create_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/edt_name"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_marginRight="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:background="@color/gray"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="请输入群名"
+                android:paddingLeft="5dp"
+                android:textCursorDrawable="@drawable/my_cursor"
+                android:textSize="@dimen/sp_10" />
+
+            <EditText
+                android:id="@+id/edt_remark"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_marginRight="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:background="@color/gray"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="输入群签名"
+                android:paddingLeft="5dp"
+                android:textCursorDrawable="@drawable/my_cursor"
+                android:textSize="@dimen/sp_10" />
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@color/gray"
+                        android:gravity="center"
+                        android:padding="@dimen/dp_5"
+                        android:text="取消"
+                        android:textSize="@dimen/dp_10" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_cofirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="#4CAF50"
+                        android:gravity="center"
+                        android:padding="@dimen/dp_5"
+                        android:text="创建群组"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/dp_10" />
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/srl_layout"
         android:layout_width="match_parent"
@@ -12,7 +116,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_message_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>

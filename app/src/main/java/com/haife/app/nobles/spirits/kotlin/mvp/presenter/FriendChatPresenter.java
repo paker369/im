@@ -4,11 +4,14 @@ import android.app.Application;
 
 import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendChatContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_FriendMsgBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_SimpleBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_deleteFriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_loginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
 import com.jess.arms.di.scope.ActivityScope;
@@ -64,7 +67,7 @@ public class FriendChatPresenter extends BasePresenter<FriendChatContract.Model,
         this.mApplication = null;
     }
 
-    public void friendList(int page, int limit, int senderUid) {
+    public void friendList(int page, int limit, long senderUid) {
 
         mModel.friendMsgList(page, limit, senderUid)
                 .compose(RxUtils.applySchedulers(mRootView))
@@ -83,7 +86,7 @@ public class FriendChatPresenter extends BasePresenter<FriendChatContract.Model,
     }
 
 
-    public void sendMsg(String content,int type,int id) {
+    public void sendMsg(String content,int type,long id) {
         R_FriendMsgBean userInfoBean = new R_FriendMsgBean(content,type,id);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.sendMsg(body)
@@ -101,7 +104,7 @@ public class FriendChatPresenter extends BasePresenter<FriendChatContract.Model,
                 });
     }
 
-    public void read(int uid) {
+    public void read(long uid) {
 
         mModel.read(uid)
                 .compose(RxUtils.applySchedulers(mRootView))
@@ -111,6 +114,25 @@ public class FriendChatPresenter extends BasePresenter<FriendChatContract.Model,
                         if (aboutBeanBaseResponse.isSuccess()) {
 
                             mRootView.readSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void deleteFriend(long id) {
+        R_deleteFriendBean userInfoBean = new R_deleteFriendBean(SPConstant.MYUID, SPConstant.MYSID,id);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.deleteFriend(body)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.deleteFriendSuccess();
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

@@ -26,7 +26,7 @@
     <color name="home_new_restaurant_average_price_color">#C19477</color>
     <color name="home_new_restaurant_content_color">#828282</color>
     <color name="home_union_restaurant_label_color">#C09A7F</color>
-
+    <color name="newmesseng">#FFFFEDC3</color>
     <!--DivideColor-->
     <color name="home_recycle_view_divide_color">#FFF0F0F0</color>
     <color name="new_enter_restaurant_color">#FFF09428</color>

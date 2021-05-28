@@ -34,14 +34,18 @@ public interface FriendChatContract {
         void sendMsgtSuccess(int type,String content);
 
         void readSuccess(ReadOtherInfoBean data);
+
+        void deleteFriendSuccess();
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
     interface Model extends IModel {
-        Observable<BaseResponse<List<MessageBean>>> friendMsgList (int page, int limit,int senderUid );
+        Observable<BaseResponse<List<MessageBean>>> friendMsgList (int page, int limit,long senderUid );
 
         Observable<BaseResponse> sendMsg (RequestBody body);
 
-        Observable<BaseResponse<ReadOtherInfoBean>> read (int uid);
+        Observable<BaseResponse<ReadOtherInfoBean>> read (long uid);
+
+        Observable<BaseResponse> deleteFriend (RequestBody body);
     }
 }

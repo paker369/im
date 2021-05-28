@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="65dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+   <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
+       android:layout_width="@dimen/dp_50"
+       android:layout_height="@dimen/dp_50"
+       android:layout_gravity="center_horizontal"
+       android:id="@+id/pop_header"/>
+
+
+    <TextView
+        android:id="@+id/pop_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="黑白"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="#ff444444"
+        android:textSize="14sp" />
+</LinearLayout>

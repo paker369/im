@@ -6,9 +6,11 @@ import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_SimpleBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_deleteFriendBean;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.FragmentScope;
 import com.jess.arms.mvp.BasePresenter;
@@ -74,6 +76,42 @@ public class FriendPresenter extends BasePresenter<FriendContract.Model, FriendC
                         if (aboutBeanBaseResponse.isSuccess()) {
 
                             mRootView.friendListSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+    public void addFriendList(int page,int limit) {
+
+        mModel.addFriendList(page,limit)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<List<FriendAskBean>>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<List<FriendAskBean>> aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.addFriendListSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void deleteFriend(long id) {
+        R_deleteFriendBean userInfoBean = new R_deleteFriendBean(SPConstant.MYUID, SPConstant.MYSID,id);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.deleteFriend(body)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.deleteFriendSuccess();
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

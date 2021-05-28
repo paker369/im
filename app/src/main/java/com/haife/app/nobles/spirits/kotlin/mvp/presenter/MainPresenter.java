@@ -2,6 +2,7 @@ package com.haife.app.nobles.spirits.kotlin.mvp.presenter;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
@@ -12,6 +13,7 @@ import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
+import com.jess.arms.utils.LogUtils;
 
 import javax.inject.Inject;
 
@@ -57,7 +59,8 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
     }
 
     public void loginInfo() {
-        mModel.loginInfo(SPConstant.MYUID,SPConstant.MYSID)
+        LogUtils.debugInfo("111测试uid"+SPUtils.getInstance().getLong(SPConstant.UID));
+        mModel.loginInfo(SPUtils.getInstance().getLong(SPConstant.UID),SPUtils.getInstance().getString(SPConstant.SID))
                 .compose(RxUtils.applySchedulers(mRootView))
                 .subscribe(new ErrorHandleSubscriber<BaseResponse<LoginInfoBean>>(mErrorHandler) {
                     @Override
@@ -73,7 +76,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
                 });
     }
 
-    public void addFriend(int uid, String remark) {
+    public void addFriend(long uid, String remark) {
 
         mModel.addFriend(SPConstant.MYUID, SPConstant.MYSID, uid, remark)
                 .compose(RxUtils.applySchedulers(mRootView))
@@ -91,7 +94,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
                 });
     }
 
-    public void addGroup(int uid) {
+    public void addGroup(long uid) {
 
         mModel.addGroup(SPConstant.MYUID, SPConstant.MYSID, uid)
                 .compose(RxUtils.applySchedulers(mRootView))

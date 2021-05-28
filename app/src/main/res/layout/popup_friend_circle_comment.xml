@@ -155,7 +155,7 @@
         <ImageView
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:src="@mipmap/logout" />
+            android:src="@mipmap/delete_group" />
 
         <TextView
             android:layout_width="60dp"

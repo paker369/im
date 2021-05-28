@@ -1,5 +1,10 @@
 <resources>
+    <!--实下滑线样式-->
+    <style name="Line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
 
+    </style>
     <!--App Theme-->
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
         <item name="colorPrimaryDark">@color/write</item>
@@ -16,12 +21,6 @@
 
         <!-- 配置qmui提供的theme -->
 
-        <item name="qmui_config_color_blue">@color/app_color_blue</item>
-        <item name="qmui_round_btn_bg_color">@color/s_btn_blue_bg</item>
-        <item name="qmui_round_btn_border_color">@color/s_btn_blue_border</item>
-        <item name="qmui_round_btn_text_color">@color/s_btn_blue_text</item>
-        <item name="qmui_content_spacing_horizontal">20dp</item>
-        <item name="qmui_content_padding_horizontal">@dimen/qmui_content_spacing_horizontal</item>
 
         <item name="QMUITopBarStyle">@style/QDTopBar</item>
 
@@ -122,7 +121,6 @@
         <item name="qmui_topbar_bg_color">?attr/app_primary_color</item>
         <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
         <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_text_btn_color_state_list">@color/s_topbar_btn_color</item>
         <item name="qmui_topbar_height">48dp</item>
         <item name="qmui_topbar_image_btn_height">48dp</item>
     </style>
@@ -133,8 +131,6 @@
         <item name="android:paddingLeft">?attr/qmui_content_spacing_horizontal</item>
         <item name="android:paddingRight">?attr/qmui_content_spacing_horizontal</item>
         <item name="qmui_borderColor">?attr/qmui_round_btn_border_color</item>
-        <item name="qmui_backgroundColor">@color/s_app_color_blue_3</item>
-        <item name="android:textColor">@color/s_app_color_blue_2</item>
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
     </style>

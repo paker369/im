@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ezreal.emojilibrary.EmojiUtils;
@@ -30,11 +31,11 @@ public class FriendListAdapter   extends BaseQuickAdapter<FriendBean, BaseViewHo
                 .asBitmap()
                 .thumbnail(0.6f)
                 .load(item.getUser().getAvatar())
-
+.apply(new RequestOptions().placeholder(R.mipmap.mandefult))
                 .into(portraitImageView);
-        SpannableString msg = EmojiUtils.text2Emoji(mContext, item.getLastMsgContent(), descTextView.getTextSize());
+//        SpannableString msg = EmojiUtils.text2Emoji(mContext, item.getLastMsgContent(), descTextView.getTextSize());
 
-        descTextView.setText(msg);
+        descTextView.setText(item.getUser().getRemark());
         nameTextView.setText(item.getUser().getName());
     }
 }

@@ -47,13 +47,15 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
     protected void convert(BaseViewHolder helper, MessageBean item) {
         ImageView otherheader=helper.getView(R.id.other_header);
         TextView othername=helper.getView(R.id.other_name);
+        TextView me_name=helper.getView(R.id.me_name);
+        me_name.setVisibility(View.GONE);
         otherheader.setVisibility(View.GONE);
         othername.setVisibility(View.GONE);
         switch (helper.getItemViewType()) {
             case 1:
                 RelativeLayout rl_other = helper.getView(R.id.rl_other);
                 RelativeLayout rl_me = helper.getView(R.id.rl_me);
-                if (SPUtils.getInstance().getInt(SPConstant.UID) == item.getSenderUid()) {
+                if (SPUtils.getInstance().getLong(SPConstant.UID) == item.getSenderUid()) {
                     rl_other.setVisibility(View.GONE);
                     rl_me.setVisibility(View.VISIBLE);
                     Glide.with(mContext)
@@ -89,7 +91,7 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
             case 2:
                 RelativeLayout rlOthers = helper.getView(R.id.rl_other);
                 RelativeLayout rlMes = helper.getView(R.id.rl_me);
-                if (SPUtils.getInstance().getInt(SPConstant.UID) == item.getUid()) {
+                if (SPUtils.getInstance().getLong(SPConstant.UID) == item.getSenderUid()) {
                     rlOthers.setVisibility(View.GONE);
                     rlMes.setVisibility(View.VISIBLE);
                     Glide.with(mContext)

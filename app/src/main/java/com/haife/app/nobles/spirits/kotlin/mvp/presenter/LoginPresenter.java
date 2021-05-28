@@ -61,7 +61,7 @@ public class LoginPresenter extends BasePresenter<LoginContract.Model, LoginCont
         this.mImageLoader = null;
         this.mApplication = null;
     }
-    public void loginbyPwd(int uid,String pwd) {
+    public void loginbyPwd(long uid,String pwd) {
         R_loginBean userInfoBean = new R_loginBean(uid, pwd);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.loginbyPwd(body)

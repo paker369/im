@@ -8,7 +8,9 @@ import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_AddGroupBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_CreateGroupBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_SimpleBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_UpdateGroup;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.FragmentScope;
 import com.jess.arms.mvp.BasePresenter;
@@ -72,6 +74,25 @@ public class GroupPresenter extends BasePresenter<GroupContract.Model, GroupCont
                         if (aboutBeanBaseResponse.isSuccess()) {
 
                             mRootView.myGroupListSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void createGroup(String name,String remark) {
+        R_CreateGroupBean userInfoBean = new R_CreateGroupBean(name, remark);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.createGroup(body)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<MyGroup.GroupBean>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<MyGroup.GroupBean> aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.createGroupSuccess(aboutBeanBaseResponse.getData());
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

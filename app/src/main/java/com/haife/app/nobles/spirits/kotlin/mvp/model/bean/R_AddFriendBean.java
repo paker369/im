@@ -2,12 +2,12 @@ package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
 public class R_AddFriendBean {
 
-    int UID;
+    long UID;
     String SID;
-    int friendUid;
+    long friendUid;
     String remark;
 
-    public R_AddFriendBean(int UID, String SID, int friendUid, String remark) {
+    public R_AddFriendBean(long UID, String SID, long friendUid, String remark) {
         this.UID = UID;
         this.SID = SID;
         this.friendUid = friendUid;

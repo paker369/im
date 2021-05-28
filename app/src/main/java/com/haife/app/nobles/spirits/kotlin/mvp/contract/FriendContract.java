@@ -1,6 +1,7 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.contract;
 
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.jess.arms.mvp.IView;
@@ -29,10 +30,18 @@ public interface FriendContract {
     //对于经常使用的关于UI的方法可以定义到IView中,如显示隐藏进度条,和显示文字消息
     interface View extends IView {
         void friendListSuccess(List<FriendBean> data);
+
+        void addFriendListSuccess(List<FriendAskBean> data);
+
+        void deleteFriendSuccess();
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
     interface Model extends IModel {
         Observable<BaseResponse<List<FriendBean>>> friendList (int page,  int limit);
+
+        Observable<BaseResponse<List<FriendAskBean>>> addFriendList (int page, int limit);
+
+        Observable<BaseResponse> deleteFriend (RequestBody body);
     }
 }

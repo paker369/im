@@ -1,9 +1,9 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
 public class MyGroup {
-    private int id;
-    private int groupId;
-    private int uid;
+    private long id;
+    private long groupId;//同GroupBean的groupId
+    private long uid;//我的id
     private String remark;
     private int lastAckMsgId;
     private String lastMsgContent;
@@ -12,27 +12,27 @@ public class MyGroup {
     private int rank;
     private GroupBean group;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(long groupId) {
         this.groupId = groupId;
     }
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
@@ -94,7 +94,7 @@ public class MyGroup {
 
     public static class GroupBean {
         private int groupId;
-        private int uid;
+        private int uid;//群主id
         private String name;
         private String remark;
         private String avatar;

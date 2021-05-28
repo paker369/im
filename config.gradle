@@ -23,7 +23,7 @@ ext {
             espressoSdkVersion      : "3.0.1",
             canarySdkVersion        : "1.6.3",
             fragmentationVersion    : "1.3.6",
-            baseRecycleViewVersion  : "2.9.30",
+            baseRecycleViewVersion  : "2.9.46",
             arouterSDk              : "1.4.1",
             arouterCompilerSdk      : "1.2.2"
     ]

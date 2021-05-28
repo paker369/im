@@ -11,18 +11,18 @@ public class LoginInfoBean {
      * profile : {"friendAskCount":null,"friendCount":null}
      */
 
-    private int uid;
+    private long uid;
     private String name;
     private String avatar;
     private String remark;
     private String createTime;
     private ProfileBean profile;
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 

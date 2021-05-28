@@ -53,17 +53,17 @@ public class MainModel extends BaseModel implements MainContract.Model {
     }
 
     @Override
-    public Observable<BaseResponse<LoginInfoBean>> loginInfo(int uId, String sId) {
+    public Observable<BaseResponse<LoginInfoBean>> loginInfo(long uId, String sId) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).loginInfo(uId, sId);
     }
 
     @Override
-    public Observable<BaseResponse> addFriend(int uId, String sId, int friendUid,  String remark) {
+    public Observable<BaseResponse> addFriend(long uId, String sId, long friendUid,  String remark) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).addFriend( uId, sId, friendUid, remark);
     }
 
     @Override
-    public Observable<BaseResponse<MyGroup>> addGroup(int uId, String sId,int groupId) {
+    public Observable<BaseResponse<MyGroup>> addGroup(long uId, String sId,long groupId) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).addGroup(uId, sId, groupId);
 
     }

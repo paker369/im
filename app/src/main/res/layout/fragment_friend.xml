@@ -4,6 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+<RelativeLayout
+android:id="@+id/rl_new_friend"
+    android:layout_width="match_parent"
+    android:background="@color/qmui_drawable_color_list_separator"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tv_new_friend"
+        android:text="新的朋友"
+       android:paddingBottom="@dimen/dp_10"
+        android:paddingLeft="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/center_num"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/shape_message_num"
+        android:gravity="center"
+        android:text="12"
+        android:textColor="#ffffffff"
+        android:textSize="8sp"
+        android:visibility="gone"
+         />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+      android:layout_below="@+id/tv_new_friend"
+        android:background="#8F8F8F"/>
+</RelativeLayout>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/srl_layout"
         android:layout_width="match_parent"

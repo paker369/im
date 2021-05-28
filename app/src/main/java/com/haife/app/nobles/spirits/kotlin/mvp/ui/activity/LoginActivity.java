@@ -26,6 +26,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.presenter.LoginPresenter;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
+import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 
 import butterknife.BindView;
@@ -59,10 +60,6 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     TextView edt_pwd;
     @BindView(R.id.tv_login)
     TextView tv_login;
-    @BindView(R.id.iv_man_tourist)
-    ImageView iv_man_tourist;
-    @BindView(R.id.iv_woman_tourist)
-    ImageView iv_woman_tourist;
     @BindView(R.id.tv_register)
     TextView tv_register;
 
@@ -89,6 +86,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     public void initData(@Nullable Bundle savedInstanceState) {
         drawablebutton = getResources().getDrawable(R.drawable.shape_login_button);
         drawablebuttonno = getResources().getDrawable(R.drawable.shape_nologin_button);
+        initEditview();
     }
 
     @Override
@@ -141,17 +139,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         });
     }
 
-    @OnClick({R.id.iv_man_tourist, R.id.iv_woman_tourist, R.id.tv_man_tourist, R.id.tv_woman_tourist, R.id.tv_login, R.id.tv_register})
+    @OnClick({  R.id.tv_login, R.id.tv_register})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_man_tourist:
-            case R.id.tv_man_tourist:
-
-                break;
-            case R.id.iv_woman_tourist:
-            case R.id.tv_woman_tourist:
-
-                break;
             case R.id.tv_login:
                 if (TextUtils.isEmpty(edt_acc.getText().toString())) {
                     ToastUtils.showShort("账号不能为空");
@@ -198,8 +188,12 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
     @Override
     public void loginbyPwdSuccess(LoginBean data) {
+        LogUtils.debugInfo("测试uid"+data.getUid());
         SPUtils.getInstance().put(SPConstant.UID,data.getUid());
         SPUtils.getInstance().put(SPConstant.SID,data.getSid());
+        SPConstant.MYSID= data.getSid();
+        SPConstant.MYUID= data.getUid();
+
         launchActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
 }

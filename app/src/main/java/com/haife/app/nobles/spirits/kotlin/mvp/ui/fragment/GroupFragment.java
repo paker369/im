@@ -9,13 +9,19 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
@@ -31,12 +37,14 @@ import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupPresenter;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -58,6 +66,24 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     SmartRefreshLayout srl_layout;
     @BindView(R.id.rv_message_list)
     RecyclerView rv_message_list;
+    @BindView(R.id.ll_create_group)
+    LinearLayout ll_create_group;
+    @BindView(R.id.edt_name)
+    EditText edt_name;
+    @BindView(R.id.edt_remark)
+    EditText edt_remark;
+
+    @BindView(R.id.tv_cancel)
+    TextView tv_cancel;
+    @BindView(R.id.tv_cofirm)
+    TextView tv_cofirm;
+
+    @BindView(R.id.tv_new_group)
+    TextView tv_new_group;
+
+
+
+
     int page = 1;
     int limit = 20;
     MyGroupListAdapter myGroupListAdapter;
@@ -86,8 +112,15 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     public void initData(@Nullable Bundle savedInstanceState) {
         initRefreshLayout();
         initRecyclerView();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mPresenter.myGroupList(page,limit);
     }
+
     /**
      * @date: 2021/1/20 15:50
      * @description 初始化刷新
@@ -115,6 +148,11 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
             MyGroup listBean = myGroupListAdapter.getData().get(position);
             Intent intent = new Intent(getActivity(), GroupChatActivity.class);
             intent.putExtra("groupid", listBean.getGroupId());
+            intent.putExtra("avatar", listBean.getGroup().getAvatar());
+            intent.putExtra("name", listBean.getGroup().getName());
+            intent.putExtra("remark", listBean.getGroup().getRemark());
+            intent.putExtra("ismine", (listBean.getGroup().getUid()== SPConstant.MYUID));
+
             startActivity(intent);
         });
 
@@ -134,7 +172,17 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 
     @Override
     public void hideLoading() {
+        try {
+            if (srl_layout.getState() == RefreshState.Refreshing) {
+                srl_layout.finishRefresh();
+            } else if (srl_layout.getState() == RefreshState.Loading) {
+                srl_layout.finishLoadMore();
+            } else {
 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -163,7 +211,29 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
         page = 1;
         mPresenter.myGroupList(page,limit);
     }
+    @OnClick({R.id.tv_new_group,R.id.tv_cancel,R.id.tv_cofirm,})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
 
+            case R.id.tv_new_group:
+                tv_new_group.setVisibility(View.GONE);
+                ll_create_group.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tv_cancel:
+                ll_create_group.setVisibility(View.GONE);
+                tv_new_group.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tv_cofirm:
+                if (TextUtils.isEmpty(edt_name.getText().toString())) {
+                    ToastUtils.showShort("群名不能为空");
+                    return;
+                }
+                mPresenter.createGroup(edt_name.getText().toString(),edt_remark.getText().toString());
+                ll_create_group.setVisibility(View.GONE);
+                tv_new_group.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
     @Override
     public void myGroupListSuccess(List<MyGroup> data) {
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
@@ -175,5 +245,21 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
             myGroupListAdapter.addData(data);
         }
         page++;
+    }
+
+    @Override
+    public void deleteGroupSuccess() {
+        mPresenter.myGroupList(page,limit);
+    }
+
+    @Override
+    public void createGroupSuccess(MyGroup.GroupBean data) {
+
+//        MyGroup myGroup=new MyGroup();
+//        myGroup.setGroup(data);
+//        myGroupListAdapter.getData().add(0,myGroup);
+//        myGroupListAdapter.notifyItemInserted(0);
+        page=1;
+        mPresenter.myGroupList(page,limit);
     }
 }

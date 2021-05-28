@@ -7,7 +7,7 @@ import com.haife.app.nobles.spirits.kotlin.BuildConfig;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.service.Api;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
-import com.jess.arms.http.imageloader.glide.GlideImageLoaderStrategy;
+
 import com.jess.arms.http.log.RequestInterceptor;
 import com.jess.arms.integration.ConfigModule;
 
@@ -30,7 +30,7 @@ public class GlobalConfiguration implements ConfigModule {
                     // builder1.addConverterFactory(FastJsonConverterFactory.create());//比如使用fastjson替代gson
                 })
                 .globalHttpHandler(new GlobalHttpHandleImpl(context))
-                .imageLoaderStrategy(new GlideImageLoaderStrategy())
+//                .imageLoaderStrategy(new GlideImageLoaderStrategy())
                 .okhttpConfiguration((context1, okhttpBuilder) -> {
                     okhttpBuilder.retryOnConnectionFailure(true);
                     okhttpBuilder.writeTimeout(DEFAULT_TIME_OUT, TimeUnit.SECONDS);

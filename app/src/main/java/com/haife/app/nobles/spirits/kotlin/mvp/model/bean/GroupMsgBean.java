@@ -1,6 +1,8 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
-public class GroupMsgBean {
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+
+public class GroupMsgBean implements MultiItemEntity {
 
     /**
      * msgId : 15
@@ -14,13 +16,22 @@ public class GroupMsgBean {
      */
 
     private int msgId;
-    private int groupId;
-    private int senderUid;
+    private long groupId;
+    private long senderUid;
     private int msgType;
     private String msgContent;
     private String createTime;
     private String modifiedTime;
     private UserBean user;
+
+    public GroupMsgBean(long groupId, long senderUid, int msgType, String msgContent, String createTime, UserBean user) {
+        this.groupId = groupId;
+        this.senderUid = senderUid;
+        this.msgType = msgType;
+        this.msgContent = msgContent;
+        this.createTime = createTime;
+        this.user = user;
+    }
 
     public String getModifiedTime() {
         return modifiedTime;
@@ -38,19 +49,19 @@ public class GroupMsgBean {
         this.msgId = msgId;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(long groupId) {
         this.groupId = groupId;
     }
 
-    public int getSenderUid() {
+    public long getSenderUid() {
         return senderUid;
     }
 
-    public void setSenderUid(int senderUid) {
+    public void setSenderUid(long senderUid) {
         this.senderUid = senderUid;
     }
 
@@ -87,4 +98,16 @@ public class GroupMsgBean {
         this.user = user;
     }
 
+    @Override
+    public int getItemType() {
+        int type = 1;
+        switch (msgType) {
+            case 0:
+                type = 1;
+                break;
+            case 1:
+                type = 2;
+        }
+        return type;
+    }
 }

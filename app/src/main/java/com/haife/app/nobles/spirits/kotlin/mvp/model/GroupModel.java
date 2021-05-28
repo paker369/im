@@ -56,4 +56,14 @@ public class GroupModel extends BaseModel implements GroupContract.Model {
     public Observable<BaseResponse<List<MyGroup>>> myGroupList( int page,  int limit) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).myGroupList(page, limit);
     }
+
+    @Override
+    public Observable<BaseResponse> deleteGroup(long groupid) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteGroup(groupid);
+    }
+
+    @Override
+    public Observable<BaseResponse<MyGroup.GroupBean>> createGroup(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).createGroup(body);
+    }
 }

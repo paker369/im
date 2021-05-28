@@ -2,16 +2,16 @@ package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
 public class GroupMemberBean {
 
-    int groupId;
+    long groupId;
     String remark;
     int rank;
    UserBean user;
 
-    public int getGroupId() {
+    public long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(long groupId) {
         this.groupId = groupId;
     }
 

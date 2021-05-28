@@ -15,14 +15,14 @@ public class MessageBean implements MultiItemEntity {
      */
 
     private int msgId;
-    private int uid;
-    private int toUid;
-    private int senderUid;
+    private long uid;
+    private long toUid;
+    private long senderUid;
     private int msgType;
     private String msgContent;
     private String createTime;
 
-    public MessageBean(int uid, int toUid, int senderUid, int msgType, String msgContent, String createTime) {
+    public MessageBean(long uid, long toUid, long senderUid, int msgType, String msgContent, String createTime) {
         this.uid = uid;
         this.toUid = toUid;
         this.senderUid = senderUid;
@@ -39,27 +39,27 @@ public class MessageBean implements MultiItemEntity {
         this.msgId = msgId;
     }
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
-    public int getToUid() {
+    public long getToUid() {
         return toUid;
     }
 
-    public void setToUid(int toUid) {
+    public void setToUid(long toUid) {
         this.toUid = toUid;
     }
 
-    public int getSenderUid() {
+    public long getSenderUid() {
         return senderUid;
     }
 
-    public void setSenderUid(int senderUid) {
+    public void setSenderUid(long senderUid) {
         this.senderUid = senderUid;
     }
 

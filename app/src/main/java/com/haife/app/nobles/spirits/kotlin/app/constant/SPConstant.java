@@ -29,6 +29,8 @@ public class SPConstant {
     public static final String HEADER = "HEADER";
     public final  static String qianzhui="/api";
     public static final String KEYBOARD = "KEYBOARD";
+    public static final String RECEIVEWSSINGLECHATE ="RECEIVEWSSINGLECHATE" ;
+    public static final String RECEIVEWSGROUPCHATE ="RECEIVEWSGROUPCHATE" ;
     public   static String MYSID= SPUtils.getInstance().getString(SID,"");
-    public   static int MYUID=SPUtils.getInstance().getInt(UID,0);
+    public   static long MYUID=SPUtils.getInstance().getLong(UID);
 }

@@ -1,10 +1,10 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,10 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatInputLayout;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatMsgRootLayout;
 import com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView;
@@ -27,19 +30,26 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendChatPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.ChatMessageAdapter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.BarUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
+import com.kongzue.dialog.v2.SelectDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+
+import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -87,8 +97,8 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     private LinearLayoutManager layouts;
     int page = 1;
     int limit = 20;
-    int senderUid;
-    private int firstCompletelyVisibleItemPosition;
+    long senderUid;
+    private int firstCompletelyVisibleItemPosition=-1;
     List<MessageBean> messagepool = new ArrayList<>();
     private Handler mHandler;
     private int messengecount;
@@ -112,10 +122,13 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        senderUid = getIntent().getIntExtra("senderUid", 0);
+        senderUid =  getIntent().getLongExtra("senderUid", 0);
         ImmersionBar.with(this)
                 .statusBarView(status_bar_view)
+                .barAlpha(0)
+                .applySystemFits(false)
                 .init();
+        KeyBoardListener.getInstance(this).init();
         initRecycler();
         input_layout.setLayoutListener(this);
         input_layout.bindInputLayout(this, rll);
@@ -130,9 +143,57 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void hideLoading() {
+        try {
+            if (refreshLayout.getState() == RefreshState.Refreshing) {
+                refreshLayout.finishRefresh();
+            } else if (refreshLayout.getState() == RefreshState.Loading) {
+                refreshLayout.finishLoadMore();
+            } else {
 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+    @OnClick({R.id.iv_delete, R.id.iv_header, R.id.newmessege})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
 
+            case R.id.iv_delete:
+                SelectDialog.show(this, "提示", "确认删除好友吗", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.deleteFriend(senderUid);
+                    }
+                });
+                break;
+            case R.id.iv_header:
+
+                break;
+            case R.id.newmessege:
+                rv_newmessege.setVisibility(View.GONE);
+                messengecount = 0;
+                if (firstCompletelyVisibleItemPosition > 70) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            layouts.scrollToPositionWithOffset(0, Integer.MIN_VALUE);
+                            color_recycler.scrollToPosition(0);
+                        }
+                    });
+
+                } else {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            color_recycler.smoothScrollToPosition(0);
+                            color_recycler.scrollToPosition(0);
+                        }
+                    });
+                }
+
+        }
+    }
     private void initRecycler() {
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableLoadMore(false);
@@ -160,6 +221,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                             public void run() {
                                 chatMessageAdapter.addData(0, messagepool);
                                 messagepool.clear();
+                                messengecount = 0;
                                 chatMessageAdapter.notifyDataSetChanged();
                             }
                         });
@@ -181,8 +243,6 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
         chatMessageAdapter = new ChatMessageAdapter(listBeans);
         chatMessageAdapter.setEmptyView(R.layout.empty_placehold, color_recycler);
         color_recycler.setAdapter(chatMessageAdapter);
-
-
     }
 
     private Handler getHandler() {
@@ -251,7 +311,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                     chatMessageAdapter.addData(data);
                 }
             });
-
+            page++;
         }
     }
 
@@ -269,6 +329,9 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                     color_recycler.scrollToPosition(0);
                 }
             });
+        }else if(firstCompletelyVisibleItemPosition==0) {
+            chatMessageAdapter.addData(0, data);
+            chatMessageAdapter.notifyDataSetChanged();
         } else {
             getHandler().post(new Runnable() {
                 @Override
@@ -288,9 +351,58 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                 .load(data.getAvatar())
 
                 .into(iv_header);
-        LogUtils.debugInfo("测试朋友的头像是"+data.getAvatar());
-        LogUtils.debugInfo("测试view"+(iv_header==null));
+        LogUtils.debugInfo("测试朋友的头像是" + data.getAvatar());
+        LogUtils.debugInfo("测试view" + (iv_header == null));
         tv_nickname.setText(data.getName());
         tv_remark.setText(data.getRemark());
     }
+
+    @Override
+    public void deleteFriendSuccess() {
+        ToastUtils.showShort("已删除好友");
+        finish();
+
+    }
+
+    public boolean isSlideToBottom(RecyclerView recyclerView) {
+        if (recyclerView == null) return false;
+        return firstCompletelyVisibleItemPosition <= 1;
+    }
+
+    @Subscriber(tag = SPConstant.RECEIVEWSSINGLECHATE)
+    public void receivemsg(MessageBean data) {
+        if (data.getSenderUid() == senderUid) {
+            messengecount++;
+            if (!isSlideToBottom(color_recycler)) {
+                messagepool.add(0, data);
+                rv_newmessege.clearAnimation();
+//              iv_newmessege.setImageResource(R.mipmap.icon_downto);
+                rv_newmessege.setVisibility(View.VISIBLE);
+              newmessege.setBackgroundColor(getResources().getColor(R.color.newmesseng));
+                newmessege.setText(messengecount + "条新消息");
+            } else {
+
+                //recycleview滚动时不能通知刷新
+                getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (chatMessageAdapter.getData().size() == 0) {
+                            chatMessageAdapter.getData().add(0, data);
+                            chatMessageAdapter.notifyDataSetChanged();
+                        } else {
+                            chatMessageAdapter.getData().add(0, data);
+                            //                                chatMessageAdapter.notifyDataSetChanged();
+                            chatMessageAdapter.notifyItemInserted(0);
+                            color_recycler.scrollToPosition(0);
+                        }
+
+                    }
+                });
+
+
+            }
+        }
+    }
+
+
 }

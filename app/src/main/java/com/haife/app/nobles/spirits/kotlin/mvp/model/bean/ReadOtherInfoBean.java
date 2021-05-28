@@ -9,16 +9,16 @@ public class ReadOtherInfoBean {
      * remark : 你今生有没有坚定不移地相信过一件事或一个人？是那种至死不渝的相信？
      */
 
-    private int uid;
+    private long uid;
     private String name;
     private String avatar;
     private String remark;
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 

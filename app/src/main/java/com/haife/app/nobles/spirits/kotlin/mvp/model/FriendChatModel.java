@@ -54,7 +54,7 @@ public class FriendChatModel extends BaseModel implements FriendChatContract.Mod
     }
 
     @Override
-    public Observable<BaseResponse<List<MessageBean>>> friendMsgList(int page, int limit, int senderUid) {
+    public Observable<BaseResponse<List<MessageBean>>> friendMsgList(int page, int limit, long senderUid) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).friendMsgList(page, limit,senderUid);
 
     }
@@ -66,7 +66,12 @@ public class FriendChatModel extends BaseModel implements FriendChatContract.Mod
     }
 
     @Override
-    public Observable<BaseResponse<ReadOtherInfoBean>> read(int uid) {
+    public Observable<BaseResponse<ReadOtherInfoBean>> read(long uid) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).read(uid);
+    }
+
+    @Override
+    public Observable<BaseResponse> deleteFriend(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteFriend(body);
     }
 }
