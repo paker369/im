@@ -41,6 +41,8 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.simple.eventbus.EventBus;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -139,7 +141,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rv_message_list.setLayoutManager(linearLayoutManager);
 
-        myGroupListAdapter = new MyGroupListAdapter();
+        myGroupListAdapter = new MyGroupListAdapter(0);
         rv_message_list.setAdapter(myGroupListAdapter);
         emptyView_noinfo = LayoutInflater.from(getActivity()).inflate(R.layout.empty_placehold, (ViewGroup) rv_message_list.getParent(), false);
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
@@ -245,6 +247,8 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
             myGroupListAdapter.addData(data);
         }
         page++;
+        EventBus.getDefault().post(myGroupListAdapter.getData(), SPConstant.GROUPMESSAGE);
+
     }
 
     @Override

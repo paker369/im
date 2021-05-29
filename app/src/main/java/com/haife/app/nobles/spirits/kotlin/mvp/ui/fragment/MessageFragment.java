@@ -5,18 +5,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerMessageComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MessageContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MessagePresenter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.MyGroupListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -25,6 +30,10 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.simple.eventbus.Subscriber;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -52,6 +61,12 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     RecyclerView rv_message_list2;
     int page = 1;
     int limit = 20;
+
+
+    MyGroupListAdapter myGroupListAdapter;
+    FriendListAdapter friendListAdapter;
+    private View emptyView_noinfo;
+
     public static MessageFragment newInstance() {
         MessageFragment fragment = new MessageFragment();
         return fragment;
@@ -82,33 +97,44 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
      * @description 初始化列表
      */
     private void initRecyclerView() {
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-//        rv_message_list.setLayoutManager(linearLayoutManager);
-//
-//                fotCompetetionTypeAdapter = new FotCompetetionTypeAdapter();
-//        rv_message_list.setAdapter(fotCompetetionTypeAdapter);
-//                emptyView_noinfo = LayoutInflater.from(getActivity()).inflate(R.layout.empty_placehold, (ViewGroup) match_ry.getParent(), false);
-//                ImageView iv_empty = emptyView_noinfo.findViewById(R.id.iv_empty);
-//                Glide.with(this).load(R.drawable.loadingg).into(iv_empty);
-//                fotCompetetionTypeAdapter.setEmptyView(emptyView_noinfo);
-//                fotCompetetionTypeAdapter.setOnItemClickListener((adapter, view, position) -> {
-//                    FootballAllStatusBean.FootballAllStatusitemBean listBean = fotCompetetionTypeAdapter.getData().get(position);
-//                    Intent intent = new Intent(getActivity(), FootballDetailsActivity.class);
-//                    intent.putExtra("teama", listBean.getaTeamName());
-//                    intent.putExtra("teamb", listBean.getbTeamName());
-//                    intent.putExtra("idteama", listBean.getaTeamId());
-//                    intent.putExtra("idteamb", listBean.getbTeamId());
-//                    intent.putExtra("score", listBean.getMatchScore());
-//                    intent.putExtra("icona", listBean.getaLogo());
-//                    intent.putExtra("iconb", listBean.getbLogo());
-//                    intent.putExtra("state", listBean.getMatchType());
-//                    intent.putExtra("nameid", listBean.getNamiId());
-//                    intent.putExtra("stringdown", listBean.getMatchNameZh() + listBean.getMatchStartTime());
-//                    intent.putExtra("matchid", listBean.getMatchId());
-//                    startActivity(intent);
-//                });
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        rv_message_list1.setLayoutManager(linearLayoutManager);
 
+        myGroupListAdapter = new MyGroupListAdapter(1);
+        rv_message_list1.setAdapter(myGroupListAdapter);
+//        emptyView_noinfo = LayoutInflater.from(getActivity()).inflate(R.layout.empty_placehold, (ViewGroup) rv_message_list.getParent(), false);
+//        TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
+//        myGroupListAdapter.setEmptyView(emptyView_noinfo);
+        myGroupListAdapter.setOnItemClickListener((adapter, view, position) -> {
+            MyGroup listBean = myGroupListAdapter.getData().get(position);
+            listBean.setUnMsgCount(0);
+            myGroupListAdapter.notifyItemChanged(position);
+            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+            intent.putExtra("groupid", listBean.getGroupId());
+            intent.putExtra("avatar", listBean.getGroup().getAvatar());
+            intent.putExtra("name", listBean.getGroup().getName());
+            intent.putExtra("remark", listBean.getGroup().getRemark());
+            intent.putExtra("ismine", (listBean.getGroup().getUid() == SPConstant.MYUID));
+            startActivity(intent);
+        });
 
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(getActivity());
+        rv_message_list2.setLayoutManager(linearLayoutManager2);
+        friendListAdapter = new FriendListAdapter(1);
+        rv_message_list2.setAdapter(friendListAdapter);
+//        emptyView_noinfo = LayoutInflater.from(getActivity()).inflate(R.layout.empty_placehold, (ViewGroup) rv_message_list.getParent(), false);
+//        TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
+//        friendListAdapter.setEmptyView(emptyView_noinfo);
+        friendListAdapter.setOnItemClickListener((adapter, view, position) -> {
+
+            FriendBean listBean = friendListAdapter.getData().get(position);
+            listBean.setUnMsgCount(0);
+            myGroupListAdapter.notifyItemChanged(position);
+            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
+            intent.putExtra("senderUid", listBean.getFriendUid());
+            startActivity(intent);
+            listBean.setUnMsgCount(0);
+        });
 
     }
     /**
@@ -118,8 +144,8 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     private void initRefreshLayout() {
         srl_layout.setOnRefreshListener(this);
         srl_layout.setOnLoadMoreListener(this);
-        srl_layout.setEnableRefresh(true);
-        srl_layout.setEnableLoadMore(true);
+        srl_layout.setEnableRefresh(false);
+        srl_layout.setEnableLoadMore(false);
     }
 
     @Override
@@ -172,5 +198,16 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
 
+    }
+
+
+    @Subscriber(tag = SPConstant.FRIENDMESSAGE)
+    public void receivefriendmsg(List<FriendBean> data) {
+        friendListAdapter.setNewData(data);
+    }
+
+    @Subscriber(tag = SPConstant.GROUPMESSAGE)
+    public void receivegroupmsg(List<MyGroup> data) {
+        myGroupListAdapter.setNewData(data);
     }
 }

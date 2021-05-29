@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IM</string>
+    <string name="app_name">黑猪chat</string>
     <!--main screen start-->
     <string name="main_bottom_menu_home_desc">首页</string>
     <string name="main_bottom_menu_sort_desc">分类</string>

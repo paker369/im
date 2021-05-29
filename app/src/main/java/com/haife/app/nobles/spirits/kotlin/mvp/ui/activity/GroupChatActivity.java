@@ -461,22 +461,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     @Override
     public void groupMemberListSuccess(List<GroupMemberBean> data) {
         LogUtils.debugInfo("测试拿到成员名单" + data.size());
-        GroupMemberBean d = data.get(0);
         memberList = data;
-        memberList.add(d);
-        memberList.add(d);
-
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-        memberList.add(d);
-
-
     }
 
     @Override

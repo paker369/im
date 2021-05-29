@@ -29,7 +29,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.haife.app.nobles.spirits.kotlin"
+        applicationId "com.networkheizhu.chat"
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode rootProject.ext.android["versionCode"]

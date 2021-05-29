@@ -1,6 +1,7 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter;
 
 import android.text.SpannableString;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +18,10 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import java.util.List;
 
 public class FriendListAdapter   extends BaseQuickAdapter<FriendBean, BaseViewHolder> {
-
-    public FriendListAdapter() {
+    int showtype;
+    public FriendListAdapter(  int showtype) {
         super(R.layout.item_friend_list);
+        this.showtype=   showtype;
     }
 
     @Override
@@ -27,6 +29,15 @@ public class FriendListAdapter   extends BaseQuickAdapter<FriendBean, BaseViewHo
         TextView nameTextView = helper.getView(R.id.nameTextView);
         TextView descTextView = helper.getView(R.id.descTextView);
         ImageView portraitImageView = helper.getView(R.id.portraitImageView);
+        TextView center_num = helper.getView(R.id.center_num);
+        center_num.setVisibility(View.GONE);
+        if(showtype==1){
+            if(item.getUnMsgCount()>0){
+                center_num.setVisibility(View.VISIBLE);
+                center_num.setText(item.getUnMsgCount()+"");
+            }
+        }
+
         Glide.with(mContext)
                 .asBitmap()
                 .thumbnail(0.6f)
@@ -34,8 +45,13 @@ public class FriendListAdapter   extends BaseQuickAdapter<FriendBean, BaseViewHo
 .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
                 .into(portraitImageView);
 //        SpannableString msg = EmojiUtils.text2Emoji(mContext, item.getLastMsgContent(), descTextView.getTextSize());
+        if(showtype==1){
+            descTextView.setText(item.getLastMsgContent());
 
-        descTextView.setText(item.getUser().getRemark());
+        }else {
+            descTextView.setText(item.getUser().getRemark());
+
+        }
         nameTextView.setText(item.getUser().getName());
     }
 }

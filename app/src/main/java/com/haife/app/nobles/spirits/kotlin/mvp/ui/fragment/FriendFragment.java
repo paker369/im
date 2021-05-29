@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.view.SlideRecyclerView;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendContract;
@@ -31,6 +32,8 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.simple.eventbus.EventBus;
 
 import java.util.List;
 
@@ -122,7 +125,7 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rv_message_list.setLayoutManager(linearLayoutManager);
 
-        friendListAdapter = new FriendListAdapter();
+        friendListAdapter = new FriendListAdapter(0);
         rv_message_list.setAdapter(friendListAdapter);
         emptyView_noinfo = LayoutInflater.from(getActivity()).inflate(R.layout.empty_placehold, (ViewGroup) rv_message_list.getParent(), false);
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
@@ -213,11 +216,23 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
             friendListAdapter.addData(data);
         }
         page++;
+
+        EventBus.getDefault().post(friendListAdapter.getData(), SPConstant.FRIENDMESSAGE);
     }
 
     @Override
     public void addFriendListSuccess(List<FriendAskBean> data) {
-        if (data != null && data.size() > 0) {
+        int num=0;
+     for(int    i=0;    i<data.size();    i++)    {
+        if(data.get(i).getStatus()==0) {
+            num++;
+        }
+
+    }
+
+
+
+        if (num > 0) {
             center_num.setText(data.size()+"");
             center_num.setVisibility(View.VISIBLE);
         } else {

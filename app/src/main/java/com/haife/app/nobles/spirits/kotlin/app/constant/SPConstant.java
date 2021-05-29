@@ -31,6 +31,8 @@ public class SPConstant {
     public static final String KEYBOARD = "KEYBOARD";
     public static final String RECEIVEWSSINGLECHATE ="RECEIVEWSSINGLECHATE" ;
     public static final String RECEIVEWSGROUPCHATE ="RECEIVEWSGROUPCHATE" ;
+    public static final String FRIENDMESSAGE = "FRIENDMESSAGE";
+    public static final String GROUPMESSAGE = "GROUPMESSAGE";
     public   static String MYSID= SPUtils.getInstance().getString(SID,"");
     public   static long MYUID=SPUtils.getInstance().getLong(UID);
 }
