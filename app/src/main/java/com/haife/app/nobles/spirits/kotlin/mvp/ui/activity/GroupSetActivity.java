@@ -249,7 +249,7 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
 //                    ToastUtils.showShort("密码不能为空");
 //                    return;
 //                }
-                mPresenter.groupUpdate(edt_id.getText().toString(), "", edt_remark.getText().toString(), groupid);
+                mPresenter.groupUpdate(edt_id.getText().toString(), avatar, edt_remark.getText().toString(), groupid);
 
             }
         });
@@ -299,7 +299,7 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
     @Override
     public void groupUpdateSuccess() {
         ToastUtils.showShort("修改信息成功");
-        launchActivity(new Intent(GroupSetActivity.this, MainActivity.class));
+
     }
 
     @Override
@@ -308,8 +308,16 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
     }
 
     @Override
-    public void uploadAvatarSuccess() {
-//ToastUtils.showShort("更换成功");
+    public void uploadAvatarSuccess(String data) {
+ToastUtils.showShort("更换成功");
+        avatar=data;
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(data)
+                .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .into(portraitImageView);
+
     }
 
     @Override

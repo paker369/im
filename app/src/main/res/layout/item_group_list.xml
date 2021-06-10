@@ -16,7 +16,7 @@
         android:paddingRight="@dimen/dp_10"
         android:paddingBottom="@dimen/dp_10">
 
-        <ImageView
+        <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
             android:id="@+id/portraitImageView"
             android:layout_width="40dp"
             android:layout_height="40dp"

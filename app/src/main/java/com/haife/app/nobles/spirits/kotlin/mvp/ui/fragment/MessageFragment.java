@@ -2,6 +2,7 @@ package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerMessageComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MessageContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
@@ -28,6 +30,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MessagePresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.MyGroupListAdapter;
 import com.jess.arms.base.BaseFragment;
@@ -74,6 +77,8 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     ImageView iv_header;
     @BindView(R.id.tv_nickname)
     TextView tv_nickname;
+    @BindView(R.id.iv_more)
+    ImageView iv_more;
     int page = 1;
     int limit = 20;
 
@@ -242,12 +247,35 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
                 EventBus.getDefault().post(1,SPConstant.SHOWINFO);
                 break;
             case R.id.iv_more:
-                EventBus.getDefault().post(1,SPConstant.LOGOUT);
-                break;
+                EventBus.getDefault().post(1, SPConstant.OPENSLIDE);
+//            showPopup(iv_more, new PopupFriendCircle.ClickLisetener() {
+//
+//
+//                @Override
+//                public void logout() {
+//                    EventBus.getDefault().post(1, SPConstant.LOGOUT);
+//                }
+//
+//                @Override
+//                public void mineinfo() {
+//                    launchActivity(new Intent(getActivity(), MineInfoActivity.class));
+//                }
+//            });
+            break;
 
         }
     }
-
+    private void showPopup(View v, PopupFriendCircle.ClickLisetener lisetener
+    ) {
+        PopupFriendCircle popupFriendCircle = null;
+        if (popupFriendCircle == null) {
+            popupFriendCircle = new PopupFriendCircle(getActivity());
+            popupFriendCircle.setPopupGravity(Gravity.LEFT | Gravity.BOTTOM);
+        }
+        popupFriendCircle.linkTo(v);
+        popupFriendCircle.setClickcollectLisetener(lisetener);
+        popupFriendCircle.showPopupWindow(v);
+    }
     @Subscriber(tag = SPConstant.FRIENDMESSAGE)
     public void receivefriendmsg(List<FriendBean> data) {
         friendListAdapter.setNewData(data);

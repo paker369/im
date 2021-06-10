@@ -29,12 +29,12 @@ public class PopupFriendCircle extends BasePopupWindow {
     public static boolean outSideTouch = false;
     public static boolean link = false;
     public static boolean blur = false;
-    @BindView(R.id.ll_addfriend)
-    LinearLayout ll_addfriend;
-    @BindView(R.id.ll_addgroup)
-    LinearLayout ll_addgroup;
-    @BindView(R.id.ll_setting)
-    LinearLayout ll_setting;
+//    @BindView(R.id.ll_addfriend)
+//    LinearLayout ll_addfriend;
+//    @BindView(R.id.ll_addgroup)
+//    LinearLayout ll_addgroup;
+//    @BindView(R.id.ll_setting)
+//    LinearLayout ll_setting;
     @BindView(R.id.ll_mineinfo)
     LinearLayout ll_mineinfo;
     @BindView(R.id.ll_logout)
@@ -84,15 +84,15 @@ public class PopupFriendCircle extends BasePopupWindow {
     @Override
     protected Animation onCreateShowAnimation() {
         Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT,
-                1f,
-                Animation.RELATIVE_TO_PARENT,
                 0,
                 Animation.RELATIVE_TO_PARENT,
                 0,
                 Animation.RELATIVE_TO_PARENT,
-                0);
+                0f,
+                Animation.RELATIVE_TO_PARENT,
+                1f);
         animation.setInterpolator(new DecelerateInterpolator());
-        animation.setDuration(350);
+        animation.setDuration(150);
         return animation;
     }
 
@@ -101,13 +101,13 @@ public class PopupFriendCircle extends BasePopupWindow {
         Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT,
                 0f,
                 Animation.RELATIVE_TO_PARENT,
-                1f,
-                Animation.RELATIVE_TO_PARENT,
                 0,
                 Animation.RELATIVE_TO_PARENT,
-                0);
+                1f,
+                Animation.RELATIVE_TO_PARENT,
+                0f);
         animation.setInterpolator(new DecelerateInterpolator());
-        animation.setDuration(350);
+        animation.setDuration(150);
         return animation;
     }
 
@@ -141,27 +141,27 @@ public class PopupFriendCircle extends BasePopupWindow {
 //        return this;
 //    }
 
-    @OnClick({R.id.ll_addfriend, R.id.ll_addgroup, R.id.ll_logout ,R.id.ll_setting, R.id.ll_mineinfo})
+    @OnClick({ R.id.ll_logout , R.id.ll_mineinfo})
     void onStarClick(View view) {
 
         switch (view.getId()) {
-            case R.id.ll_addfriend:
-                iscollect = (!iscollect);
-                dismiss();
-                if (clickLisetener == null) {
-                    return;
-                }
-                clickLisetener.addfriend();
-
-                break;
-            case R.id.ll_addgroup:
-                dismiss();
-                if (clickLisetener == null) {
-
-                    return;
-                }
-                clickLisetener.addgroup();
-                break;
+//            case R.id.ll_addfriend:
+//                iscollect = (!iscollect);
+//                dismiss();
+//                if (clickLisetener == null) {
+//                    return;
+//                }
+//                clickLisetener.addfriend();
+//
+//                break;
+//            case R.id.ll_addgroup:
+//                dismiss();
+//                if (clickLisetener == null) {
+//
+//                    return;
+//                }
+//                clickLisetener.addgroup();
+//                break;
             case R.id.ll_logout:
                 dismiss();
                 if (clickLisetener == null) {
@@ -169,13 +169,13 @@ public class PopupFriendCircle extends BasePopupWindow {
                 }
                 clickLisetener.logout();
                 break;
-            case R.id.ll_setting:
-                dismiss();
-                if (clickLisetener == null) {
-                    return;
-                }
-                clickLisetener.setting();
-                break;
+//            case R.id.ll_setting:
+//                dismiss();
+//                if (clickLisetener == null) {
+//                    return;
+//                }
+//                clickLisetener.setting();
+//                break;
             case R.id.ll_mineinfo:
                 dismiss();
                 if (clickLisetener == null) {
@@ -189,10 +189,10 @@ public class PopupFriendCircle extends BasePopupWindow {
 
 
     public interface ClickLisetener {
-        void addfriend();
-        void addgroup();
+//        void addfriend();
+//        void addgroup();
         void logout();
-        void setting();
+//        void setting();
         void mineinfo();
     }
 

@@ -132,12 +132,12 @@ public class GroupSetPresenter extends BasePresenter<GroupSetContract.Model, Gro
 
         mModel.uploadAvatar(parts)
                 .compose(RxUtils.applySchedulers(mRootView))
-                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<String>>(mErrorHandler) {
                     @Override
-                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                    public void onNext(BaseResponse<String> aboutBeanBaseResponse) {
 
                         if (aboutBeanBaseResponse.isSuccess()) {
-                            mRootView.uploadAvatarSuccess();
+                            mRootView.uploadAvatarSuccess(aboutBeanBaseResponse.getData());
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

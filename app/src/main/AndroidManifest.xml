@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
+        <activity android:name=".mvp.ui.activity.MineInfoActivity" />
         <activity android:name=".mvp.ui.activity.GroupSetActivity" />
         <activity
             android:name=".mvp.ui.activity.SplashActivity"
@@ -46,7 +47,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".mvp.ui.activity.MainActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask" />
         <activity android:name=".mvp.ui.activity.TestActivity" />
 
         <meta-data

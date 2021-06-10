@@ -16,7 +16,10 @@ import javax.inject.Inject;
 
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MainContract;
 
+import java.util.List;
+
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Query;
 
@@ -65,6 +68,12 @@ public class MainModel extends BaseModel implements MainContract.Model {
     @Override
     public Observable<BaseResponse<MyGroup>> addGroup(long uId, String sId,long groupId) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).addGroup(uId, sId, groupId);
+
+    }
+
+    @Override
+    public Observable<BaseResponse<String>> uploadAvatar(List<MultipartBody.Part> parts) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).uploadAvatar(parts);
 
     }
 }

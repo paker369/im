@@ -93,8 +93,8 @@ public class MyGroup {
     }
 
     public static class GroupBean {
-        private int groupId;
-        private int uid;//群主id
+        private long groupId;
+        private long uid;//群主id
         private String name;
         private String remark;
         private String avatar;
@@ -102,19 +102,19 @@ public class MyGroup {
         private String modifiedTime;
         private String createTime;
 
-        public int getGroupId() {
+        public long getGroupId() {
             return groupId;
         }
 
-        public void setGroupId(int groupId) {
+        public void setGroupId(long groupId) {
             this.groupId = groupId;
         }
 
-        public int getUid() {
+        public long getUid() {
             return uid;
         }
 
-        public void setUid(int uid) {
+        public void setUid(long uid) {
             this.uid = uid;
         }
 

@@ -8,15 +8,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -28,7 +28,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chaychan.library.BottomBarLayout;
 import com.example.songzeceng.studyofretrofit.item.PersonProto;
-import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
@@ -47,14 +46,17 @@ import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MainPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment.FriendFragment;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment.GroupFragment;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment.MessageFragment;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.ImageUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.PhotoSelectSingleUtile;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
-import com.kongzue.dialog.v2.DialogSettings;
-import com.kongzue.dialog.v2.MessageDialog;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.zhangke.websocket.SimpleListener;
 import com.zhangke.websocket.SocketListener;
 import com.zhangke.websocket.WebSocketHandler;
@@ -66,22 +68,21 @@ import org.java_websocket.client.WebSocketClient;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
-import static com.kongzue.dialog.v2.DialogSettings.THEME_DARK;
-import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
 
 
 /**
@@ -104,14 +105,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     BottomBarLayout bbl;
     @BindView(R.id.nvp_layout)
     ViewPager nvpLayout;
-//    @BindView(R.id.iv_header)
-//    CircleImageView iv_header;
-//    @BindView(R.id.iv_more)
-//    ImageView iv_more;
-//    @BindView(R.id.tv_nickname)
-//    TextView tv_nickname;
-//    @BindView(R.id.tv_remark)
-//    TextView tv_remark;
+    @BindView(R.id.drawerlayout)
+    DrawerLayout drawerlayout;
+    @BindView(R.id.portraitImageView)
+    CircleImageView portraitImageView;
+    @BindView(R.id.groupNameTextView)
+    TextView groupNameTextView;
+    @BindView(R.id.tv_remark)
+    TextView tv_remark;
+    @BindView(R.id.actionButton)
+    TextView actionButton;
     @BindView(R.id.status_bar_view)
     View status_bar_view;
 
@@ -126,7 +129,37 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private Handler mHandler;
     private Dialog dia3;
     long mPressedTime;
+    //选择的图片集合
+    private List<LocalMedia> mSelectList = new ArrayList<>();
 
+    //选择头像图片之后的回调
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    mSelectList = PictureSelector.obtainMultipleResult(data);
+                    if (mSelectList != null && mSelectList.size() > 0) {
+//                        ImageUtils.getPic(ImageUtils.selectPhotoShow(this, mSelectList.get(0)), civHeader, this, R.mipmap.ic_launcher_round);
+
+                        MultipartBody.Builder builder = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM);
+                        File file = new File(ImageUtils.selectPhotoShow(this, mSelectList.get(0)));
+                        RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);//表单类型
+                        builder.addFormDataPart("file", file.getName(), body);
+                        builder.addFormDataPart("type", "1");
+                        builder.addFormDataPart("uid", SPUtils.getInstance().getLong(SPConstant.UID, 0) + "");
+                        builder.addFormDataPart("groupId", "");
+                        List<MultipartBody.Part> parts = builder.build().parts();
+                        mPresenter.uploadAvatar(parts);
+//                        upload(file,AppConstants.qiniutoken);
+                    }
+                    break;
+            }
+        }
+    }
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
         DaggerMainComponent //如找不到该类,请编译一下项目
@@ -296,44 +329,10 @@ return  formatStr;
 
     };
 
-    //             private void connectRunnable() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(mSocket == null){
-//                    try {
-//                        mSocket = new WebSocketClient(new URI("ws://chat.networkheizhu.com/ws")) {
-//                            @Override
-//                            public void onOpen(ServerHandshake handshakedata) {
-//                                LogUtils.warnInfo("测试主wsonOpen");
-//                            }
-//
-//                            @Override
-//                            public void onMessage(String message) {
-//                                LogUtils.warnInfo("测试主wsonMessage");
-//                            }
-//
-//                            @Override
-//                            public void onClose(int code, String reason, boolean remote) {
-//                                LogUtils.warnInfo("测试主wsonClose");
-//                            }
-//
-//                            @Override
-//                            public void onError(Exception ex) {
-//                                LogUtils.warnInfo("测试主wsonError");
-//                            }
-//                        };
-//                        mSocket.connect();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }).start();
-//
-//    }
+
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        drawerlayout.closeDrawers();
         ImmersionBar.with(this)
                 .statusBarView(status_bar_view)
                 .statusBarDarkFont(true)   //状态栏字体是深色，不写默认为亮色
@@ -341,6 +340,7 @@ return  formatStr;
         initFragment();
         initWebSocket();
         WebSocketHandler.getDefault().addListener(socketListener);
+
 
     }
     @Override
@@ -365,17 +365,7 @@ return  formatStr;
 
     }
 
-    private void showPopup(View v, PopupFriendCircle.ClickLisetener lisetener
-    ) {
-        PopupFriendCircle popupFriendCircle = null;
-        if (popupFriendCircle == null) {
-            popupFriendCircle = new PopupFriendCircle(this);
-            popupFriendCircle.setPopupGravity(Gravity.LEFT | Gravity.BOTTOM);
-        }
-        popupFriendCircle.linkTo(v);
-        popupFriendCircle.setClickcollectLisetener(lisetener);
-        popupFriendCircle.showPopupWindow(v);
-    }
+
 
     /**
      * @date: 2021/1/16 9:58
@@ -428,27 +418,52 @@ return  formatStr;
 //                .into(iv_header);
 //        tv_nickname.setText(data.getName());
 //        tv_remark.setText(data.getRemark());
-        SPUtils.getInstance().put(SPConstant.HEADER,data.getAvatar());
-        SPUtils.getInstance().put(SPConstant.USERNAME,data.getName());
-        EventBus.getDefault().post(data,SPConstant.loginInfoSuccess);
+        SPUtils.getInstance().put(SPConstant.HEADER, data.getAvatar());
+        SPUtils.getInstance().put(SPConstant.USERNAME, data.getName());
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(data.getAvatar())
+
+                .into(portraitImageView);
+        groupNameTextView.setText(data.getName());
+        tv_remark.setText(data.getRemark());
+        EventBus.getDefault().post(data, SPConstant.loginInfoSuccess);
     }
 
     @Override
     public void addFriendSuccess() {
         if (dia != null && dia.isShowing())
             dia.dismiss();
+        ToastUtils.showShort("请求已发送");
     }
 
     @Override
     public void addGroupSuccess(MyGroup data) {
         if (dia2 != null && dia2.isShowing())
             dia2.dismiss();
+        onResume();
+        ToastUtils.showShort("请求已发送");
     }
 
     @Override
-    public void addfriend() {
-        shwoDialog1();
+    public void uploadAvatarSuccess(String data) {
+        ToastUtils.showShort("更换成功");
+//        avatar=data;
+        SPUtils.getInstance().put(SPConstant.HEADER, data);
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(data)
+                .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .into(portraitImageView);
+        mPresenter.loginInfo();
     }
+
+//    @Override
+//    public void addfriend() {
+//        shwoDialog1();
+//    }
 
     private Handler getHandler() {
         if (mHandler == null) {
@@ -456,9 +471,16 @@ return  formatStr;
         }
         return mHandler;
     }
+
     @Subscriber(tag = SPConstant.ADDGROUP)
     public void receiveadd(int i) {
         shwoDialog2();
+    }
+
+    @Subscriber(tag = SPConstant.OPENSLIDE)
+    public void receiveopenslide(int i) {
+
+        drawerlayout.openDrawer(GravityCompat.START);
     }
 
     @Subscriber(tag = SPConstant.ADDPERSON)
@@ -466,6 +488,7 @@ return  formatStr;
 
         shwoDialog1();
     }
+
     @Subscriber(tag = SPConstant.SHOWINFO)
     public void receiveshowifo(int i) {
 
@@ -623,28 +646,26 @@ return  formatStr;
     }
 
 
-
-
-
-
-    @Override
-    public void addgroup() {
-        shwoDialog2();
-    }
-
-//    @OnClick({R.id.iv_more, R.id.iv_header})
-//    public void onViewClick(View view) {
-//        switch (view.getId()) {
 //
-//            case R.id.iv_more:
-//                showPopup(iv_more, this);
-//                break;
-//            case R.id.iv_header:
-//
-//                break;
-//
-//        }
+//    @Override
+//    public void addgroup() {
+//        shwoDialog2();
 //    }
+
+    @OnClick({R.id.actionButton, R.id.portraitImageView})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.actionButton:
+                receivelogout(1);
+                break;
+            case R.id.portraitImageView:
+                PhotoSelectSingleUtile.selectPhoto(this, mSelectList, 1);
+
+                break;
+
+        }
+    }
 
     @Override
     public void logout() {
@@ -656,20 +677,20 @@ return  formatStr;
         finish();
     }
 
-    @Override
-    public void setting() {
-
-    }
+//    @Override
+//    public void setting() {
+//
+//    }
 
     @Override
     public void mineinfo() {
-        DialogSettings.dialog_theme = THEME_LIGHT;
-        DialogSettings.use_blur = true;
-        MessageDialog.show(this, "我的信息", "我的UID："+SPUtils.getInstance().getLong(SPConstant.UID), "知道了", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+//        DialogSettings.dialog_theme = THEME_LIGHT;
+//        DialogSettings.use_blur = true;
+//        MessageDialog.show(this, "我的信息", "我的UID："+SPUtils.getInstance().getLong(SPConstant.UID), "知道了", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//            }
+//        });
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {

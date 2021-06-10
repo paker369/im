@@ -72,7 +72,7 @@ public class GroupSetModel extends BaseModel implements GroupSetContract.Model {
     }
 
     @Override
-    public Observable<BaseResponse> uploadAvatar(List<MultipartBody.Part> parts) {
+    public Observable<BaseResponse<String>> uploadAvatar(List<MultipartBody.Part> parts) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).uploadAvatar(parts);
 
     }

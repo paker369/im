@@ -15,10 +15,13 @@ import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.utils.LogUtils;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
+import okhttp3.MultipartBody;
 
 
 /**
@@ -108,6 +111,25 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());
                         }
+                    }
+                });
+    }
+
+    public void uploadAvatar(List<MultipartBody.Part> parts) {
+
+        mModel.uploadAvatar(parts)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<String>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<String> aboutBeanBaseResponse) {
+
+                        if (aboutBeanBaseResponse.isSuccess()) {
+                            mRootView.uploadAvatarSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+
                     }
                 });
     }

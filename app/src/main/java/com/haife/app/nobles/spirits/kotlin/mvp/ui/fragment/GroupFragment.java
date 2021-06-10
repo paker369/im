@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,18 +22,19 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.MyGroupListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
-import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -71,6 +73,8 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     ImageView iv_header;
     @BindView(R.id.tv_nickname)
     TextView tv_nickname;
+    @BindView(R.id.iv_more)
+    ImageView iv_more;
 
     int page = 1;
     int limit = 20;
@@ -109,6 +113,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     public void onResume() {
         super.onResume();
         LogUtils.debugInfo(" 测试group执行了onResume");
+        page=1;
     mPresenter.myGroupList(page,limit);
     }
 
@@ -277,11 +282,34 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
                 EventBus.getDefault().post(1,SPConstant.SHOWINFO);
                 break;
             case R.id.iv_more:
-                EventBus.getDefault().post(1,SPConstant.LOGOUT);
-                break;
+                EventBus.getDefault().post(1, SPConstant.OPENSLIDE);
+//            showPopup(iv_more, new PopupFriendCircle.ClickLisetener() {
+//
+//
+//                @Override
+//                public void logout() {
+//                    EventBus.getDefault().post(1, SPConstant.LOGOUT);
+//                }
+//
+//                @Override
+//                public void mineinfo() {
+//                    launchActivity(new Intent(getActivity(), MineInfoActivity.class));
+//                }
+//            });
+            break;
         }
     }
-
+    private void showPopup(View v, PopupFriendCircle.ClickLisetener lisetener
+    ) {
+        PopupFriendCircle popupFriendCircle = null;
+        if (popupFriendCircle == null) {
+            popupFriendCircle = new PopupFriendCircle(getActivity());
+            popupFriendCircle.setPopupGravity(Gravity.LEFT | Gravity.BOTTOM);
+        }
+        popupFriendCircle.linkTo(v);
+        popupFriendCircle.setClickcollectLisetener(lisetener);
+        popupFriendCircle.showPopupWindow(v);
+    }
 
     @Override
     public void myGroupListSuccess(List<MyGroup> data) {
@@ -305,7 +333,9 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 
     @Override
     public void createGroupSuccess(MyGroup.GroupBean data) {
-
+        if (dia != null && dia.isShowing())
+            dia.dismiss();
+        ToastUtils.showShort("群已创建");
 //        MyGroup myGroup=new MyGroup();
 //        myGroup.setGroup(data);
 //        myGroupListAdapter.getData().add(0,myGroup);

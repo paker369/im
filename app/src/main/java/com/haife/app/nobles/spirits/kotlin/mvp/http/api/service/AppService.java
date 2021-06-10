@@ -195,7 +195,7 @@ public interface AppService {
      */
     @Multipart
     @POST(SPConstant.qianzhui + "/uploadAvatar")
-    Observable<BaseResponse> uploadAvatar(@Part List<MultipartBody.Part> parts);
+    Observable<BaseResponse<String>> uploadAvatar(@Part List<MultipartBody.Part> parts);
 
 
 

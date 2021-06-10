@@ -3,11 +3,10 @@ package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,10 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
@@ -28,12 +27,12 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
-import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -76,6 +75,8 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     ImageView iv_header;
     @BindView(R.id.tv_nickname)
     TextView tv_nickname;
+    @BindView(R.id.iv_more)
+    ImageView iv_more;
 
 
     int page2 = 1;
@@ -125,7 +126,8 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     @Override
     public void onResume() {
         super.onResume();
-
+        page = 1;
+        page2 = 1;
         mPresenter.friendList(page, limit);
         mPresenter.addFriendList(page2, limit2);
     }
@@ -272,17 +274,43 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
                 launchActivity(new Intent(getActivity(), AskFriendListActivity.class));
                 break;
             case R.id.iv_person_add:
-                EventBus.getDefault().post(1,SPConstant.ADDPERSON);
+                EventBus.getDefault().post(1, SPConstant.ADDPERSON);
                 break;
             case R.id.iv_group_add:
-                EventBus.getDefault().post(1,SPConstant.ADDGROUP);
+                EventBus.getDefault().post(1, SPConstant.ADDGROUP);
                 break;
             case R.id.iv_header:
-                EventBus.getDefault().post(1,SPConstant.SHOWINFO);
+                EventBus.getDefault().post(1, SPConstant.SHOWINFO);
                 break;
             case R.id.iv_more:
-                EventBus.getDefault().post(1,SPConstant.LOGOUT);
+
+                EventBus.getDefault().post(1, SPConstant.OPENSLIDE);
+//                showPopup(iv_more, new PopupFriendCircle.ClickLisetener() {
+//
+//
+//                    @Override
+//                    public void logout() {
+//                        EventBus.getDefault().post(1, SPConstant.LOGOUT);
+//                    }
+//
+//                    @Override
+//                    public void mineinfo() {
+//                        launchActivity(new Intent(getActivity(), MineInfoActivity.class));
+//                    }
+//                });
                 break;
         }
+    }
+
+    private void showPopup(View v, PopupFriendCircle.ClickLisetener lisetener
+    ) {
+        PopupFriendCircle popupFriendCircle = null;
+        if (popupFriendCircle == null) {
+            popupFriendCircle = new PopupFriendCircle(getActivity());
+            popupFriendCircle.setPopupGravity(Gravity.LEFT | Gravity.BOTTOM);
+        }
+        popupFriendCircle.linkTo(v);
+        popupFriendCircle.setClickcollectLisetener(lisetener);
+        popupFriendCircle.showPopupWindow(v);
     }
 }

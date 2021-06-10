@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -99,3 +104,73 @@
             />
     </com.chaychan.library.BottomBarLayout>
 </LinearLayout>
+    <LinearLayout
+        android:layout_gravity="start"
+        android:gravity="center_horizontal"
+        android:layout_width="@dimen/dp_250"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
+            android:id="@+id/portraitImageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="100dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/mandefult" />
+
+
+
+
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+            android:id="@+id/groupNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:padding="10dp"
+            android:text="" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:orientation="horizontal">
+
+            <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="签名: " />
+
+            <TextView
+                android:id="@+id/tv_remark"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="6"
+               android:paddingRight="@dimen/dp_10"
+                android:gravity="center"
+                android:text="" />
+
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/actionButton"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:textColor="#FB0F0F"
+            android:textSize="16sp"
+            android:text="退出登录"  />
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

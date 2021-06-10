@@ -6,7 +6,10 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.jess.arms.mvp.IView;
 import com.jess.arms.mvp.IModel;
 
+import java.util.List;
+
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Query;
 
@@ -31,6 +34,8 @@ public interface MainContract {
         void addFriendSuccess();
 
         void addGroupSuccess(MyGroup data);
+
+        void uploadAvatarSuccess(String data);
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
@@ -38,6 +43,10 @@ public interface MainContract {
         Observable<BaseResponse<LoginInfoBean>> loginInfo(long uId,  String sId);
 
         Observable<BaseResponse> addFriend(long uId, String sId, long friendUid,  String remark);
+
         Observable<BaseResponse<MyGroup>> addGroup(long uId, String sId,long groupId);
+
+
+        Observable<BaseResponse<String>> uploadAvatar (List<MultipartBody.Part> parts);
     }
 }

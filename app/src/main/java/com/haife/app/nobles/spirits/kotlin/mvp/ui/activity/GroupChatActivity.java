@@ -437,7 +437,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         //创建并显示popWindow
         customPopupWindow = new CustomPopWindow.PopupWindowBuilder(this)
                 .setView(contentView)
-                .size(ViewGroup.LayoutParams.WRAP_CONTENT, 600)//显示大小
+                .size(ViewGroup.LayoutParams.MATCH_PARENT, 600)//显示大小
                 .create()
                 .showAsDropDown(rl_top, 0, 0);
 
