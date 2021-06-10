@@ -19,6 +19,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendChatContract;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
@@ -73,5 +74,10 @@ public class FriendChatModel extends BaseModel implements FriendChatContract.Mod
     @Override
     public Observable<BaseResponse> deleteFriend(RequestBody body) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).deleteFriend(body);
+    }
+
+    @Override
+    public Observable<BaseResponse<String>> upload(List<MultipartBody.Part> parts) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).upload(parts);
     }
 }

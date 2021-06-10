@@ -50,7 +50,7 @@
             android:layout_marginLeft="15dp"
             android:scaleType="fitXY"
             android:src="@mipmap/more1"
-            android:visibility="visible" />
+          />
 
         <TextView
             android:id="@+id/tv_btn_send"
@@ -81,40 +81,40 @@
         android:background="@color/white"
         android:gravity="center_vertical|top"
         android:padding="20dp"
-        android:visibility="gone">
+        android:visibility="gone"
+       >
 
 
-        <LinearLayout
-            android:id="@+id/layout_camera"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+<!--        <LinearLayout-->
+<!--            android:id="@+id/layout_camera"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="wrap_content"-->
 
 
-            android:gravity="center"
-            android:orientation="vertical">
+<!--            android:gravity="center"-->
+<!--            android:orientation="vertical">-->
 
-            <ImageView
-                android:id="@+id/iv_btn_camera"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/img_corner_background"
-                android:padding="10dp"
-                android:scaleType="center"
-                android:src="@mipmap/ic_more_capture" />
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_btn_camera"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:background="@drawable/img_corner_background"-->
+<!--                android:padding="30dp"-->
+<!--                android:scaleType="center"-->
+<!--                android:src="@mipmap/ic_more_capture" />-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="拍照" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="拍照" />-->
+<!--        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/layout_image"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
-            android:layout_toRightOf="@+id/layout_camera"
             android:orientation="vertical">
 
             <ImageView
@@ -122,7 +122,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/img_corner_background"
-                android:padding="10dp"
+                android:padding="30dp"
                 android:scaleType="center"
                 android:src="@mipmap/ic_more_img" />
 

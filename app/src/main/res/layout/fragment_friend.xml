@@ -7,14 +7,104 @@
 <RelativeLayout
 android:id="@+id/rl_new_friend"
     android:layout_width="match_parent"
-    android:background="@color/qmui_drawable_color_list_separator"
+    android:elevation="@dimen/dp_6"
     android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:src="@mipmap/more" />
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
+            android:id="@+id/iv_header"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/dp_15"
+            android:layout_toRightOf="@+id/iv_more" />
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_header"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="黑猪"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dp_15" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/iv_creat_group"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:padding="@dimen/dp_2"
+                android:src="@mipmap/creat_group"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_person_add"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:padding="@dimen/dp_2"
+
+                android:src="@mipmap/person_add" />
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:padding="@dimen/dp_2"
+                android:src="@mipmap/search"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/iv_group_add"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:padding="@dimen/dp_2"
+                android:src="@mipmap/group_add"
+               />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_below="@+id/top"
+        android:layout_width="match_parent"
+        android:background="@color/qmui_drawable_color_list_separator"
+
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingLeft="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_10"
+        android:layout_height="wrap_content">
     <TextView
         android:id="@+id/tv_new_friend"
         android:text="新的朋友"
-       android:paddingBottom="@dimen/dp_10"
-        android:paddingLeft="@dimen/dp_20"
-        android:paddingTop="@dimen/dp_10"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
@@ -31,11 +121,12 @@ android:id="@+id/rl_new_friend"
         android:textSize="8sp"
         android:visibility="gone"
          />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-      android:layout_below="@+id/tv_new_friend"
-        android:background="#8F8F8F"/>
+    </RelativeLayout>
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0.5dp"-->
+<!--      android:layout_below="@+id/tv_new_friend"-->
+<!--        android:background="#8F8F8F"/>-->
 </RelativeLayout>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/srl_layout"

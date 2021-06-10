@@ -46,8 +46,7 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
     protected void convert(BaseViewHolder helper, GroupMsgBean item) {
         ImageView otherheader=helper.getView(R.id.other_header);
         TextView othername=helper.getView(R.id.other_name);
-        otherheader.setVisibility(View.GONE);
-        othername.setVisibility(View.GONE);
+//        othername.setVisibility(View.GONE);
         switch (helper.getItemViewType()) {
             case 1:
                 RelativeLayout rl_other = helper.getView(R.id.rl_other);
@@ -61,9 +60,7 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                             .load(SPUtils.getInstance().getString(SPConstant.HEADER))
                             .apply(new RequestOptions()
                                     .transforms(new CenterCrop(), new CircleCrop())
-                                    .error(R.mipmap.ic_launcher_round)
-                                    .placeholder(R.mipmap.ic_launcher_round)
-
+                                    .placeholder(R.mipmap.mandefult)
                             )
                             .into((ImageView) helper.getView(R.id.me_header));
 
@@ -78,9 +75,20 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                     rl_me.setVisibility(View.GONE);
                     helper.setText(R.id.other_time, TimeUtils.progressDate(item.getCreateTime()));
                     TextView tvMsg = helper.getView(R.id.other_content);
+                    Glide.with(mContext)
+                            .asBitmap()
+                            .thumbnail(0.6f)
+                            .load(item.getUser().getAvatar())
+                            .apply(new RequestOptions()
+                                    .transforms(new CenterCrop(), new CircleCrop())
+                                    .placeholder(R.mipmap.mandefult)
+
+                            )
+                            .into((ImageView) helper.getView(R.id.other_header));
                     String content = TextUtils.isEmpty(item.getMsgContent()) ? "" : item.getMsgContent();
                     SpannableString msg = EmojiUtils.text2Emoji(mContext, content, tvMsg.getTextSize());
                     helper.setText(R.id.other_content, msg);
+                    othername.setText(item.getUser().getName());
                 }
                 helper.addOnLongClickListener(R.id.me_header);
                 helper.addOnLongClickListener(R.id.other_header);
@@ -97,8 +105,7 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                             .load(SPUtils.getInstance().getString(SPConstant.HEADER))
                             .apply(new RequestOptions()
                                     .transforms(new CenterCrop(), new CircleCrop())
-                                    .error(R.mipmap.ic_launcher_round)
-                                    .placeholder(R.mipmap.ic_launcher_round)
+                                    .placeholder(R.mipmap.mandefult)
 
                             )
                             .into((ImageView) helper.getView(R.id.me_header));
@@ -142,6 +149,17 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                             .into((ImageView) helper.getView(R.id.other_img)
                             );
                 }
+                Glide.with(mContext)
+                        .asBitmap()
+                        .thumbnail(0.6f)
+                        .load(item.getUser().getAvatar())
+                        .apply(new RequestOptions()
+                                .transforms(new CenterCrop(), new CircleCrop())
+                                .placeholder(R.mipmap.mandefult)
+
+                        )
+                        .into((ImageView) helper.getView(R.id.other_header));
+                othername.setText(item.getUser().getName());
                 helper.addOnLongClickListener(R.id.me_header);
                 helper.addOnLongClickListener(R.id.other_header);
                 helper.addOnClickListener(R.id.other_img);

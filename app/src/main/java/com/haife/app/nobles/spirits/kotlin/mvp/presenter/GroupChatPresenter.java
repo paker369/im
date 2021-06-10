@@ -2,6 +2,7 @@ package com.haife.app.nobles.spirits.kotlin.mvp.presenter;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
@@ -12,8 +13,6 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_FriendMsgBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_SendGroupMsgBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_UpdateGroup;
-import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_deleteFriendBean;
-import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
@@ -23,6 +22,7 @@ import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 import javax.inject.Inject;
@@ -106,27 +106,11 @@ public class GroupChatPresenter extends BasePresenter<GroupChatContract.Model, G
                 });
     }
 
-    public void deleteGroup(long groupid) {
 
-        mModel.deleteGroup(groupid)
-                .compose(RxUtils.applySchedulers(mRootView))
-                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
-                    @Override
-                    public void onNext(BaseResponse aboutBeanBaseResponse) {
-                        if (aboutBeanBaseResponse.isSuccess()) {
-
-                            mRootView.deleteGroupSuccess();
-                        } else {
-
-                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
-                        }
-                    }
-                });
-    }
 
     public void groupMemberList(long groupid) {
 
-        mModel.groupMemberList(SPConstant.MYUID,SPConstant.MYSID,groupid)
+        mModel.groupMemberList(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID),groupid)
                 .compose(RxUtils.applySchedulers(mRootView))
                 .subscribe(new ErrorHandleSubscriber<BaseResponse<List<GroupMemberBean>>>(mErrorHandler) {
                     @Override
@@ -159,22 +143,18 @@ public class GroupChatPresenter extends BasePresenter<GroupChatContract.Model, G
                     }
                 });
     }
-    public void deleteMyGroup(long groupid) {
 
-        mModel.deleteMyGroup(groupid)
+    public void upload(List<MultipartBody.Part> parts) {
+
+        mModel.upload(parts)
                 .compose(RxUtils.applySchedulers(mRootView))
-                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<String>>(mErrorHandler) {
                     @Override
-                    public void onNext(BaseResponse aboutBeanBaseResponse) {
-                        if (aboutBeanBaseResponse.isSuccess()) {
+                    public void onNext(BaseResponse<String> aboutBeanBaseResponse) {
 
-                            mRootView.deleteMyGroupSuccess();
-                        } else {
+                        mRootView.uploadSuccess( aboutBeanBaseResponse.getData());
 
-                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
-                        }
                     }
                 });
     }
-
 }

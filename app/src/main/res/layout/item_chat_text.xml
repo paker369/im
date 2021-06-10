@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
+    android:layout_marginBottom="5dp"
     android:paddingLeft="13dp"
     android:paddingRight="13dp">
 
@@ -32,7 +33,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@mipmap/mandefult"
-            android:visibility="gone"/>
+           />
 
         <LinearLayout
             android:layout_below="@+id/other_time"
@@ -45,7 +46,6 @@
             android:orientation="horizontal">
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/other_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

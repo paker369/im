@@ -3,6 +3,8 @@ package com.haife.app.nobles.spirits.kotlin.mvp.model;
 import android.app.Application;
 
 import com.google.gson.Gson;
+import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
+import com.haife.app.nobles.spirits.kotlin.mvp.http.api.service.AppService;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
 
@@ -11,6 +13,9 @@ import com.jess.arms.di.scope.FragmentScope;
 import javax.inject.Inject;
 
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MessageContract;
+
+import io.reactivex.Observable;
+import okhttp3.RequestBody;
 
 
 /**
@@ -42,5 +47,16 @@ public class MessageModel extends BaseModel implements MessageContract.Model {
         super.onDestroy();
         this.mGson = null;
         this.mApplication = null;
+    }
+
+    @Override
+    public Observable<BaseResponse> clearfriendMsg(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).clearfriendMsg(body);
+
+    }
+
+    @Override
+    public Observable<BaseResponse> cleargroupMsg(long groupid) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).cleargroupMsg(groupid);
     }
 }

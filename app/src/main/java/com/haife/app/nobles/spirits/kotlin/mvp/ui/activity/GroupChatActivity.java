@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,17 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.zhouwei.library.CustomPopWindow;
-import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
-import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatInputLayout;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatMsgRootLayout;
-import com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupChatComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupChatContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMemberBean;
@@ -41,13 +36,19 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.UserBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupChatPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.ChatMessageAdapter1;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.GroupMemberAdapter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.BarUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.ImageUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.PhotoSelectSingleUtile;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
-import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
-import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.DialogSettings;
+import com.kongzue.dialog.v2.MessageDialog;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -55,13 +56,18 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
+import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
 
 
 /**
@@ -93,18 +99,16 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     TextView newmessege;
     @BindView(R.id.input_layout)
     ChatInputLayout input_layout;
-    @BindView(R.id.tv_nickname)
+    @BindView(R.id.tv_groupname)
     TextView tv_nickname;
-    @BindView(R.id.tv_remark)
-    TextView tv_remark;
+
     @BindView(R.id.status_bar_view)
     View status_bar_view;
-    @BindView(R.id.iv_header)
-    CircleImageView iv_header;
-    @BindView(R.id.rl_top_bar)
-    RelativeLayout rl_top_bar;
     @BindView(R.id.iv_setting)
     ImageView iv_setting;
+
+    @BindView(R.id.rl_top)
+    RelativeLayout rl_top;
 
     String avatar;
     String name;
@@ -141,30 +145,33 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        BarUtils.setStatusBarAlpha(this, 0, true);
+        BarUtils.setStatusBarLightMode(this, true);
         avatar = getIntent().getStringExtra("avatar");
         name = getIntent().getStringExtra("name");
         remark = getIntent().getStringExtra("remark");
         groupid = getIntent().getLongExtra("groupid", 0);
-        ismine= getIntent().getBooleanExtra("ismine",false);
-        if(ismine){
-            iv_setting.setVisibility(View.VISIBLE);
-        }
-        Glide.with(this)
-                .asBitmap()
-                .thumbnail(0.6f)
-                .load(avatar)
-.apply(new RequestOptions().placeholder(R.mipmap.mandefult))
-                .into(iv_header);
+        ismine = getIntent().getBooleanExtra("ismine", false);
+        LogUtils.debugInfo("测试这是我的群吗"+ismine);
+//        if(ismine){
+//            iv_setting.setVisibility(View.VISIBLE);
+//        }
+//        Glide.with(this)
+//                .asBitmap()
+//                .thumbnail(0.6f)
+//                .load(avatar)
+//.apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+//                .into(iv_header);
 //        LogUtils.debugInfo("测试朋友的头像是"+data.getAvatar());
 //        LogUtils.debugInfo("测试view"+(iv_header==null));
         tv_nickname.setText(name);
-        tv_remark.setText(remark);
-        ImmersionBar.with(this)
-                .statusBarView(status_bar_view)
-                .barAlpha(0)
-                .applySystemFits(false)
-                .init();
-        KeyBoardListener.getInstance(this).init();
+//        tv_remark.setText(remark);
+//        ImmersionBar.with(this)
+//                .statusBarView(status_bar_view)
+//                .barAlpha(0)
+//                .applySystemFits(false)
+//                .init();
+//        KeyBoardListener.getInstance(this).init();
         initRecycler();
         input_layout.setLayoutListener(this);
         input_layout.bindInputLayout(this, rll);
@@ -292,36 +299,66 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         }
     }
 
-    @OnClick({R.id.iv_delete, R.id.iv_header, R.id.iv_show_member, R.id.iv_setting, R.id.newmessege})
+    @OnClick({R.id.iv_setting, R.id.newmessege, R.id.iv_back, R.id.tv_groupname, R.id.iv_pulldown})
     public void onViewClick(View view) {
         switch (view.getId()) {
-
-            case R.id.iv_delete:
-                if(ismine){
-                    SelectDialog.show(this, "提示", "确认解散群组吗", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mPresenter.deleteMyGroup(groupid);
-                        }
-                    });
-                }else {
-                    SelectDialog.show(this, "提示", "确认退出群组吗", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mPresenter.deleteGroup(groupid);
-                        }
-                    });
-                }
-
-
+            case R.id.iv_back:
+                finish();
                 break;
-            case R.id.iv_header:
-            case R.id.iv_show_member:
+            case R.id.tv_groupname:
+                DialogSettings.dialog_theme = THEME_LIGHT;
+                DialogSettings.use_blur = true;
+                MessageDialog.show(this, "群详情", "群ID：" + groupid, "知道了", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                break;
+            case R.id.iv_pulldown:
                 showPopListView();
                 break;
+//            case R.id.iv_delete:
+//                if(ismine){
+//                    SelectDialog.show(this, "提示", "确认解散群组吗", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mPresenter.deleteMyGroup(groupid);
+//                        }
+//                    });
+//                }else {
+//                    SelectDialog.show(this, "提示", "确认退出群组吗", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mPresenter.deleteGroup(groupid);
+//                        }
+//                    });
+//                }
+//
+//
+//                break;
+//            case R.id.iv_header:
+//            case R.id.iv_show_member:
+//                showPopListView();
+//                break;
             case R.id.iv_setting:
-                shwoDialog1();
+//                shwoDialog1();
+                Intent intent = new Intent(this, GroupSetActivity.class);
+                intent.putExtra("groupid", groupid);
+                intent.putExtra("avatar", avatar);
+                intent.putExtra("name", name);
+                intent.putExtra("remark", remark);
+                intent.putExtra("ismine", ismine);
+                startActivity(intent);
                 break;
+//            case R.id.iv_info:
+//                DialogSettings.dialog_theme = THEME_LIGHT;
+//                DialogSettings.use_blur = true;
+//                MessageDialog.show(this, "群详情", "群ID："+groupid, "知道了", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                });
+//                break;
             case R.id.newmessege:
                 rv_newmessege.setVisibility(View.GONE);
                 messengecount = 0;
@@ -400,9 +437,9 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         //创建并显示popWindow
         customPopupWindow = new CustomPopWindow.PopupWindowBuilder(this)
                 .setView(contentView)
-                .size(ViewGroup.LayoutParams.MATCH_PARENT, 600)//显示大小
+                .size(ViewGroup.LayoutParams.WRAP_CONTENT, 600)//显示大小
                 .create()
-                .showAsDropDown(rl_top_bar, 0, 0);
+                .showAsDropDown(rl_top, 0, 0);
 
     }
 
@@ -425,7 +462,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     @Override
     public void sendGroupMsgSuccess(int type, String content) {
 //        GroupMsgBean data = new MessageBean(SPConstant.MYUID, senderUid, SPConstant.MYUID, type, content.toString(), AppDateMgr.todayYyyyMmDdHhMmSs());
-        GroupMsgBean data = new GroupMsgBean(groupid, SPConstant.MYUID, 0, content, AppDateMgr.todayYyyyMmDdHhMmSs(), new UserBean(SPConstant.USERNAME, SPConstant.HEADER));
+        GroupMsgBean data = new GroupMsgBean(groupid, SPUtils.getInstance().getLong(SPConstant.UID), type, content, AppDateMgr.todayYyyyMmDdHhMmSs(), new UserBean(SPConstant.USERNAME, SPConstant.HEADER));
         input_layout.hideOverView();
 
         if (firstCompletelyVisibleItemPosition > 70) {
@@ -452,11 +489,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         }
     }
 
-    @Override
-    public void deleteGroupSuccess() {
-        ToastUtils.showShort("已退出群组");
-        finish();
-    }
+
 
     @Override
     public void groupMemberListSuccess(List<GroupMemberBean> data) {
@@ -475,6 +508,46 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         ToastUtils.showShort("已解散群组");
         finish();
     }
+    @Override
+    public void deleteGroupSuccess() {
+        ToastUtils.showShort("已退出群组");
+        finish();
+    }
+
+    @Override
+    public void uploadSuccess(String data) {
+        mPresenter.sendGroupMsg(data, 1, groupid);
+
+    }
+
+    //选择的图片集合
+    private List<LocalMedia> mSelectList = new ArrayList<>();
+
+    //选择头像图片之后的回调
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    mSelectList = PictureSelector.obtainMultipleResult(data);
+                    if (mSelectList != null && mSelectList.size() > 0) {
+//                        ImageUtils.getPic(ImageUtils.selectPhotoShow(this, mSelectList.get(0)), civHeader, this, R.mipmap.ic_launcher_round);
+
+                        MultipartBody.Builder builder = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM);
+                        File file = new File(ImageUtils.selectPhotoShow(this, mSelectList.get(0)));
+                        RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);//表单类型
+                        builder.addFormDataPart("file", file.getName(), body);
+                        List<MultipartBody.Part> parts = builder.build().parts();
+                        mPresenter.upload(parts);
+//                        upload(file,AppConstants.qiniutoken);
+                    }
+                    break;
+            }
+        }
+    }
 
 
     @Override
@@ -484,7 +557,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     @Override
     public void photoBtnClick() {
-
+        PhotoSelectSingleUtile.selectPhoto(this, mSelectList, 1);
     }
 
     @Override

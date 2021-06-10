@@ -3,33 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
+    android:layout_marginBottom="5dp"
     android:paddingLeft="13dp"
     android:paddingRight="13dp">
 
     <RelativeLayout
         android:id="@+id/rl_other"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+android:visibility="gone"
+       >
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/other_header"
+            android:layout_below="@+id/other_time"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@mipmap/mandefult" />
 
         <LinearLayout
+
             android:id="@+id/other_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/other_time"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@id/other_header"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/other_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,16 +40,20 @@
                 android:textColor="#ff333333"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/other_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:text="2010/02/21 14:21"
-                android:textColor="#ff888888"
-                android:textSize="12sp" />
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/other_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="2010/02/21 14:21"
+            android:padding="@dimen/dp_2"
+            android:textSize="10sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:background="#ff888888"
+            />
         <ImageView
             android:id="@+id/other_img"
             android:layout_width="134dp"
@@ -61,7 +68,8 @@
         android:id="@+id/rl_me"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true">
+        android:layout_alignParentRight="true"
+      >
 
         <ImageView
             android:id="@+id/me_header"
@@ -69,8 +77,21 @@
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:background="@mipmap/mandefult" />
-
+        <TextView
+            android:id="@+id/me_time"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:layout_marginRight="16dp"
+            android:text="2010/02/21 14:21"
+            android:padding="@dimen/dp_2"
+            android:textSize="10sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:background="#ff888888"
+            />
         <LinearLayout
+            android:layout_below="@+id/me_time"
             android:id="@+id/me_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,14 +100,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/me_time"
-                android:layout_width="wrap_content"
-                android:layout_height="19dp"
-                android:layout_marginRight="16dp"
-                android:text="2010/02/21 14:21"
-                android:textColor="#ff888888"
-                android:textSize="12sp" />
+
 
             <TextView
                 android:id="@+id/me_name"

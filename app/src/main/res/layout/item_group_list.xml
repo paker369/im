@@ -25,11 +25,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:orientation="vertical">
 
-            <TextView
+            <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
                 android:id="@+id/nameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,30 +45,48 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:textColor="@color/gray"
                 android:textSize="12sp"
-                tools:text="2条记录" />
+                tools:text=""
+                />
         </LinearLayout>
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/center_num"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
         android:layout_marginRight="15dp"
-        android:background="@drawable/shape_message_num"
-        android:gravity="center"
-        android:text="12"
-        android:textColor="#ffffffff"
-        android:textSize="8sp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_show_time"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text=""
+            android:maxLines="1"
+            android:textSize="9sp"
 
-        />
+            />
 
-    <!--    <View-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="0.5dp"-->
-    <!--        android:background="#8F8F8F"/>-->
+        <TextView
+            android:id="@+id/center_num"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/shape_message_num"
+            android:gravity="center"
+            android:layout_gravity="right"
+            android:text="12"
+            android:textColor="#ffffffff"
+            android:textSize="8sp"
+
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="@dimen/dp_30"
+        android:layout_marginRight="@dimen/dp_30"
+        android:layout_below="@+id/content"
+        android:background="#BDBDBD"/>
 
 </RelativeLayout>

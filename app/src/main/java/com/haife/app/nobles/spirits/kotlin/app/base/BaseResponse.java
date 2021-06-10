@@ -33,7 +33,8 @@ public class BaseResponse<T> implements Serializable {
     private String submessage = "";
 
     public boolean isSuccess() {
-        if (message.contains("登录失效")) {
+
+        if (message!=null&&message.contains("登录失效")) {
             SPUtils.getInstance().remove(SPConstant.SID);
             SPUtils.getInstance().remove(SPConstant.UID);
             SPUtils.getInstance().remove(SPConstant.USERNAME);

@@ -1,10 +1,14 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,13 +16,15 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
-import com.haife.app.nobles.spirits.kotlin.app.view.SlideRecyclerView;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
@@ -27,6 +33,7 @@ import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
+import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -34,6 +41,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.util.List;
 
@@ -64,12 +72,19 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     TextView tv_new_friend;
     @BindView(R.id.center_num)
     TextView center_num;
+    @BindView(R.id.iv_header)
+    ImageView iv_header;
+    @BindView(R.id.tv_nickname)
+    TextView tv_nickname;
 
 
+    int page2 = 1;
+    int limit2 = 100;
     int page = 1;
     int limit = 20;
     FriendListAdapter friendListAdapter;
     private View emptyView_noinfo;
+    private Dialog dia;
 
     public static FriendFragment newInstance() {
         FriendFragment fragment = new FriendFragment();
@@ -97,13 +112,22 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         initRecyclerView();
 
     }
+    @Subscriber(tag = SPConstant.loginInfoSuccess)
+    public void loginInfoSuccess(LoginInfoBean data) {
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(data.getAvatar())
 
+                .into(iv_header);
+        tv_nickname.setText(data.getName());
+    }
     @Override
     public void onResume() {
         super.onResume();
 
         mPresenter.friendList(page, limit);
-        mPresenter.addFriendList(page, limit);
+        mPresenter.addFriendList(page2, limit2);
     }
 
     /**
@@ -134,20 +158,14 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
             FriendBean listBean = friendListAdapter.getData().get(position);
             Intent intent = new Intent(getActivity(), FriendChatActivity.class);
             intent.putExtra("senderUid", listBean.getFriendUid());
+            intent.putExtra("avatar", listBean.getUser().getAvatar());
+            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
             startActivity(intent);
         });
 
 
     }
-    @OnClick({R.id.rl_new_friend})
-    public void onViewClick(View view) {
-        switch (view.getId()) {
 
-            case R.id.rl_new_friend:
-                launchActivity(new Intent(getActivity(), AskFriendListActivity.class));
-                break;
-        }
-    }
     @Override
     public void setData(@Nullable Object data) {
 
@@ -200,6 +218,7 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         page = 1;
         mPresenter.friendList(page, limit);
+        mPresenter.addFriendList(page2, limit2);
     }
 
     @Override
@@ -209,10 +228,10 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         friendListAdapter.setEmptyView(emptyView_noinfo);
 
         if (page == 1) {
-            LogUtils.debugInfo("11测试得到数据");
+
             friendListAdapter.setNewData(data);
         } else {
-            LogUtils.debugInfo("22测试得到数据");
+
             friendListAdapter.addData(data);
         }
         page++;
@@ -244,5 +263,26 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     public void deleteFriendSuccess() {
         page = 1;
         mPresenter.friendList(page, limit);
+    }
+
+    @OnClick({R.id.iv_more, R.id.iv_header, R.id.tv_nickname, R.id.iv_person_add, R.id.iv_group_add,R.id.rl_new_friend})
+        public void onViewClick(View view) {
+        switch (view.getId()) {
+            case R.id.rl_new_friend:
+                launchActivity(new Intent(getActivity(), AskFriendListActivity.class));
+                break;
+            case R.id.iv_person_add:
+                EventBus.getDefault().post(1,SPConstant.ADDPERSON);
+                break;
+            case R.id.iv_group_add:
+                EventBus.getDefault().post(1,SPConstant.ADDGROUP);
+                break;
+            case R.id.iv_header:
+                EventBus.getDefault().post(1,SPConstant.SHOWINFO);
+                break;
+            case R.id.iv_more:
+                EventBus.getDefault().post(1,SPConstant.LOGOUT);
+                break;
+        }
     }
 }

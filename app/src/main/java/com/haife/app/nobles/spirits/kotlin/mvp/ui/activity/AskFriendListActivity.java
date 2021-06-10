@@ -1,11 +1,13 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -27,6 +29,9 @@ import com.haife.app.nobles.spirits.kotlin.mvp.contract.AskFriendListContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.AskFriendListPresenter;
 
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.kongzue.dialog.v2.DialogSettings;
+import com.kongzue.dialog.v2.MessageDialog;
+import com.kongzue.dialog.v2.SelectDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -37,8 +42,10 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
+import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
 
 
 /**
@@ -59,10 +66,10 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
     @BindView(R.id.rv_message_list)
     RecyclerView rv_message_list;
 
-    @BindView(R.id.title_back)
-    ImageView titleBack;
-    @BindView(R.id.title_name)
-    TextView titleName;
+    @BindView(R.id.rl_back)
+    RelativeLayout rl_back;
+    @BindView(R.id.center_title)
+    TextView center_title;
 
 
     int page = 1;
@@ -87,7 +94,7 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        titleName.setText("申请列表");
+        center_title.setText("申请列表");
         initRefreshLayout();
         initRecyclerView();
         mPresenter.addFriendList(page,limit);
@@ -158,6 +165,14 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
                 mPresenter.confirmOrNot(list.getId(),1,position);
                 break;
 
+        }
+    }
+    @OnClick({R.id.rl_back})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
+            case R.id.rl_back:
+                finish();
+                break;
         }
     }
 

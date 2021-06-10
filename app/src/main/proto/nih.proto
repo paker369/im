@@ -20,6 +20,7 @@ message WSMessageResProto {
   optional uint64 receiveId = 1;
   optional int32 msgType = 2 ; // 默认值
   optional string msgContent = 3;
+  optional string receiveName = 4;
 
     }
 

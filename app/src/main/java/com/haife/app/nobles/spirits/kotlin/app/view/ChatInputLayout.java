@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -89,7 +90,7 @@ public class ChatInputLayout extends RelativeLayout {
         int keyboardHeight = SharedPreferencesUtil.getIntSharedPreferences(activity, SPConstant.KEYBOARD
                 , SPConstant.KEYBOARD);
         if (keyboardHeight == 0) {
-            keyboardHeight = 787;
+            keyboardHeight = 618;
         }
 
         ViewGroup.LayoutParams layoutParams = mExpressLayout.getLayoutParams();
@@ -252,12 +253,12 @@ public class ChatInputLayout extends RelativeLayout {
         }
     }
 
-    @OnClick(R.id.layout_camera)
-    public void startCamera() {
-        if (mLayoutListener != null) {
-            mLayoutListener.cameraBtnClick();
-        }
-    }
+//    @OnClick(R.id.layout_camera)
+//    public void startCamera() {
+//        if (mLayoutListener != null) {
+//            mLayoutListener.cameraBtnClick();
+//        }
+//    }
 
 
 
@@ -276,25 +277,25 @@ public class ChatInputLayout extends RelativeLayout {
      * 锁定内容 View 的高度，解决闪屏问题
      */
     private void lockContentHeight() {
-//        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)
-//                mContentView.getLayoutParams();
-//        layoutParams.height = mContentView.getHeight();
-//        layoutParams.weight = 0.0f;
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)
+                mContentView.getLayoutParams();
+        layoutParams.height = mContentView.getHeight();
+        layoutParams.weight = 0.0f;
     }
 
     /**
      * 释放内容 View 高度
      */
     private void unLockContentHeight() {
-//        mEtInput.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)
-//                        mContentView.getLayoutParams();
-//                layoutParams.height = 0;
-//                layoutParams.weight = 1.0f;
-//            }
-//        }, 200);
+        mEtInput.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)
+                        mContentView.getLayoutParams();
+                layoutParams.height = 0;
+                layoutParams.weight = 1.0f;
+            }
+        }, 200);
     }
 
     /**

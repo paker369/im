@@ -83,6 +83,7 @@ public class RegeisterActivity extends BaseActivity<RegeisterPresenter> implemen
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        initEditview();
         drawablebutton = getResources().getDrawable(R.drawable.shape_login_button);
         drawablebuttonno = getResources().getDrawable(R.drawable.shape_nologin_button);
     }

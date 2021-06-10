@@ -1,40 +1,38 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
-import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
+import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupComponent;
+import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.MyGroupListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
-
-import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupComponent;
-import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupContract;
-import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupPresenter;
-
-import com.haife.app.nobles.spirits.kotlin.R;
+import com.jess.arms.utils.LogUtils;
+import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -42,6 +40,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.util.List;
 
@@ -68,28 +67,17 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     SmartRefreshLayout srl_layout;
     @BindView(R.id.rv_message_list)
     RecyclerView rv_message_list;
-    @BindView(R.id.ll_create_group)
-    LinearLayout ll_create_group;
-    @BindView(R.id.edt_name)
-    EditText edt_name;
-    @BindView(R.id.edt_remark)
-    EditText edt_remark;
-
-    @BindView(R.id.tv_cancel)
-    TextView tv_cancel;
-    @BindView(R.id.tv_cofirm)
-    TextView tv_cofirm;
-
-    @BindView(R.id.tv_new_group)
-    TextView tv_new_group;
-
-
-
+    @BindView(R.id.iv_header)
+    ImageView iv_header;
+    @BindView(R.id.tv_nickname)
+    TextView tv_nickname;
 
     int page = 1;
     int limit = 20;
     MyGroupListAdapter myGroupListAdapter;
     private View emptyView_noinfo;
+    private Dialog dia;
+
     public static GroupFragment newInstance() {
         GroupFragment fragment = new GroupFragment();
         return fragment;
@@ -120,7 +108,8 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.myGroupList(page,limit);
+        LogUtils.debugInfo(" 测试group执行了onResume");
+    mPresenter.myGroupList(page,limit);
     }
 
     /**
@@ -153,14 +142,62 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
             intent.putExtra("avatar", listBean.getGroup().getAvatar());
             intent.putExtra("name", listBean.getGroup().getName());
             intent.putExtra("remark", listBean.getGroup().getRemark());
-            intent.putExtra("ismine", (listBean.getGroup().getUid()== SPConstant.MYUID));
-
+            intent.putExtra("ismine", (listBean.getGroup().getUid() == SPUtils.getInstance().getLong(SPConstant.UID)));
             startActivity(intent);
         });
 
 
     }
 
+    /**
+     * 弹出添加好友dialog
+     */
+    public void shwoDialog1() {
+        if (dia != null) {
+            dia.show();
+            return;
+        }
+        dia = new Dialog(getActivity(), R.style.edit_AlertDialog_style);
+        dia.setContentView(R.layout.dialog_add);
+        TextView tv_cofirm = dia.findViewById(R.id.tv_cofirm);
+        TextView tv_cancel = dia.findViewById(R.id.tv_cancel);
+        TextView tv_title = dia.findViewById(R.id.tv_title);
+        EditText edt_id = dia.findViewById(R.id.edt_id);
+        EditText edt_remark = dia.findViewById(R.id.edt_remark);
+        edt_id.setHint("请输入群名");
+        tv_cofirm.setText("确认创建");
+        tv_cancel.setText("取消创建");
+        tv_title.setText("创建群");
+        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(edt_id.getText().toString())) {
+                    ToastUtils.showShort("账号不能为空");
+                    return;
+                }
+//                if (!AppValidationMgr.isNumber(edt_id.getText().toString())) {
+//                    ToastUtils.showShort("账号不能非数字");
+//                    return;
+//                }
+//                if (TextUtils.isEmpty(edt_remark.getText().toString())) {
+//                    ToastUtils.showShort("密码不能为空");
+//                    return;
+//                }
+                mPresenter.createGroup(edt_id.getText().toString(), edt_remark.getText().toString());
+
+            }
+        });
+
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edt_id.getText().clear();
+                edt_remark.getText().clear();
+                dia.dismiss();
+            }
+        });
+        dia.show();
+    }
 
     @Override
     public void setData(@Nullable Object data) {
@@ -213,29 +250,39 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
         page = 1;
         mPresenter.myGroupList(page,limit);
     }
-    @OnClick({R.id.tv_new_group,R.id.tv_cancel,R.id.tv_cofirm,})
+    @Subscriber(tag = SPConstant.loginInfoSuccess)
+    public void loginInfoSuccess(LoginInfoBean data) {
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(data.getAvatar())
+
+                .into(iv_header);
+        tv_nickname.setText(data.getName());
+    }
+    @OnClick({R.id.iv_more, R.id.iv_header, R.id.tv_nickname,R.id.iv_creat_group, R.id.iv_person_add, R.id.iv_group_add,})
     public void onViewClick(View view) {
         switch (view.getId()) {
 
-            case R.id.tv_new_group:
-                tv_new_group.setVisibility(View.GONE);
-                ll_create_group.setVisibility(View.VISIBLE);
+            case R.id.iv_creat_group:
+                shwoDialog1();
                 break;
-            case R.id.tv_cancel:
-                ll_create_group.setVisibility(View.GONE);
-                tv_new_group.setVisibility(View.VISIBLE);
+            case R.id.iv_person_add:
+                EventBus.getDefault().post(1, SPConstant.ADDPERSON);
                 break;
-            case R.id.tv_cofirm:
-                if (TextUtils.isEmpty(edt_name.getText().toString())) {
-                    ToastUtils.showShort("群名不能为空");
-                    return;
-                }
-                mPresenter.createGroup(edt_name.getText().toString(),edt_remark.getText().toString());
-                ll_create_group.setVisibility(View.GONE);
-                tv_new_group.setVisibility(View.VISIBLE);
+            case R.id.iv_group_add:
+                EventBus.getDefault().post(1, SPConstant.ADDGROUP);
+                break;
+            case R.id.iv_header:
+                EventBus.getDefault().post(1,SPConstant.SHOWINFO);
+                break;
+            case R.id.iv_more:
+                EventBus.getDefault().post(1,SPConstant.LOGOUT);
                 break;
         }
     }
+
+
     @Override
     public void myGroupListSuccess(List<MyGroup> data) {
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);

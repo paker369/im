@@ -23,24 +23,29 @@ import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.TimeUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
+import com.jess.arms.utils.LogUtils;
+import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 
 
+import java.util.Date;
 import java.util.List;
 
 public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, BaseViewHolder> {
-
+    String avatar;
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
      * some initialization data.
      *
      * @param data A new list is created out of this one to avoid mutable list
      */
-    public ChatMessageAdapter(List<MessageBean> data) {
+    public ChatMessageAdapter(List<MessageBean> data,String avatar) {
         super(data);
         //普通文本
         addItemType(1, R.layout.item_chat_text);
         //图片
         addItemType(2, R.layout.item_chat_image);
+        this.avatar=avatar;
+        LogUtils.debugInfo("测试头像是"+avatar);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
         TextView othername=helper.getView(R.id.other_name);
         TextView me_name=helper.getView(R.id.me_name);
         me_name.setVisibility(View.GONE);
-        otherheader.setVisibility(View.GONE);
+//        otherheader.setVisibility(View.GONE);
         othername.setVisibility(View.GONE);
         switch (helper.getItemViewType()) {
             case 1:
@@ -64,14 +69,19 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
                             .load(SPUtils.getInstance().getString(SPConstant.HEADER))
                             .apply(new RequestOptions()
                                     .transforms(new CenterCrop(), new CircleCrop())
-                                    .error(R.mipmap.ic_launcher_round)
-                                    .placeholder(R.mipmap.ic_launcher_round)
+                                    .placeholder(R.mipmap.mandefult)
 
                             )
                             .into((ImageView) helper.getView(R.id.me_header));
 
                     helper.setText(R.id.me_name, SPUtils.getInstance().getString(SPConstant.USERNAME));
-                    helper.setText(R.id.me_time, TimeUtils.progressDate(item.getCreateTime()) );
+                    if(TextUtils.isEmpty(item.getCreateTime())){
+                        helper.setText(R.id.me_time, AppDateMgr.formatDateTime(new Date(),"yyyy-MM-dd HH:mm:ss") );
+                    }else {
+                        helper.setText(R.id.me_time, TimeUtils.progressDate(item.getCreateTime()) );
+                    }
+
+
                     String content = item.getMsgContent();
                     TextView tvMsg = helper.getView(R.id.me_content);
                     SpannableString msg = EmojiUtils.text2Emoji(mContext, content, tvMsg.getTextSize());
@@ -79,8 +89,21 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
                 } else {
                     rl_other.setVisibility(View.VISIBLE);
                     rl_me.setVisibility(View.GONE);
-                    helper.setText(R.id.other_time, TimeUtils.progressDate(item.getCreateTime()));
-                    TextView tvMsg = helper.getView(R.id.other_content);
+                    Glide.with(mContext)
+                            .asBitmap()
+                            .thumbnail(0.6f)
+                            .load(avatar)
+                            .apply(new RequestOptions()
+                                    .transforms(new CenterCrop(), new CircleCrop())
+                                    .placeholder(R.mipmap.mandefult)
+
+                            )
+                            .into((ImageView) helper.getView(R.id.other_header));
+                    if(TextUtils.isEmpty(item.getCreateTime())){
+                        helper.setText(R.id.other_time, AppDateMgr.formatDateTime(new Date(),"yyyy-MM-dd HH:mm:ss") );
+                    }else {
+                        helper.setText(R.id.other_time, TimeUtils.progressDate(item.getCreateTime()) );
+                    }                    TextView tvMsg = helper.getView(R.id.other_content);
                     String content = TextUtils.isEmpty(item.getMsgContent()) ? "" : item.getMsgContent();
                     SpannableString msg = EmojiUtils.text2Emoji(mContext, content, tvMsg.getTextSize());
                     helper.setText(R.id.other_content, msg);
@@ -100,14 +123,16 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
                             .load(SPUtils.getInstance().getString(SPConstant.HEADER))
                             .apply(new RequestOptions()
                                     .transforms(new CenterCrop(), new CircleCrop())
-                                    .error(R.mipmap.ic_launcher_round)
-                                    .placeholder(R.mipmap.ic_launcher_round)
+                                    .placeholder(R.mipmap.mandefult)
 
                             )
                             .into((ImageView) helper.getView(R.id.me_header));
                     helper.setText(R.id.me_name,SPUtils.getInstance().getString(SPConstant.USERNAME));
-                    helper.setText(R.id.me_time,TimeUtils.progressDate(item.getCreateTime()));
-//                    Picasso.with(mContext)
+                    if(TextUtils.isEmpty(item.getCreateTime())){
+                        helper.setText(R.id.me_time, AppDateMgr.formatDateTime(new Date(),"yyyy-MM-dd HH:mm:ss") );
+                    }else {
+                        helper.setText(R.id.me_time, TimeUtils.progressDate(item.getCreateTime()) );
+                    }//                    Picasso.with(mContext)
 //                            .load(item.getPicture().getFilePath())
 //                                    .error(R.mipmap.ic_error)
 //                                    .placeholder(R.mipmap.loading)
@@ -126,8 +151,11 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
                 } else {
                     rlOthers.setVisibility(View.VISIBLE);
                     rlMes.setVisibility(View.GONE);
-                    helper.setText(R.id.other_time,TimeUtils.progressDate(item.getCreateTime()));
-//                    Glide.with(mContext)
+                    if(TextUtils.isEmpty(item.getCreateTime())){
+                        helper.setText(R.id.me_time, AppDateMgr.formatDateTime(new Date(),"yyyy-MM-dd HH:mm:ss") );
+                    }else {
+                        helper.setText(R.id.me_time, TimeUtils.progressDate(item.getCreateTime()) );
+                    }//                    Glide.with(mContext)
 //                            .load(item.getPicture().getFilePath())
 //
 //                                    .error(R.mipmap.ic_error)
@@ -136,12 +164,23 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
                     Glide.with(mContext)
                             .asBitmap()
                             .thumbnail(0.6f)
+                            .load(avatar)
+                            .apply(new RequestOptions()
+                                    .transforms(new CenterCrop(), new CircleCrop())
+                                    .placeholder(R.mipmap.mandefult)
+
+                            )
+                            .into((ImageView) helper.getView(R.id.other_header));
+                    LogUtils.debugInfo("测试这里的图片是"+item.getMsgContent());
+                    Glide.with(mContext)
+                            .asBitmap()
+                            .thumbnail(0.6f)
                             .load(item.getMsgContent())
                             .apply(new RequestOptions()
                                     .transforms(new FitCenter())
-//                                    .placeholder(R.mipmap.ic_placeholder)
+                                    .placeholder(R.mipmap.icon_app)
 //                                    .error(R.mipmap.ic_error)
-                                    .diskCacheStrategy(DiskCacheStrategy.DATA))
+)
                             .into((ImageView) helper.getView(R.id.other_img)
                             );
                 }

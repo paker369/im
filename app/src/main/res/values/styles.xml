@@ -49,7 +49,12 @@
         <item name="android:background">@android:color/white</item>
         <item name="android:overScrollMode">never</item>
     </style>
-
+    <style name="SplashThemes" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@mipmap/launcher</item>
+    </style>
     <!--限时抢购倒计时style-->
     <style name="RushBuyCountDownTimerViewStyle">
         <item name="android:layout_width">match_parent</item>

@@ -33,6 +33,11 @@ public class SPConstant {
     public static final String RECEIVEWSGROUPCHATE ="RECEIVEWSGROUPCHATE" ;
     public static final String FRIENDMESSAGE = "FRIENDMESSAGE";
     public static final String GROUPMESSAGE = "GROUPMESSAGE";
-    public   static String MYSID= SPUtils.getInstance().getString(SID,"");
-    public   static long MYUID=SPUtils.getInstance().getLong(UID);
+    public static final String ADDPERSON = "ADDPERSON";
+    public static final String ADDGROUP = "ADDGROUP";
+    public static final String loginInfoSuccess="loginInfoSuccess";
+    public static final String SHOWINFO ="SHOWINFO" ;
+    public static final String LOGOUT ="LOGOUT" ;
+//    public   static String MYSID= SPUtils.getInstance().getString(SID,"");
+//    public   static long MYUID=SPUtils.getInstance().getLong(UID);
 }

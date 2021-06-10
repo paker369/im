@@ -1,3 +1,7 @@
+include ':picture_library'
+include ':ucrop'
+include ':smartkeyboardmanager'
+include ':keyboardchangelib'
 include ':emojilibrary'
 include ':websocketlib'
 include ':app'

@@ -9,6 +9,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMemberBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMsgBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
+
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
 
@@ -21,6 +22,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupChatContract;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Query;
 
@@ -72,7 +74,10 @@ public class GroupChatModel extends BaseModel implements GroupChatContract.Model
     public Observable<BaseResponse> deleteGroup(long groupid) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).deleteGroup(groupid);
     }
-
+    @Override
+    public Observable<BaseResponse> deleteMyGroup(long groupid) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteMygroup(groupid);
+    }
     @Override
     public Observable<BaseResponse<List<GroupMemberBean>>> groupMemberList(long uId, String sId, long groupid) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).groupMemberList(uId, sId, groupid);
@@ -84,8 +89,10 @@ public class GroupChatModel extends BaseModel implements GroupChatContract.Model
         return mRepositoryManager.obtainRetrofitService(AppService.class).groupUpdate(body);
 
     }
+
+
     @Override
-    public Observable<BaseResponse> deleteMyGroup(long groupid) {
-        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteMygroup(groupid);
+    public Observable<BaseResponse<String>> upload(List<MultipartBody.Part> parts) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).upload(parts);
     }
 }

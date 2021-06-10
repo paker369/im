@@ -78,7 +78,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
 
     public void addFriend(long uid, String remark) {
 
-        mModel.addFriend(SPConstant.MYUID, SPConstant.MYSID, uid, remark)
+        mModel.addFriend(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID), uid, remark)
                 .compose(RxUtils.applySchedulers(mRootView))
                 .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
                     @Override
@@ -96,7 +96,7 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
 
     public void addGroup(long uid) {
 
-        mModel.addGroup(SPConstant.MYUID, SPConstant.MYSID, uid)
+        mModel.addGroup(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID), uid)
                 .compose(RxUtils.applySchedulers(mRootView))
                 .subscribe(new ErrorHandleSubscriber<BaseResponse<MyGroup>>(mErrorHandler) {
                     @Override

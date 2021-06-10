@@ -54,4 +54,9 @@ public class LoginModel extends BaseModel implements LoginContract.Model {
     public Observable<BaseResponse<LoginBean>> loginbyPwd(RequestBody body) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).loginbyPwd(body);
     }
+
+    @Override
+    public Observable<BaseResponse<LoginBean>> registerUser(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).registerUser(body);
+    }
 }

@@ -69,12 +69,13 @@ public class TimeUtils {
             dateStr = releaseDate.substring(0, releaseDate.indexOf("+"));
         }
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000+0000'", Locale.CHINA);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000", Locale.CHINA);
           Date date=  simpleDateFormat.parse(releaseDate);
             return AppDateMgr.date2String(date);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
 //        Date date = new Date();
 //        Date now = new Date();
@@ -112,6 +113,62 @@ public class TimeUtils {
         return dateStr;
     }
 
+
+//
+//    public static Date progressDatetoDate(String releaseDate) {
+//        // releaseDate format: 2012-04-24T10:00:10+08:00
+//        String dateStr = "";
+//        if (isBlank(releaseDate) || releaseDate.length() < 19)
+//            return new da;
+//        if (releaseDate.indexOf("+") == -1) {
+//            dateStr = releaseDate;
+//        } else {
+//            dateStr = releaseDate.substring(0, releaseDate.indexOf("+"));
+//        }
+//        try {
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000+0000'", Locale.CHINA);
+//            Date date=  simpleDateFormat.parse(releaseDate);
+//            return AppDateMgr.date2String(date);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+////        Date date = new Date();
+////        Date now = new Date();
+////        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+////        try {
+////            date = simpleDateFormat.parse(dateStr);
+////        } catch (ParseException e) {
+////            return "";
+////        }
+////        long between = (now.getTime() - date.getTime()) / 1000; // 2个时间相差多少秒
+////
+////        long day = between / (24 * 3600);
+////
+////        long hour = between % (24 * 3600) / 3600;
+////
+////        long minute = between % 3600 / 60;
+////
+////        long second=between%60;
+////
+////        String result = "";
+////
+////
+////        if (day > 14) {
+////            result = releaseDate.substring(0, releaseDate.indexOf("T"));
+////        } else if (day <= 14 && day > 0) {
+////            result = String.valueOf(day) + "天前";
+////        } else if (hour > 0) {
+////            result = String.valueOf(hour) + "小时前";
+////        } else if (minute > 0) {
+////            result = String.valueOf(minute) + "分钟前";
+////        } else {
+////            result = "1分钟前";
+////        }
+//
+//        return dateStr;
+//    }
     /**
      * 根据传来的毫秒字符串，转换成"yyyy-MM-dd"格式日期
      *

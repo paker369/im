@@ -9,6 +9,7 @@ import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_loginBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_regeisterBean;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.mvp.BasePresenter;
@@ -72,6 +73,25 @@ public class LoginPresenter extends BasePresenter<LoginContract.Model, LoginCont
                         if (aboutBeanBaseResponse.isSuccess()) {
 
                             mRootView.loginbyPwdSuccess(aboutBeanBaseResponse.getData());
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+
+    public void registerUser(String name,String pwd) {
+        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.registerUser(body)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse<LoginBean>>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse<LoginBean> aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.registerUserSuccess(aboutBeanBaseResponse.getData());
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

@@ -1,6 +1,7 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,25 +10,32 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerLoginComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.LoginContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.LoginPresenter;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.BarUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
+
+import org.geeklub.smartkeyboardmanager.SmartKeyboardManager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -50,21 +58,27 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
 public class LoginActivity extends BaseActivity<LoginPresenter> implements LoginContract.View {
     @BindView(R.id.status_bar_view)
     View status_bar_view;
-    @BindView(R.id.rl_back)
-    RelativeLayout rlBack;
-    @BindView(R.id.center_title)
-    TextView centerTitle;
-    @BindView(R.id.edt_acc)
+    @BindView(R.id.edt_id)
     EditText edt_acc;
-    @BindView(R.id.edt_pwd)
+    @BindView(R.id.edt_remark)
     TextView edt_pwd;
     @BindView(R.id.tv_login)
     TextView tv_login;
     @BindView(R.id.tv_register)
     TextView tv_register;
+    @BindView(R.id.tv_operate)
+    TextView tv_operate;
+    @BindView(R.id.container)
+    LinearLayout container;
+    @BindView(R.id.ll_login)
+    LinearLayout ll_login;
+
 
     private Drawable drawablebutton;
     private Drawable drawablebuttonno;
+    private boolean login=true;
+    private long mPressedTime;
+
 
 
     @Override
@@ -84,10 +98,18 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        ImmersionBar.with(this)
+                .statusBarView(status_bar_view)
+                .init();
+//        KeyBoardListener.getInstance(this).init();
         drawablebutton = getResources().getDrawable(R.drawable.shape_login_button);
         drawablebuttonno = getResources().getDrawable(R.drawable.shape_nologin_button);
         initEditview();
+
+
     }
+
+
 
     @Override
     public void showLoading() {
@@ -106,9 +128,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
                 if (!TextUtils.isEmpty(edt_acc.getText().toString()) && !TextUtils.isEmpty(charSequence.toString())) {
 
-                    tv_login.setBackground(drawablebutton);
+                    tv_operate.setBackground(drawablebutton);
                 } else {
-                    tv_login.setBackground(drawablebuttonno);
+                    tv_operate.setBackground(drawablebuttonno);
                 }
             }
 
@@ -127,9 +149,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
                 if (!TextUtils.isEmpty(edt_pwd.getText().toString()) && !TextUtils.isEmpty(charSequence.toString())) {
 
-                    tv_login.setBackground(drawablebutton);
+                    tv_operate.setBackground(drawablebutton);
                 } else {
-                    tv_login.setBackground(drawablebuttonno);
+                    tv_operate.setBackground(drawablebuttonno);
                 }
             }
 
@@ -138,27 +160,69 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
             }
         });
     }
-
-    @OnClick({  R.id.tv_login, R.id.tv_register})
+    @Override
+    public void onBackPressed() {
+        long mNowTime = System.currentTimeMillis();//获取第一次按键时间
+        if ((mNowTime - mPressedTime) > 2000) {//比较两次按键时间差
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mPressedTime = mNowTime;
+        } else {//退出程序
+            this.finish();
+            System.exit(0);
+        }
+    }
+    @OnClick({  R.id.tv_login, R.id.tv_register,R.id.tv_operate})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_login:
-                if (TextUtils.isEmpty(edt_acc.getText().toString())) {
-                    ToastUtils.showShort("账号不能为空");
-                    return;
-                }
-                if (!AppValidationMgr.isInteger(edt_acc.getText().toString())) {
-                    ToastUtils.showShort("账号不能非数字");
-                    return;
-                }
-                if (TextUtils.isEmpty(edt_pwd.getText().toString())) {
-                    ToastUtils.showShort("密码不能为空");
-                    return;
-                }
-                mPresenter.loginbyPwd(Integer.valueOf(edt_acc.getText().toString()), edt_pwd.getText().toString());
+             login=true;
+                tv_login.setBackground(getResources().getDrawable(R.drawable.home_radio_bg_left));
+                tv_register.setBackground(null);
+                edt_acc.setHint("请输入uid");
+                tv_login.setTextColor(Color.WHITE);
+                tv_register.setTextColor(Color.BLACK);
+                tv_operate.setText("登录");
                 break;
             case R.id.tv_register:
-                launchActivity(new Intent(LoginActivity.this, RegeisterActivity.class));
+               login=false;
+                tv_register.setBackground(getResources().getDrawable(R.drawable.home_radio_bg));
+                tv_login.setBackground(null);
+                edt_acc.setHint("请输入用户名");
+                tv_login.setTextColor(Color.BLACK);
+                tv_register.setTextColor(Color.WHITE);
+                tv_operate.setText("注册");
+                break;
+
+            case R.id.tv_operate:
+                if(login){
+                    if (TextUtils.isEmpty(edt_acc.getText().toString())) {
+                        ToastUtils.showShort("id不能为空");
+                        return;
+                    }
+                    if (!AppValidationMgr.isNumber(edt_acc.getText().toString())) {
+                        ToastUtils.showShort("id输入错误");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(edt_pwd.getText().toString())) {
+                        ToastUtils.showShort("密码不能为空");
+                        return;
+                    }
+                    mPresenter.loginbyPwd(Long.parseLong(edt_acc.getText().toString()), edt_pwd.getText().toString());
+                }else {
+                    if (TextUtils.isEmpty(edt_acc.getText().toString())) {
+                        ToastUtils.showShort("用户名不能为空");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(edt_pwd.getText().toString())) {
+                        ToastUtils.showShort("密码不能为空");
+                        return;
+                    }
+                    mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString());
+                }
+
+
+
+
                 break;
 
         }
@@ -191,9 +255,15 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         LogUtils.debugInfo("测试uid"+data.getUid());
         SPUtils.getInstance().put(SPConstant.UID,data.getUid());
         SPUtils.getInstance().put(SPConstant.SID,data.getSid());
-        SPConstant.MYSID= data.getSid();
-        SPConstant.MYUID= data.getUid();
+
 
         launchActivity(new Intent(LoginActivity.this, MainActivity.class));
+    }
+
+    @Override
+    public void registerUserSuccess(LoginBean data) {
+        SPUtils.getInstance().put(SPConstant.UID,data.getUid());
+        SPUtils.getInstance().put(SPConstant.SID,data.getSid());
+        launchActivity(new Intent(LoginActivity.this,MainActivity.class));
     }
 }

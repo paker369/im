@@ -17,13 +17,17 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
 
+
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface AppService {
@@ -175,4 +179,37 @@ public interface AppService {
     Observable<BaseResponse> deleteMygroup(@Query("groupId") long groupid);
 
 
+    //    @Multipart
+//    @POST(AppConstants.qianzhui + "/upload/img")
+//    Observable<BaseResponse<String>> uploadimg(@Part List<MultipartBody.Part> parts);
+    /*
+     * 上传文件
+     */
+    @Multipart
+    @POST(SPConstant.qianzhui + "/upload")
+    Observable<BaseResponse<String>> upload(@Part List<MultipartBody.Part> parts);
+
+
+    /*
+     * 更换头像
+     */
+    @Multipart
+    @POST(SPConstant.qianzhui + "/uploadAvatar")
+    Observable<BaseResponse> uploadAvatar(@Part List<MultipartBody.Part> parts);
+
+
+
+
+    /*
+     * 私聊未读消息归零
+     */
+    @POST(SPConstant.qianzhui + "/user/friendMsg/clearUnMsgCount")
+    Observable<BaseResponse> clearfriendMsg(@Body RequestBody body);
+
+
+    /*
+     * 群组未读消息归零
+     */
+    @POST(SPConstant.qianzhui + "/group/user/clearUnMsgCount")
+    Observable<BaseResponse> cleargroupMsg(@Query("groupId") long groupid);
 }

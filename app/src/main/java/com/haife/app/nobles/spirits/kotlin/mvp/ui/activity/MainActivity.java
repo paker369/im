@@ -1,6 +1,8 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.activity;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +25,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.chaychan.library.BottomBarLayout;
 import com.example.songzeceng.studyofretrofit.item.PersonProto;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.gson.Gson;
@@ -49,6 +54,7 @@ import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.kongzue.dialog.v2.DialogSettings;
 import com.kongzue.dialog.v2.MessageDialog;
+import com.kongzue.dialog.v2.SelectDialog;
 import com.zhangke.websocket.SimpleListener;
 import com.zhangke.websocket.SocketListener;
 import com.zhangke.websocket.WebSocketHandler;
@@ -58,6 +64,7 @@ import com.zhangke.websocket.response.ErrorResponse;
 
 import org.java_websocket.client.WebSocketClient;
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -92,19 +99,19 @@ import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View, PopupFriendCircle.ClickLisetener {
 
 
-    @BindView(R.id.tab_indi)
+    @BindView(R.id.bbl)
 
-    SlidingTabLayout tab_indi;
+    BottomBarLayout bbl;
     @BindView(R.id.nvp_layout)
     ViewPager nvpLayout;
-    @BindView(R.id.iv_header)
-    CircleImageView iv_header;
-    @BindView(R.id.iv_more)
-    ImageView iv_more;
-    @BindView(R.id.tv_nickname)
-    TextView tv_nickname;
-    @BindView(R.id.tv_remark)
-    TextView tv_remark;
+//    @BindView(R.id.iv_header)
+//    CircleImageView iv_header;
+//    @BindView(R.id.iv_more)
+//    ImageView iv_more;
+//    @BindView(R.id.tv_nickname)
+//    TextView tv_nickname;
+//    @BindView(R.id.tv_remark)
+//    TextView tv_remark;
     @BindView(R.id.status_bar_view)
     View status_bar_view;
 
@@ -117,6 +124,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private Dialog dia2;
     private WebSocketClient mSocket;
     private Handler mHandler;
+    private Dialog dia3;
+    long mPressedTime;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -136,7 +145,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private void initWebSocket() {
         WebSocketSetting setting = new WebSocketSetting();
         //连接地址，必填，例如 wss://echo.websocket.org
-        setting.setConnectUrl("ws://chat.networkheizhu.com/ws");//必填
+        setting.setConnectUrl("ws://www.haoqbo.com/ws");//必填
 //        setting.setHttpHeaders(map);
 
         //设置连接超时时间
@@ -189,12 +198,11 @@ return  formatStr;
 //            appendMsgDisplay("onConnected");
             LogUtils.warnInfo("测试主ws链接上了");
             PersonProto.WSBaseReqProto.Builder builder = PersonProto.WSBaseReqProto.newBuilder();
-            builder.setUid(SPConstant.MYUID);
-            LogUtils.debugInfo("测试sid是" + SPConstant.MYSID);
-            builder.setSid(SPConstant.MYSID);
+            builder.setUid(SPUtils.getInstance().getLong(SPConstant.UID));
+            builder.setSid(SPUtils.getInstance().getString(SPConstant.SID));
             builder.setType(1);
             PersonProto.WSBaseReqProto person = builder.build();
-            R_Ws userInfoBean = new R_Ws(SPConstant.MYUID, SPConstant.MYSID, 1);
+            R_Ws userInfoBean = new R_Ws(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID), 1);
             byte[] i = new Gson().toJson(userInfoBean).getBytes();
             WebSocketHandler.getDefault().send(person.toByteArray());
 //            WebSocketHandler.getDefault().send(person.toString());
@@ -242,7 +250,6 @@ return  formatStr;
 
 //            PersonProto.Person.Builder builder = PersonProto.Person.newBuilder();
 
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes.array());
             PersonProto.WSBaseResProto wsBaseResProto = null;
             try {
                 wsBaseResProto = PersonProto.WSBaseResProto.parseFrom(bytes.array());
@@ -256,11 +263,11 @@ return  formatStr;
                 String content=wsBaseResProto.getMessage().getMsgContent();
                 int msgType=wsBaseResProto.getMessage().getMsgType();
                 int type=wsBaseResProto.getType();
-                int receiveid=(int)wsBaseResProto.getMessage().getReceiveId();
-                int senderid= (int)wsBaseResProto.getUser().getUid();
+                long receiveid=wsBaseResProto.getMessage().getReceiveId();
+                long senderid= wsBaseResProto.getUser().getUid();
                 String name=wsBaseResProto.getUser().getName();
                 String avatar=wsBaseResProto.getUser().getAvatar();
-                String createtime= transferTime(wsBaseResProto.getCreateTime());
+//                String createtime= transferTime(wsBaseResProto.getCreateTime());
 
 //                LogUtils.debugInfo("222测试主ws收到消息内容" + );
 //                LogUtils.debugInfo("222测试主ws收到消息图片还是文本" + wsBaseResProto.getMessage().getMsgType());
@@ -270,13 +277,15 @@ return  formatStr;
 //
                 if(type==1){
                     //私聊消息
+                    LogUtils.debugInfo("111测试主ws收到消息接收shijian" + wsBaseResProto.getCreateTime());
+
                     EventBus.getDefault().post(new MessageBean(0,0,senderid,msgType,
-                          content,createtime
+                          content,""
                            ),SPConstant.RECEIVEWSSINGLECHATE);
                 }else {
                     LogUtils.debugInfo("222测试主ws收到消息接收shijian" + wsBaseResProto.getCreateTime());
                     //群聊消息
-                    EventBus.getDefault().post(new GroupMsgBean(receiveid,senderid,msgType,content,createtime,new UserBean(name,avatar)),SPConstant.RECEIVEWSGROUPCHATE);
+                    EventBus.getDefault().post(new GroupMsgBean(receiveid,senderid,msgType,content,"",new UserBean(name,avatar)),SPConstant.RECEIVEWSGROUPCHATE);
                 }
 
             }
@@ -327,18 +336,24 @@ return  formatStr;
     public void initData(@Nullable Bundle savedInstanceState) {
         ImmersionBar.with(this)
                 .statusBarView(status_bar_view)
+                .statusBarDarkFont(true)   //状态栏字体是深色，不写默认为亮色
                 .init();
-        if (SPUtils.getInstance().getLong(SPConstant.UID, 0) == 0) {
-            launchActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
         initFragment();
         initWebSocket();
         WebSocketHandler.getDefault().addListener(socketListener);
-        tab_indi.getTitleView(0).setCompoundDrawablesRelativeWithIntrinsicBounds(getResources().getDrawable(R.mipmap.message), null, null, null);
-        tab_indi.getTitleView(1).setCompoundDrawablesRelativeWithIntrinsicBounds(getResources().getDrawable(R.mipmap.friend), null, null, null);
-        tab_indi.getTitleView(2).setCompoundDrawablesRelativeWithIntrinsicBounds(getResources().getDrawable(R.mipmap.group), null, null, null);
-    }
 
+    }
+    @Override
+    public void onBackPressed() {
+        long mNowTime = System.currentTimeMillis();//获取第一次按键时间
+        if ((mNowTime - mPressedTime) > 2000) {//比较两次按键时间差
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mPressedTime = mNowTime;
+        } else {//退出程序
+            this.finish();
+            System.exit(0);
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -375,7 +390,7 @@ return  formatStr;
         nvpLayout.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         nvpLayout.setOffscreenPageLimit(2);
 
-        tab_indi.setViewPager(nvpLayout, mTitles);
+        bbl.setViewPager(nvpLayout  );
 
         nvpLayout.setCurrentItem(0, false);
 
@@ -405,16 +420,17 @@ return  formatStr;
 
     @Override
     public void loginInfoSuccess(LoginInfoBean data) {
-        Glide.with(this)
-                .asBitmap()
-                .thumbnail(0.6f)
-                .load(data.getAvatar())
-
-                .into(iv_header);
-        tv_nickname.setText(data.getName());
-        tv_remark.setText(data.getRemark());
+//        Glide.with(this)
+//                .asBitmap()
+//                .thumbnail(0.6f)
+//                .load(data.getAvatar())
+//
+//                .into(iv_header);
+//        tv_nickname.setText(data.getName());
+//        tv_remark.setText(data.getRemark());
         SPUtils.getInstance().put(SPConstant.HEADER,data.getAvatar());
         SPUtils.getInstance().put(SPConstant.USERNAME,data.getName());
+        EventBus.getDefault().post(data,SPConstant.loginInfoSuccess);
     }
 
     @Override
@@ -439,6 +455,36 @@ return  formatStr;
             mHandler = new Handler();
         }
         return mHandler;
+    }
+    @Subscriber(tag = SPConstant.ADDGROUP)
+    public void receiveadd(int i) {
+        shwoDialog2();
+    }
+
+    @Subscriber(tag = SPConstant.ADDPERSON)
+    public void receiveaddperson(int i) {
+
+        shwoDialog1();
+    }
+    @Subscriber(tag = SPConstant.SHOWINFO)
+    public void receiveshowifo(int i) {
+
+        shwoDialog3();
+    }
+    @Subscriber(tag = SPConstant.LOGOUT)
+    public void receivelogout(int i) {
+        SelectDialog.show(this, "提示", "确认退出登录？", "确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logout();
+            }
+        }, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
     }
 
     /**
@@ -465,7 +511,7 @@ return  formatStr;
                     ToastUtils.showShort("账号不能为空");
                     return;
                 }
-                if (!AppValidationMgr.isInteger(edt_id.getText().toString())) {
+                if (!AppValidationMgr.isNumber(edt_id.getText().toString())) {
                     ToastUtils.showShort("账号不能非数字");
                     return;
                 }
@@ -473,7 +519,7 @@ return  formatStr;
 //                    ToastUtils.showShort("密码不能为空");
 //                    return;
 //                }
-                mPresenter.addFriend(Integer.valueOf(edt_id.getText().toString()), edt_remark.getText().toString());
+                mPresenter.addFriend(Long.parseLong(edt_id.getText().toString()), edt_remark.getText().toString());
 
             }
         });
@@ -506,7 +552,7 @@ return  formatStr;
         EditText edt_remark = dia2.findViewById(R.id.edt_remark);
         edt_id.setHint("请输入群id");
         edt_remark.setVisibility(View.GONE);
-        tv_title.setText("添加群");
+        tv_title.setText("添加群组");
         tv_cofirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -514,7 +560,7 @@ return  formatStr;
                     ToastUtils.showShort("群号不能为空");
                     return;
                 }
-                if (!AppValidationMgr.isInteger(edt_id.getText().toString())) {
+                if (!AppValidationMgr.isNumber(edt_id.getText().toString())) {
                     ToastUtils.showShort("群号不能非数字");
                     return;
                 }
@@ -522,7 +568,7 @@ return  formatStr;
 //                    ToastUtils.showShort("密码不能为空");
 //                    return;
 //                }
-                mPresenter.addGroup(Integer.valueOf(edt_id.getText().toString()));
+                mPresenter.addGroup(Long.parseLong(edt_id.getText().toString()));
 
             }
         });
@@ -538,24 +584,67 @@ return  formatStr;
         dia2.show();
     }
 
+
+    /**
+     * 弹出添加好友dialog
+     */
+    public void shwoDialog3() {
+        if (dia3 != null) {
+            dia3.show();
+            return;
+        }
+        dia3 = new Dialog(this, R.style.edit_AlertDialog_style);
+        dia3.setContentView(R.layout.dialog_show_info);
+        TextView tv_uid = dia3.findViewById(R.id.tv_uid);
+        TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
+        TextView tv_name = dia3.findViewById(R.id.tv_name);
+        CircleImageView iv_header = dia3.findViewById(R.id.iv_header);
+        tv_cofirm.setText("复制ID");
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(SPUtils.getInstance().getString(SPConstant.HEADER))
+.apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .into(iv_header);
+        tv_name.setText(SPUtils.getInstance().getString(SPConstant.USERNAME));
+        tv_uid.setText("UID： "+SPUtils.getInstance().getLong(SPConstant.UID));
+        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+                cmb.setText(SPUtils.getInstance().getLong(SPConstant.UID)+"");
+                ToastUtils.showShort("复制成功");
+            }
+        });
+
+
+        dia3.show();
+    }
+
+
+
+
+
+
     @Override
     public void addgroup() {
         shwoDialog2();
     }
 
-    @OnClick({R.id.iv_more, R.id.iv_header})
-    public void onViewClick(View view) {
-        switch (view.getId()) {
-
-            case R.id.iv_more:
-                showPopup(iv_more, this);
-                break;
-            case R.id.iv_header:
-
-                break;
-
-        }
-    }
+//    @OnClick({R.id.iv_more, R.id.iv_header})
+//    public void onViewClick(View view) {
+//        switch (view.getId()) {
+//
+//            case R.id.iv_more:
+//                showPopup(iv_more, this);
+//                break;
+//            case R.id.iv_header:
+//
+//                break;
+//
+//        }
+//    }
 
     @Override
     public void logout() {
@@ -576,7 +665,7 @@ return  formatStr;
     public void mineinfo() {
         DialogSettings.dialog_theme = THEME_LIGHT;
         DialogSettings.use_blur = true;
-        MessageDialog.show(this, "我的信息", "我的UID："+SPConstant.MYUID, "知道了", new DialogInterface.OnClickListener() {
+        MessageDialog.show(this, "我的信息", "我的UID："+SPUtils.getInstance().getLong(SPConstant.UID), "知道了", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }

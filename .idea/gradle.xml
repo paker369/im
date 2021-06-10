@@ -13,6 +13,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/emojilibrary" />
+            <option value="$PROJECT_DIR$/keyboardchangelib" />
+            <option value="$PROJECT_DIR$/picture_library" />
+            <option value="$PROJECT_DIR$/smartkeyboardmanager" />
+            <option value="$PROJECT_DIR$/ucrop" />
             <option value="$PROJECT_DIR$/websocketlib" />
           </set>
         </option>

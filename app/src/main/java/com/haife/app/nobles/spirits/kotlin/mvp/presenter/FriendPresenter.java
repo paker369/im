@@ -2,6 +2,7 @@ package com.haife.app.nobles.spirits.kotlin.mvp.presenter;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
@@ -102,7 +103,7 @@ public class FriendPresenter extends BasePresenter<FriendContract.Model, FriendC
     }
 
     public void deleteFriend(long id) {
-        R_deleteFriendBean userInfoBean = new R_deleteFriendBean(SPConstant.MYUID, SPConstant.MYSID,id);
+        R_deleteFriendBean userInfoBean = new R_deleteFriendBean(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID),id);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.deleteFriend(body)
                 .compose(RxUtils.applySchedulers(mRootView))

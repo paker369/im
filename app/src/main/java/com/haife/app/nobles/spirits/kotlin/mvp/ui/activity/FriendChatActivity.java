@@ -14,16 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.bumptech.glide.Glide;
-import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatInputLayout;
-import com.haife.app.nobles.spirits.kotlin.app.view.ChatMsgRootLayout;
-import com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendChatComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendChatContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
@@ -31,25 +27,34 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendChatPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.ChatMessageAdapter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.BarUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.ImageUtils;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.PhotoSelectSingleUtile;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-
+import org.geeklub.smartkeyboardmanager.SmartKeyboardManager;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -71,7 +76,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     @BindView(R.id.ll_root)
     LinearLayout ll_root;
     @BindView(R.id.rll)
-    ChatMsgRootLayout rll;
+    RelativeLayout rll;
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
     @BindView(R.id.color_recycler)
@@ -86,23 +91,23 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     ChatInputLayout input_layout;
     @BindView(R.id.tv_nickname)
     TextView tv_nickname;
-    @BindView(R.id.tv_remark)
-    TextView tv_remark;
+
     @BindView(R.id.status_bar_view)
     View status_bar_view;
-    @BindView(R.id.iv_header)
-    CircleImageView iv_header;
+
 
     ChatMessageAdapter chatMessageAdapter;
     private LinearLayoutManager layouts;
     int page = 1;
     int limit = 20;
     long senderUid;
-    private int firstCompletelyVisibleItemPosition=-1;
+    private int firstCompletelyVisibleItemPosition = -1;
     List<MessageBean> messagepool = new ArrayList<>();
     private Handler mHandler;
     private int messengecount;
     private List<MessageBean> listBeans = new ArrayList<>();
+    private String avatar = "";
+    private SmartKeyboardManager mSmartKeyboardManager;
     ;
 
     @Override
@@ -122,13 +127,27 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        senderUid =  getIntent().getLongExtra("senderUid", 0);
-        ImmersionBar.with(this)
-                .statusBarView(status_bar_view)
-                .barAlpha(0)
-                .applySystemFits(false)
-                .init();
-        KeyBoardListener.getInstance(this).init();
+        senderUid = getIntent().getLongExtra("senderUid", 0);
+        avatar = getIntent().getStringExtra("avatar");
+        BarUtils.setStatusBarAlpha(this, 0, true);
+        BarUtils.setStatusBarLightMode(this, true);
+        View mFaceTextEmotionTrigger = input_layout.findViewById(R.id.iv_expression);
+        View mFaceTextInputLayout = input_layout.findViewById(R.id.layout_express);
+//        ImmersionBar.with(this)
+//                .statusBarView(status_bar_view)
+//                .barAlpha(0)
+////                .applySystemFits(false)
+//                .init();
+//        KeyBoardListener.getInstance(this).init();
+//        mSmartKeyboardManager = new SmartKeyboardManager.Builder(this).setContentView(color_recycler)
+//                .setEmotionKeyboard(mFaceTextInputLayout) // 表情键盘View
+//                .setEditText(input_layout) // 输入框
+//                .setEmotionTrigger(mFaceTextEmotionTrigger) // 表情键盘和软键盘的切换按钮
+//                .addOnContentViewScrollListener(new SmartKeyboardManager.OnContentViewScrollListener() {
+//                    @Override public void shouldScroll(int distance) {
+//                        color_recycler.scrollBy(0, distance); // 将 recyclerview 滚动相应的距离，内部已经把滚动的方向问题处理好了，大胆使用吧
+//                    }})
+//                .create();
         initRecycler();
         input_layout.setLayoutListener(this);
         input_layout.bindInputLayout(this, rll);
@@ -155,7 +174,8 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
             e.printStackTrace();
         }
     }
-    @OnClick({R.id.iv_delete, R.id.iv_header, R.id.newmessege})
+
+    @OnClick({R.id.iv_delete, R.id.tv_nickname, R.id.newmessege, R.id.iv_back})
     public void onViewClick(View view) {
         switch (view.getId()) {
 
@@ -167,9 +187,11 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                     }
                 });
                 break;
-            case R.id.iv_header:
-
+            case R.id.iv_back:
+                LogUtils.debugInfo("测试点击了退出");
+                finish();
                 break;
+
             case R.id.newmessege:
                 rv_newmessege.setVisibility(View.GONE);
                 messengecount = 0;
@@ -240,7 +262,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
             }
         });
-        chatMessageAdapter = new ChatMessageAdapter(listBeans);
+        chatMessageAdapter = new ChatMessageAdapter(listBeans, avatar);
         chatMessageAdapter.setEmptyView(R.layout.empty_placehold, color_recycler);
         color_recycler.setAdapter(chatMessageAdapter);
     }
@@ -250,6 +272,35 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
             mHandler = new Handler();
         }
         return mHandler;
+    }
+
+    //选择的图片集合
+    private List<LocalMedia> mSelectList = new ArrayList<>();
+
+    //选择头像图片之后的回调
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    mSelectList = PictureSelector.obtainMultipleResult(data);
+                    if (mSelectList != null && mSelectList.size() > 0) {
+//                        ImageUtils.getPic(ImageUtils.selectPhotoShow(this, mSelectList.get(0)), civHeader, this, R.mipmap.ic_launcher_round);
+
+                        MultipartBody.Builder builder = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM);
+                        File file = new File(ImageUtils.selectPhotoShow(this, mSelectList.get(0)));
+                        RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);//表单类型
+                        builder.addFormDataPart("file", file.getName(), body);
+                        List<MultipartBody.Part> parts = builder.build().parts();
+                        mPresenter.upload(parts);
+//                        upload(file,AppConstants.qiniutoken);
+                    }
+                    break;
+            }
+        }
     }
 
     @Override
@@ -281,6 +332,10 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void photoBtnClick() {
+        //相册回调
+        // 进入相册 以下是例子：不需要的api可以不写
+        LogUtils.debugInfo("测试点击了照片");
+        PhotoSelectSingleUtile.selectPhoto(this, mSelectList, 1);
 
     }
 
@@ -317,14 +372,16 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void sendMsgtSuccess(int type, String content) {
-        MessageBean data = new MessageBean(SPConstant.MYUID, senderUid, SPConstant.MYUID, type, content.toString(), AppDateMgr.todayYyyyMmDdHhMmSs());
+        MessageBean data = new MessageBean(SPUtils.getInstance().getLong(SPConstant.UID), senderUid, SPUtils.getInstance().getLong(SPConstant.UID), type, content.toString(), AppDateMgr.todayYyyyMmDdHhMmSs());
 
         input_layout.hideOverView();
-        messagepool.add(0, data);
+
         if (firstCompletelyVisibleItemPosition > 70) {
+            messagepool.add(0, data);
             getHandler().post(new Runnable() {
                 @Override
                 public void run() {
+
                     layouts.scrollToPositionWithOffset(0, Integer.MIN_VALUE);
                     color_recycler.scrollToPosition(0);
                 }
@@ -333,9 +390,11 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
             chatMessageAdapter.addData(0, data);
             chatMessageAdapter.notifyDataSetChanged();
         } else {
+            messagepool.add(0, data);
             getHandler().post(new Runnable() {
                 @Override
                 public void run() {
+
                     color_recycler.smoothScrollToPosition(0);
                     color_recycler.scrollToPosition(0);
                 }
@@ -345,16 +404,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void readSuccess(ReadOtherInfoBean data) {
-        Glide.with(this)
-                .asBitmap()
-                .thumbnail(0.6f)
-                .load(data.getAvatar())
-
-                .into(iv_header);
-        LogUtils.debugInfo("测试朋友的头像是" + data.getAvatar());
-        LogUtils.debugInfo("测试view" + (iv_header == null));
         tv_nickname.setText(data.getName());
-        tv_remark.setText(data.getRemark());
     }
 
     @Override
@@ -363,6 +413,12 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
         finish();
 
     }
+
+    @Override
+    public void uploadSuccess(String data) {
+        mPresenter.sendMsg(data, 1, senderUid);
+    }
+
 
     public boolean isSlideToBottom(RecyclerView recyclerView) {
         if (recyclerView == null) return false;
