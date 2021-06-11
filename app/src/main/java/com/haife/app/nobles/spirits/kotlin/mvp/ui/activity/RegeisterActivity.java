@@ -29,6 +29,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.presenter.RegeisterPresenter;
 
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
+import com.kongzue.dialog.v2.TipDialog;
 
 
 import butterknife.BindView;
@@ -163,7 +164,9 @@ public class RegeisterActivity extends BaseActivity<RegeisterPresenter> implemen
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override

@@ -23,8 +23,7 @@
             android:textSize="10sp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:background="#ff888888"
+            android:textColor="#656565"
             />
 
         <ImageView
@@ -88,8 +87,7 @@
             android:textSize="10sp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:background="#ff888888"
+            android:textColor="#656565"
              />
         <ImageView
             android:id="@+id/me_header"

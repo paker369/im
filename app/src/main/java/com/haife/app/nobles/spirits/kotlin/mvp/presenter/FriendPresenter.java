@@ -102,7 +102,7 @@ public class FriendPresenter extends BasePresenter<FriendContract.Model, FriendC
                 });
     }
 
-    public void deleteFriend(long id) {
+    public void deleteFriend(long id,int position) {
         R_deleteFriendBean userInfoBean = new R_deleteFriendBean(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID),id);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.deleteFriend(body)
@@ -112,7 +112,7 @@ public class FriendPresenter extends BasePresenter<FriendContract.Model, FriendC
                     public void onNext(BaseResponse aboutBeanBaseResponse) {
                         if (aboutBeanBaseResponse.isSuccess()) {
 
-                            mRootView.deleteFriendSuccess();
+                            mRootView.deleteFriendSuccess(position);
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

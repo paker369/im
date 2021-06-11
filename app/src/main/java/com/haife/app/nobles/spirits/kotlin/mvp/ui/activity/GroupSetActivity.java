@@ -30,6 +30,7 @@ import com.jess.arms.utils.ArmsUtils;
 import com.kongzue.dialog.v2.DialogSettings;
 import com.kongzue.dialog.v2.MessageDialog;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -276,7 +277,9 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override

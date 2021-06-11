@@ -62,7 +62,6 @@ public class KeyBoardListener {
             int usableHeightSansKeyboard = mChildOfContent.getRootView()
                     .getHeight();
             int heightDifference = usableHeightSansKeyboard - usableHeightNow;
-            SPUtils.getInstance().put(SPConstant.KEYBOARD,heightDifference);
             if (heightDifference > (usableHeightSansKeyboard / 4)) {
 // keyboard probably just became visible
                 frameLayoutParams.height = usableHeightSansKeyboard

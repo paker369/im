@@ -54,6 +54,7 @@ import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -229,7 +230,7 @@ return  formatStr;
         @Override
         public void onConnected() {
 //            appendMsgDisplay("onConnected");
-            LogUtils.warnInfo("测试主ws链接上了");
+//            LogUtils.warnInfo("测试主ws链接上了");
             PersonProto.WSBaseReqProto.Builder builder = PersonProto.WSBaseReqProto.newBuilder();
             builder.setUid(SPUtils.getInstance().getLong(SPConstant.UID));
             builder.setSid(SPUtils.getInstance().getString(SPConstant.SID));
@@ -239,8 +240,6 @@ return  formatStr;
             byte[] i = new Gson().toJson(userInfoBean).getBytes();
             WebSocketHandler.getDefault().send(person.toByteArray());
 //            WebSocketHandler.getDefault().send(person.toString());
-            LogUtils.debugInfo("111测试发送是" + person.toByteArray());
-            LogUtils.debugInfo("111测试发送是" + person.toByteString());
         }
 
         @Override
@@ -251,7 +250,7 @@ return  formatStr;
         @Override
         public void onDisconnect() {
 //            appendMsgDisplay("onDisconnect");
-            LogUtils.warnInfo("测试主ws断开了链接");
+//            LogUtils.warnInfo("测试主ws断开了链接");
         }
 
         @Override
@@ -263,7 +262,7 @@ return  formatStr;
         @Override
         public <T> void onMessage(String message, T data) {
 //            WebSocketHandler.getDefault().getSetting().getConnectUrl();
-            LogUtils.debugInfo("111测试主ws收到消息" + message);
+//            LogUtils.debugInfo("111测试主ws收到消息" + message);
 //            WebsocketBean webSocketResultBean = null;
             if(message.equals("123")){
                 return;
@@ -310,13 +309,10 @@ return  formatStr;
 //
                 if(type==1){
                     //私聊消息
-                    LogUtils.debugInfo("111测试主ws收到消息接收shijian" + wsBaseResProto.getCreateTime());
-
                     EventBus.getDefault().post(new MessageBean(0,0,senderid,msgType,
                           content,""
                            ),SPConstant.RECEIVEWSSINGLECHATE);
                 }else {
-                    LogUtils.debugInfo("222测试主ws收到消息接收shijian" + wsBaseResProto.getCreateTime());
                     //群聊消息
                     EventBus.getDefault().post(new GroupMsgBean(receiveid,senderid,msgType,content,"",new UserBean(name,avatar)),SPConstant.RECEIVEWSGROUPCHATE);
                 }
@@ -394,7 +390,9 @@ return  formatStr;
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override

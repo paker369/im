@@ -100,4 +100,38 @@ public class GroupPresenter extends BasePresenter<GroupContract.Model, GroupCont
                     }
                 });
     }
+    public void deleteGroup(long groupid,int position) {
+
+        mModel.deleteGroup(groupid)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.deleteGroupSuccess(position);
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
+    public void deleteMyGroup(long groupid,int position) {
+
+        mModel.deleteMyGroup(groupid)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.deleteMyGroupSuccess(position);
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
 }

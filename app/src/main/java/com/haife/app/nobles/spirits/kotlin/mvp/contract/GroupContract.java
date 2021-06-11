@@ -29,15 +29,19 @@ public interface GroupContract {
     interface View extends IView {
         void myGroupListSuccess(List<MyGroup> data);
 
-        void deleteGroupSuccess();
+
 
         void createGroupSuccess(MyGroup.GroupBean data);
+
+        void deleteGroupSuccess(int position);
+        void deleteMyGroupSuccess(int position);
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
     interface Model extends IModel {
         Observable<BaseResponse<List<MyGroup>>> myGroupList ( int page,  int limit);
 
+        Observable<BaseResponse> deleteMyGroup (long groupid);
         Observable<BaseResponse> deleteGroup (long groupid);
 
         Observable<BaseResponse<MyGroup.GroupBean>> createGroup (RequestBody body);

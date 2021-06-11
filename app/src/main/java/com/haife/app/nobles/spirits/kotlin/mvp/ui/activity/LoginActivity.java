@@ -23,7 +23,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
-import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerLoginComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.LoginContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
@@ -34,8 +33,9 @@ import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
-
-import org.geeklub.smartkeyboardmanager.SmartKeyboardManager;
+import com.kongzue.dialog.v2.TipDialog;
+import com.yescpu.keyboardchangelib.KeyboardChangeListener;
+import com.zhy.autolayout.attr.MaxHeightAttr;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -55,13 +55,13 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * <a href="https://github.com/JessYanCoding/MVPArmsTemplate">模版请保持更新</a>
  * ================================================
  */
-public class LoginActivity extends BaseActivity<LoginPresenter> implements LoginContract.View {
+public class LoginActivity extends BaseActivity<LoginPresenter> implements LoginContract.View  , KeyboardChangeListener.KeyboardListener{
     @BindView(R.id.status_bar_view)
     View status_bar_view;
     @BindView(R.id.edt_id)
     EditText edt_acc;
     @BindView(R.id.edt_remark)
-    TextView edt_pwd;
+    EditText edt_pwd;
     @BindView(R.id.tv_login)
     TextView tv_login;
     @BindView(R.id.tv_register)
@@ -78,7 +78,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     private Drawable drawablebuttonno;
     private boolean login=true;
     private long mPressedTime;
-
+    private KeyboardChangeListener mKeyboardChangeListener;
+    //最长名字限制
+    private int MAXNAME=10;
 
 
     @Override
@@ -104,8 +106,14 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 //        KeyBoardListener.getInstance(this).init();
         drawablebutton = getResources().getDrawable(R.drawable.shape_login_button);
         drawablebuttonno = getResources().getDrawable(R.drawable.shape_nologin_button);
+        if(SPUtils.getInstance().getLong(SPConstant.REMEBERID,0)!=0){
+            edt_acc.setText(SPUtils.getInstance().getLong(SPConstant.REMEBERID)+"");
+        }else {
+            edt_acc.setHint("请输入uid");
+        }
         initEditview();
-
+        mKeyboardChangeListener = KeyboardChangeListener.create(this);
+        mKeyboardChangeListener.setKeyboardListener(this);
 
     }
 
@@ -178,7 +186,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
              login=true;
                 tv_login.setBackground(getResources().getDrawable(R.drawable.home_radio_bg_left));
                 tv_register.setBackground(null);
-                edt_acc.setHint("请输入uid");
+                if(SPUtils.getInstance().getLong(SPConstant.REMEBERID,0)!=0){
+                    edt_acc.setText(SPUtils.getInstance().getLong(SPConstant.REMEBERID)+"");
+                }else {
+                    edt_acc.setHint("请输入uid");
+                }
                 tv_login.setTextColor(Color.WHITE);
                 tv_register.setTextColor(Color.BLACK);
                 tv_operate.setText("登录");
@@ -188,6 +200,8 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 tv_register.setBackground(getResources().getDrawable(R.drawable.home_radio_bg));
                 tv_login.setBackground(null);
                 edt_acc.setHint("请输入用户名");
+                edt_acc.getText().clear();
+                edt_pwd.getText().clear();
                 tv_login.setTextColor(Color.BLACK);
                 tv_register.setTextColor(Color.WHITE);
                 tv_operate.setText("注册");
@@ -213,6 +227,10 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                         ToastUtils.showShort("用户名不能为空");
                         return;
                     }
+                    if (edt_acc.getText().toString().length()> MAXNAME) {
+                        ToastUtils.showShort("用户名过长");
+                        return;
+                    }
                     if (TextUtils.isEmpty(edt_pwd.getText().toString())) {
                         ToastUtils.showShort("密码不能为空");
                         return;
@@ -236,7 +254,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -252,11 +272,10 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
     @Override
     public void loginbyPwdSuccess(LoginBean data) {
-        LogUtils.debugInfo("测试uid"+data.getUid());
         SPUtils.getInstance().put(SPConstant.UID,data.getUid());
         SPUtils.getInstance().put(SPConstant.SID,data.getSid());
 
-
+        SPUtils.getInstance().put(SPConstant.REMEBERID,data.getUid());
         launchActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
 
@@ -264,6 +283,15 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     public void registerUserSuccess(LoginBean data) {
         SPUtils.getInstance().put(SPConstant.UID,data.getUid());
         SPUtils.getInstance().put(SPConstant.SID,data.getSid());
+        SPUtils.getInstance().put(SPConstant.REMEBERID,data.getUid());
         launchActivity(new Intent(LoginActivity.this,MainActivity.class));
+    }
+
+    @Override
+    public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+        if(isShow){
+            SPUtils.getInstance().put(SPConstant.KEYBOARD,keyboardHeight);
+        }
+
     }
 }

@@ -46,6 +46,7 @@ import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 import com.kongzue.dialog.v2.DialogSettings;
 import com.kongzue.dialog.v2.MessageDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -53,6 +54,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.yescpu.keyboardchangelib.KeyboardChangeListener;
 
 import org.simple.eventbus.Subscriber;
 
@@ -82,7 +84,10 @@ import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
  * <a href="https://github.com/JessYanCoding/MVPArmsTemplate">模版请保持更新</a>
  * ================================================
  */
-public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implements GroupChatContract.View, ChatInputLayout.OnInputLayoutListener, OnRefreshListener {
+public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implements GroupChatContract.View,
+        ChatInputLayout.OnInputLayoutListener,
+        OnRefreshListener  ,
+        KeyboardChangeListener.KeyboardListener{
     @BindView(R.id.ll_root)
     LinearLayout ll_root;
     @BindView(R.id.rll)
@@ -128,6 +133,8 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     List<GroupMemberBean> memberList;
     private Dialog dia;
    boolean ismine;
+    private KeyboardChangeListener mKeyboardChangeListener;
+
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
         DaggerGroupChatComponent //如找不到该类,请编译一下项目
@@ -152,7 +159,8 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         remark = getIntent().getStringExtra("remark");
         groupid = getIntent().getLongExtra("groupid", 0);
         ismine = getIntent().getBooleanExtra("ismine", false);
-        LogUtils.debugInfo("测试这是我的群吗"+ismine);
+        mKeyboardChangeListener = KeyboardChangeListener.create(this);
+        mKeyboardChangeListener.setKeyboardListener(this);
 //        if(ismine){
 //            iv_setting.setVisibility(View.VISIBLE);
 //        }
@@ -202,7 +210,6 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 //                Log.i(TAG, "--------------------------------------");
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-                Log.i(TAG, "测试firstCompletelyVisibleItemPosition: "+firstCompletelyVisibleItemPosition);
                 if (firstCompletelyVisibleItemPosition <= 3) {
                     //                    Log.i(TAG, "滑动到di部");
                     //recycleview滚动时不能通知刷新
@@ -264,7 +271,9 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -493,7 +502,6 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     @Override
     public void groupMemberListSuccess(List<GroupMemberBean> data) {
-        LogUtils.debugInfo("测试拿到成员名单" + data.size());
         memberList = data;
     }
 
@@ -503,16 +511,16 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         finish();
     }
 
-    @Override
-    public void deleteMyGroupSuccess() {
-        ToastUtils.showShort("已解散群组");
-        finish();
-    }
-    @Override
-    public void deleteGroupSuccess() {
-        ToastUtils.showShort("已退出群组");
-        finish();
-    }
+//    @Override
+//    public void deleteMyGroupSuccess() {
+//        ToastUtils.showShort("已解散群组");
+//        finish();
+//    }
+//    @Override
+//    public void deleteGroupSuccess() {
+//        ToastUtils.showShort("已退出群组");
+//        finish();
+//    }
 
     @Override
     public void uploadSuccess(String data) {
@@ -582,8 +590,6 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     @Subscriber(tag = SPConstant.RECEIVEWSGROUPCHATE)
     public void receivemsg(GroupMsgBean data) {
-
-        LogUtils.debugInfo("测试收到群组消息");
         if (data.getGroupId() == groupid) {
             messengecount++;
             if (!isSlideToBottom(color_recycler)) {
@@ -615,5 +621,14 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
             }
         }
+    }
+
+    @Override
+    public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+        if(isShow){
+            SPUtils.getInstance().put(SPConstant.KEYBOARD,keyboardHeight);
+
+        }
+
     }
 }

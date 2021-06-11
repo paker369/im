@@ -27,7 +27,7 @@
         <!-- 配置app自己的theme -->
         <item name="app_primary_color">?attr/qmui_config_color_blue</item>
         <item name="app_content_bg_color">@color/qmui_config_color_white</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/black</item>
 
     </style>
     <!-- Base application theme. -->

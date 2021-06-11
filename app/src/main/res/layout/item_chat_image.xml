@@ -51,17 +51,16 @@
             android:textSize="10sp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:background="#ff888888"
+            android:textColor="#656565"
             />
         <ImageView
             android:id="@+id/other_img"
-            android:layout_width="134dp"
+            android:layout_width="wrap_content"
             android:layout_height="95dp"
-            android:layout_below="@id/other_header"
+            android:layout_below="@id/other_ll"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_alignParentLeft="true"
+           android:layout_toRightOf="@+id/other_header"
            />
     </RelativeLayout>
 
@@ -89,8 +88,7 @@
             android:textSize="10sp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:background="#ff888888"
+            android:textColor="#656565"
             />
         <LinearLayout
             android:layout_below="@+id/me_time"
@@ -117,12 +115,12 @@
 
         <ImageView
             android:id="@+id/me_img"
-            android:layout_width="134dp"
+            android:layout_width="wrap_content"
             android:layout_height="95dp"
-            android:layout_below="@id/me_header"
+            android:layout_below="@id/me_ll"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            android:layout_alignParentRight="true"
+      android:layout_toLeftOf="@+id/me_header"
            />
     </RelativeLayout>
 </RelativeLayout>

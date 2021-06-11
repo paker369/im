@@ -62,7 +62,6 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
     }
 
     public void loginInfo() {
-        LogUtils.debugInfo("111测试uid"+SPUtils.getInstance().getLong(SPConstant.UID));
         mModel.loginInfo(SPUtils.getInstance().getLong(SPConstant.UID),SPUtils.getInstance().getString(SPConstant.SID))
                 .compose(RxUtils.applySchedulers(mRootView))
                 .subscribe(new ErrorHandleSubscriber<BaseResponse<LoginInfoBean>>(mErrorHandler) {

@@ -40,6 +40,7 @@ public class SPConstant {
     public static final String LOGOUT ="LOGOUT" ;
     public static final String CLICKMORE ="CLICKMORE" ;
     public static final String OPENSLIDE = "OPENSLIDE";
+    public static final String REMEBERID ="REMEBERID" ;
 //    public   static String MYSID= SPUtils.getInstance().getString(SID,"");
 //    public   static long MYUID=SPUtils.getInstance().getLong(UID);
 }

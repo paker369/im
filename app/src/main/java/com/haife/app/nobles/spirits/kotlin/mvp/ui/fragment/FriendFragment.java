@@ -1,6 +1,9 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -15,7 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
@@ -26,13 +31,13 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
+import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -42,6 +47,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -86,6 +92,11 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     FriendListAdapter friendListAdapter;
     private View emptyView_noinfo;
     private Dialog dia;
+    private Dialog dia3;
+    private TextView tv_uid;
+    private TextView tv_name;
+    private ImageView iv_header1;
+
 
     public static FriendFragment newInstance() {
         FriendFragment fragment = new FriendFragment();
@@ -158,13 +169,29 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         friendListAdapter.setEmptyView(emptyView_noinfo);
         friendListAdapter.setOnItemClickListener((adapter, view, position) -> {
             FriendBean listBean = friendListAdapter.getData().get(position);
-            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
-            intent.putExtra("senderUid", listBean.getFriendUid());
-            intent.putExtra("avatar", listBean.getUser().getAvatar());
-            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
-            startActivity(intent);
+//            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
+//            intent.putExtra("senderUid", listBean.getFriendUid());
+//            intent.putExtra("avatar", listBean.getUser().getAvatar());
+//            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
+//            startActivity(intent);
+            shwoDialog3(listBean.getUser().getAvatar(), listBean.getUser().getName(), listBean.getUser().getUid());
         });
-
+        friendListAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            FriendBean listBean = friendListAdapter.getData().get(position);
+//            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
+//            intent.putExtra("senderUid", listBean.getFriendUid());
+//            intent.putExtra("avatar", listBean.getUser().getAvatar());
+//            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
+//            startActivity(intent);
+            SelectDialog.show(getActivity(), "提示", "确认删除"+listBean.getUser().getName()+"", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.deleteFriend(listBean.getUser().getUid(),position);
+                }
+            });
+//            shwoDialog3(listBean.getUser().getAvatar(), listBean.getUser().getName(), listBean.getUser().getUid());
+       return true;
+        });
 
     }
 
@@ -196,7 +223,9 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(getActivity(), message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -248,13 +277,9 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         if(data.get(i).getStatus()==0) {
             num++;
         }
-
     }
-
-
-
         if (num > 0) {
-            center_num.setText(data.size()+"");
+            center_num.setText(num + "");
             center_num.setVisibility(View.VISIBLE);
         } else {
             center_num.setVisibility(View.GONE);
@@ -262,10 +287,68 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     }
 
     @Override
-    public void deleteFriendSuccess() {
-        page = 1;
-        mPresenter.friendList(page, limit);
+    public void deleteFriendSuccess(int position) {
+        List<FriendBean> list = friendListAdapter.getData();
+        FriendBean listBean = friendListAdapter.getData().get(position);
+        Iterator<FriendBean> iterator = list.iterator();
+        int  i=0;
+        while (iterator.hasNext()) {
+            FriendBean obj = iterator.next();
+            if (obj == listBean) {
+                iterator.remove();
+                break;
+            }
+        }
+        friendListAdapter.notifyItemRemoved(position);
+        friendListAdapter.notifyItemRangeChanged(0, list.size());
     }
+
+    /**
+     * 弹出添加好友dialog
+     */
+    public void shwoDialog3(String avatar, String name, long uid) {
+        if (dia3 != null) {
+            Glide.with(this)
+                    .asBitmap()
+                    .thumbnail(0.6f)
+                    .load(avatar)
+                    .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                    .into(iv_header1);
+            tv_name.setText(name);
+            tv_uid.setText("UID： " + uid);
+            dia3.show();
+            return;
+        }
+        dia3 = new Dialog(getActivity(), R.style.edit_AlertDialog_style);
+        dia3.setContentView(R.layout.dialog_show_info);
+        tv_uid = dia3.findViewById(R.id.tv_uid);
+        TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
+        tv_name = dia3.findViewById(R.id.tv_name);
+        iv_header1 = dia3.findViewById(R.id.iv_header);
+        tv_cofirm.setText("复制ID");
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(avatar)
+                .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .into(iv_header1);
+        tv_name.setText(name);
+        tv_uid.setText("UID： " + uid);
+        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
+                cmb.setText(uid + "");
+                ToastUtils.showShort("复制成功");
+            }
+        });
+
+
+        dia3.show();
+    }
+
+
 
     @OnClick({R.id.iv_more, R.id.iv_header, R.id.tv_nickname, R.id.iv_person_add, R.id.iv_group_add,R.id.rl_new_friend})
         public void onViewClick(View view) {

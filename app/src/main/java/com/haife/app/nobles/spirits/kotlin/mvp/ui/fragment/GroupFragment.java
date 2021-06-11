@@ -1,6 +1,9 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,11 +23,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupPresenter;
@@ -35,6 +40,8 @@ import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
+import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -44,6 +51,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -112,7 +120,6 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.debugInfo(" 测试group执行了onResume");
         page=1;
     mPresenter.myGroupList(page,limit);
     }
@@ -142,17 +149,93 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
         myGroupListAdapter.setEmptyView(emptyView_noinfo);
         myGroupListAdapter.setOnItemClickListener((adapter, view, position) -> {
             MyGroup listBean = myGroupListAdapter.getData().get(position);
-            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-            intent.putExtra("groupid", listBean.getGroupId());
-            intent.putExtra("avatar", listBean.getGroup().getAvatar());
-            intent.putExtra("name", listBean.getGroup().getName());
-            intent.putExtra("remark", listBean.getGroup().getRemark());
-            intent.putExtra("ismine", (listBean.getGroup().getUid() == SPUtils.getInstance().getLong(SPConstant.UID)));
-            startActivity(intent);
+//            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+//            intent.putExtra("groupid", listBean.getGroupId());
+//            intent.putExtra("avatar", listBean.getGroup().getAvatar());
+//            intent.putExtra("name", listBean.getGroup().getName());
+//            intent.putExtra("remark", listBean.getGroup().getRemark());
+//            intent.putExtra("ismine", (listBean.getGroup().getUid() == SPUtils.getInstance().getLong(SPConstant.UID)));
+//            startActivity(intent);
+            shwoDialog3(listBean.getGroup().getAvatar(), listBean.getGroup().getName(), listBean.getGroupId());
+
+        });
+        myGroupListAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            MyGroup listBean = myGroupListAdapter.getData().get(position);
+//            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
+//            intent.putExtra("senderUid", listBean.getFriendUid());
+//            intent.putExtra("avatar", listBean.getUser().getAvatar());
+//            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
+//            startActivity(intent);
+            if(listBean.getUid()==SPUtils.getInstance().getLong(SPConstant.UID)){
+                SelectDialog.show(getActivity(), "提示", "确认解散该群吗", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.deleteMyGroup(listBean.getGroupId(),position);
+                    }
+                });
+            }else {
+                SelectDialog.show(getActivity(), "提示", "确认退群吗", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.deleteGroup(listBean.getGroupId(),position);
+                    }
+                });
+            }
+
+//            shwoDialog3(listBean.getUser().getAvatar(), listBean.getUser().getName(), listBean.getUser().getUid());
+            return true;
+        });
+
+    }
+    private Dialog dia3;
+    private TextView tv_uid;
+    private TextView tv_name;
+    private ImageView iv_header1;
+    /**
+     * 弹出添加好友dialog
+     */
+    public void shwoDialog3(String avatar, String name, long groupid) {
+        if (dia3 != null) {
+            Glide.with(this)
+                    .asBitmap()
+                    .thumbnail(0.6f)
+                    .load(avatar)
+                    .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                    .into(iv_header1);
+            tv_name.setText(name);
+            tv_uid.setText("群号： " + groupid);
+            dia3.show();
+            return;
+        }
+        dia3 = new Dialog(getActivity(), R.style.edit_AlertDialog_style);
+        dia3.setContentView(R.layout.dialog_show_info);
+        tv_uid = dia3.findViewById(R.id.tv_uid);
+        TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
+        tv_name = dia3.findViewById(R.id.tv_name);
+        iv_header1 = dia3.findViewById(R.id.iv_header);
+        tv_cofirm.setText("复制群号");
+        Glide.with(this)
+                .asBitmap()
+                .thumbnail(0.6f)
+                .load(avatar)
+                .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .into(iv_header1);
+        tv_name.setText(name);
+        tv_uid.setText("群号： " + groupid);
+        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
+                cmb.setText(groupid + "");
+                ToastUtils.showShort("复制成功");
+            }
         });
 
 
+        dia3.show();
     }
+
 
     /**
      * 弹出添加好友dialog
@@ -232,7 +315,9 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(getActivity(), message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -326,10 +411,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 
     }
 
-    @Override
-    public void deleteGroupSuccess() {
-        mPresenter.myGroupList(page,limit);
-    }
+
 
     @Override
     public void createGroupSuccess(MyGroup.GroupBean data) {
@@ -342,5 +424,39 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 //        myGroupListAdapter.notifyItemInserted(0);
         page=1;
         mPresenter.myGroupList(page,limit);
+    }
+
+    @Override
+    public void deleteGroupSuccess(int position) {
+        List<MyGroup> list = myGroupListAdapter.getData();
+        MyGroup listBean = myGroupListAdapter.getData().get(position);
+        Iterator<MyGroup> iterator = list.iterator();
+        int  i=0;
+        while (iterator.hasNext()) {
+            MyGroup obj = iterator.next();
+            if (obj == listBean) {
+                iterator.remove();
+                break;
+            }
+        }
+        myGroupListAdapter.notifyItemRemoved(position);
+        myGroupListAdapter.notifyItemRangeChanged(0, list.size());
+    }
+
+    @Override
+    public void deleteMyGroupSuccess(int position) {
+        List<MyGroup> list = myGroupListAdapter.getData();
+        MyGroup listBean = myGroupListAdapter.getData().get(position);
+        Iterator<MyGroup> iterator = list.iterator();
+        int  i=0;
+        while (iterator.hasNext()) {
+            MyGroup obj = iterator.next();
+            if (obj == listBean) {
+                iterator.remove();
+                break;
+            }
+        }
+        myGroupListAdapter.notifyItemRemoved(position);
+        myGroupListAdapter.notifyItemRangeChanged(0, list.size());
     }
 }

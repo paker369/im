@@ -32,6 +32,7 @@ import com.haife.app.nobles.spirits.kotlin.R;
 import com.kongzue.dialog.v2.DialogSettings;
 import com.kongzue.dialog.v2.MessageDialog;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -132,7 +133,9 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
     /**
      * @date: 2021/1/14 15:48

@@ -16,6 +16,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.contract.MineInfoContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MineInfoPresenter;
 
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.kongzue.dialog.v2.TipDialog;
 
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
@@ -68,7 +69,9 @@ public class MineInfoActivity extends BaseActivity<MineInfoPresenter> implements
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override

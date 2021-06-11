@@ -70,14 +70,7 @@ public class GroupChatModel extends BaseModel implements GroupChatContract.Model
 
     }
 
-    @Override
-    public Observable<BaseResponse> deleteGroup(long groupid) {
-        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteGroup(groupid);
-    }
-    @Override
-    public Observable<BaseResponse> deleteMyGroup(long groupid) {
-        return mRepositoryManager.obtainRetrofitService(AppService.class).deleteMygroup(groupid);
-    }
+
     @Override
     public Observable<BaseResponse<List<GroupMemberBean>>> groupMemberList(long uId, String sId, long groupid) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).groupMemberList(uId, sId, groupid);

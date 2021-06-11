@@ -45,7 +45,6 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
         //图片
         addItemType(2, R.layout.item_chat_image);
         this.avatar=avatar;
-        LogUtils.debugInfo("测试头像是"+avatar);
     }
 
     @Override
@@ -171,7 +170,6 @@ public class ChatMessageAdapter extends BaseMultiItemQuickAdapter<MessageBean, B
 
                             )
                             .into((ImageView) helper.getView(R.id.other_header));
-                    LogUtils.debugInfo("测试这里的图片是"+item.getMsgContent());
                     Glide.with(mContext)
                             .asBitmap()
                             .thumbnail(0.6f)

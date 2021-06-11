@@ -29,6 +29,7 @@ import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.SharedPreferencesUtil;
 import com.haife.app.nobles.spirits.kotlin.app.utils.SystemUtils;
 import com.jess.arms.utils.LogUtils;
+import com.luck.picture.lib.tools.SPUtils;
 
 
 import butterknife.BindView;
@@ -87,8 +88,8 @@ public class ChatInputLayout extends RelativeLayout {
     public void bindInputLayout(Activity activity, View contentView) {
         mActivity = activity;
         mContentView = contentView;
-        int keyboardHeight = SharedPreferencesUtil.getIntSharedPreferences(activity, SPConstant.KEYBOARD
-                , SPConstant.KEYBOARD);
+        int keyboardHeight = SPUtils.getInstance().getInt( SPConstant.KEYBOARD
+                , 0);
         if (keyboardHeight == 0) {
             keyboardHeight = 618;
         }
@@ -238,7 +239,6 @@ public class ChatInputLayout extends RelativeLayout {
 
     @OnClick(R.id.tv_btn_send)
     public void sendTextMessage() {
-        LogUtils.debugInfo("测试点击了发送");
         String text = mEtInput.getText().toString();
         mEtInput.getText().clear();
         if (mLayoutListener != null) {

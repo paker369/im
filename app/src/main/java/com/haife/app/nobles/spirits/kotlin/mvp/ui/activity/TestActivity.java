@@ -19,6 +19,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.contract.TestContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.TestPresenter;
 
 import com.haife.app.nobles.spirits.kotlin.R;
+import com.kongzue.dialog.v2.TipDialog;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.webview.QMUIWebView;
 
@@ -97,7 +98,9 @@ public class TestActivity extends BaseActivity<TestPresenter> implements TestCon
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override

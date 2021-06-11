@@ -37,6 +37,7 @@ import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
+import com.kongzue.dialog.v2.TipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -160,14 +161,12 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
 
             FriendBean listBean = friendListAdapter.getData().get(position);
             listBean.setUnMsgCount(0);
-            myGroupListAdapter.notifyItemChanged(position);
+            friendListAdapter.notifyItemChanged(position);
             mPresenter.clearfriendMsg(listBean.getFriendUid());
             Intent intent = new Intent(getActivity(), FriendChatActivity.class);
             intent.putExtra("senderUid", listBean.getFriendUid());
             intent.putExtra("avatar", listBean.getUser().getAvatar());
             startActivity(intent);
-            listBean.setUnMsgCount(0);
-
         });
 
     }
@@ -210,7 +209,9 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(getActivity(), message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -290,11 +291,8 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     @Subscriber(tag = SPConstant.RECEIVEWSSINGLECHATE)
     public void wsreceivemsg(MessageBean data) {
    long id=data.getSenderUid();
-        LogUtils.debugInfo("测试消息frag收到消息接收" + id);
-
         for(int    i=0;    i<friendListAdapter.getData().size();    i++)    {
             if(friendListAdapter.getData().get(i).getFriendUid()==id) {
-                LogUtils.debugInfo("测试消息frag执行了" + id);
                 friendListAdapter.getData().get(i).setLastMsgContent(data.getMsgContent());
                 friendListAdapter.getData().get(i).setUnMsgCount(1);
                 friendListAdapter.notifyItemChanged(i);
@@ -320,11 +318,10 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
 
     @Override
     public void cleargroupMsgSuccess() {
-LogUtils.debugInfo("测试删除群组未读成功");
     }
 
     @Override
     public void clearfriendMsgSuccess() {
-        LogUtils.debugInfo("测试删除私聊未读成功");
+
     }
 }

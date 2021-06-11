@@ -35,6 +35,7 @@ import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 import com.kongzue.dialog.v2.SelectDialog;
+import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -42,8 +43,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.yescpu.keyboardchangelib.KeyboardChangeListener;
 
-import org.geeklub.smartkeyboardmanager.SmartKeyboardManager;
+
 import org.simple.eventbus.Subscriber;
 
 import java.io.File;
@@ -71,7 +73,10 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * <a href="https://github.com/JessYanCoding/MVPArmsTemplate">模版请保持更新</a>
  * ================================================
  */
-public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implements FriendChatContract.View, ChatInputLayout.OnInputLayoutListener, OnRefreshListener {
+public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implements FriendChatContract.View
+        , ChatInputLayout.OnInputLayoutListener
+        , OnRefreshListener
+        , KeyboardChangeListener.KeyboardListener{
 
     @BindView(R.id.ll_root)
     LinearLayout ll_root;
@@ -107,8 +112,8 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     private int messengecount;
     private List<MessageBean> listBeans = new ArrayList<>();
     private String avatar = "";
-    private SmartKeyboardManager mSmartKeyboardManager;
-    ;
+    private KeyboardChangeListener mKeyboardChangeListener;
+
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -149,6 +154,8 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 //                    }})
 //                .create();
         initRecycler();
+        mKeyboardChangeListener = KeyboardChangeListener.create(this);
+        mKeyboardChangeListener.setKeyboardListener(this);
         input_layout.setLayoutListener(this);
         input_layout.bindInputLayout(this, rll);
         mPresenter.friendList(page, limit, senderUid);
@@ -188,7 +195,6 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                 });
                 break;
             case R.id.iv_back:
-                LogUtils.debugInfo("测试点击了退出");
                 finish();
                 break;
 
@@ -306,7 +312,9 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     @Override
     public void showMessage(@NonNull String message) {
         checkNotNull(message);
-        ArmsUtils.snackbarText(message);
+        TipDialog.show(this, message, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR);
+
+//        ArmsUtils.snackbarText(message);
     }
 
     @Override
@@ -334,7 +342,6 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     public void photoBtnClick() {
         //相册回调
         // 进入相册 以下是例子：不需要的api可以不写
-        LogUtils.debugInfo("测试点击了照片");
         PhotoSelectSingleUtile.selectPhoto(this, mSelectList, 1);
 
     }
@@ -461,4 +468,10 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     }
 
 
+    @Override
+    public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+        if(isShow){
+            SPUtils.getInstance().put(SPConstant.KEYBOARD,keyboardHeight);
+        }
+    }
 }

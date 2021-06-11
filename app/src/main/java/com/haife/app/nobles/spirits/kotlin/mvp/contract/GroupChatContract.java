@@ -33,8 +33,7 @@ public interface GroupChatContract {
 
         void sendGroupMsgSuccess(int type,String content);
 
-        void deleteGroupSuccess();
-        void deleteMyGroupSuccess();
+
 
         void groupMemberListSuccess(List<GroupMemberBean> data);
 
@@ -60,8 +59,7 @@ public interface GroupChatContract {
 
         Observable<BaseResponse> groupUpdate ( RequestBody body);
 
-        Observable<BaseResponse> deleteMyGroup (long groupid);
-        Observable<BaseResponse> deleteGroup (long groupid);
+
 
 
         Observable<BaseResponse<String>> upload (List<MultipartBody.Part> parts);

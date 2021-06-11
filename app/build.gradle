@@ -13,6 +13,7 @@ kapt {
 }
 android {
     compileSdkVersion 28
+
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -34,7 +35,8 @@ android {
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode rootProject.ext.android["versionCode"]
         versionName rootProject.ext.android["versionName"]
-
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         debug {
@@ -81,6 +83,14 @@ protobuf {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    //lib
+    implementation project(path: ':websocketlib')
+    implementation project(path: ':emojilibrary')
+    implementation project(":keyboardchangelib")
+    implementation project(path: ':picture_library')
+
+
     //support
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'me.jessyan:arms:2.4.1'
@@ -136,8 +146,6 @@ dependencies {
     //工具类
     implementation 'com.abrahamcaijin.commonutil:CommonUtil:1.0.3'
 
-    //websocket
-    implementation project(path: ':websocketlib')
 
     //沉浸式状态栏
     // 基础依赖包，必须要依赖
@@ -149,12 +157,11 @@ dependencies {
 //对话框
     implementation 'com.kongzue.dialog:dialog:2.5.2'
 
-    implementation project(path: ':emojilibrary')
 
     implementation 'com.github.pinguo-zhouwei:CustomPopwindow:2.1.1'
     implementation 'com.google.protobuf:protobuf-lite:3.0.1'
 
-    implementation project(":smartkeyboardmanager")
+
     implementation 'com.github.chaychan:BottomBarLayout:2.0.2'
-    implementation project(path: ':picture_library')
+
 }
