@@ -399,7 +399,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     @Override
     public void myGroupListSuccess(List<MyGroup> data) {
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
-        tv_empty.setText("暂无数据");
+        tv_empty.setText("暂无加入群组，赶紧去加群吧~");
         myGroupListAdapter.setEmptyView(emptyView_noinfo);
         if(page==1){
             myGroupListAdapter.setNewData(data);

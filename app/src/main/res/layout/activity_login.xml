@@ -70,8 +70,8 @@ android:id="@+id/container"
             android:id="@+id/edt_id"
             android:layout_width="match_parent"
             android:layout_height="34dp"
-            android:layout_marginLeft="@dimen/dp_15"
-            android:layout_marginRight="@dimen/dp_15"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:layout_marginBottom="@dimen/dp_20"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -85,8 +85,8 @@ android:id="@+id/container"
             android:id="@+id/edt_remark"
             android:layout_width="match_parent"
             android:layout_height="34dp"
-            android:layout_marginLeft="@dimen/dp_15"
-            android:layout_marginRight="@dimen/dp_15"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:layout_marginBottom="@dimen/dp_20"
             android:background="@drawable/rounded_edittext"
             android:focusable="true"
@@ -98,7 +98,39 @@ android:id="@+id/container"
             android:textCursorDrawable="@drawable/my_cursor"
             android:textSize="@dimen/sp_10" />
 
+<LinearLayout
+    android:id="@+id/ll_invitecode"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
+
+    <EditText
+
+        android:id="@+id/edt_invitecode"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="34dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:background="@drawable/rounded_edittext"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:inputType="textPassword"
+        android:hint="请输入邀请码"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:textCursorDrawable="@drawable/my_cursor"
+        android:textSize="@dimen/sp_10" />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="邀请码"
+        android:textColor="#44ACFF"/>
+</LinearLayout>
 
                 <TextView
                     android:paddingRight="@dimen/dp_40"

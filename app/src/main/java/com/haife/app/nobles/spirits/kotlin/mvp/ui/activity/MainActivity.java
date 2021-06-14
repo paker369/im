@@ -26,6 +26,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.chaychan.library.BottomBarItem;
 import com.chaychan.library.BottomBarLayout;
 import com.example.songzeceng.studyofretrofit.item.PersonProto;
 import com.google.gson.Gson;
@@ -376,7 +377,7 @@ return  formatStr;
         nvpLayout.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         nvpLayout.setOffscreenPageLimit(2);
 
-        bbl.setViewPager(nvpLayout  );
+        bbl.setViewPager(nvpLayout);
 
         nvpLayout.setCurrentItem(0, false);
 

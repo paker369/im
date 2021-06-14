@@ -98,6 +98,7 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     private ImageView iv_header1;
 
 
+
     public static FriendFragment newInstance() {
         FriendFragment fragment = new FriendFragment();
         return fragment;
@@ -255,7 +256,7 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
     @Override
     public void friendListSuccess(List<FriendBean> data) {
         TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
-        tv_empty.setText("暂无数据");
+        tv_empty.setText("暂无好友，赶紧去添加好友吧~");
         friendListAdapter.setEmptyView(emptyView_noinfo);
 
         if (page == 1) {

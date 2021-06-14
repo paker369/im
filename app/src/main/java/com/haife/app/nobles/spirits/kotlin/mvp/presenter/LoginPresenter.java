@@ -81,8 +81,8 @@ public class LoginPresenter extends BasePresenter<LoginContract.Model, LoginCont
                 });
     }
 
-    public void registerUser(String name,String pwd) {
-        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd);
+    public void registerUser(String name, String pwd, String code) {
+        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd, code);
         RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
         mModel.registerUser(body)
                 .compose(RxUtils.applySchedulers(mRootView))

@@ -60,22 +60,22 @@ public class RegeisterPresenter extends BasePresenter<RegeisterContract.Model, R
         this.mImageLoader = null;
         this.mApplication = null;
     }
-    public void registerUser(String name,String pwd) {
-        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd);
-        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
-        mModel.registerUser(body)
-                .compose(RxUtils.applySchedulers(mRootView))
-                .subscribe(new ErrorHandleSubscriber<BaseResponse<LoginBean>>(mErrorHandler) {
-                    @Override
-                    public void onNext(BaseResponse<LoginBean> aboutBeanBaseResponse) {
-                        if (aboutBeanBaseResponse.isSuccess()) {
-
-                            mRootView.registerUserSuccess(aboutBeanBaseResponse.getData());
-                        } else {
-
-                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
-                        }
-                    }
-                });
-    }
+//    public void registerUser(String name,String pwd) {
+//        R_regeisterBean userInfoBean = new R_regeisterBean(name, pwd);
+//        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+//        mModel.registerUser(body)
+//                .compose(RxUtils.applySchedulers(mRootView))
+//                .subscribe(new ErrorHandleSubscriber<BaseResponse<LoginBean>>(mErrorHandler) {
+//                    @Override
+//                    public void onNext(BaseResponse<LoginBean> aboutBeanBaseResponse) {
+//                        if (aboutBeanBaseResponse.isSuccess()) {
+//
+//                            mRootView.registerUserSuccess(aboutBeanBaseResponse.getData());
+//                        } else {
+//
+//                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+//                        }
+//                    }
+//                });
+//    }
 }

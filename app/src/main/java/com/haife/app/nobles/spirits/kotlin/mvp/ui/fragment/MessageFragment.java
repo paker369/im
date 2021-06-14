@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -80,9 +81,15 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     TextView tv_nickname;
     @BindView(R.id.iv_more)
     ImageView iv_more;
+    @BindView(R.id.rl_empty)
+    RelativeLayout rl_empty;
+
+
     int page = 1;
     int limit = 20;
+    boolean tag1=false;
 
+    boolean tag2=false;
 
     MyGroupListAdapter myGroupListAdapter;
     FriendListAdapter friendListAdapter;
@@ -279,12 +286,31 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     }
     @Subscriber(tag = SPConstant.FRIENDMESSAGE)
     public void receivefriendmsg(List<FriendBean> data) {
-        friendListAdapter.setNewData(data);
+        if(data!=null&&data.size()>0){
+            tag1=false;
+            friendListAdapter.setNewData(data);
+        }else {
+           tag1=true;
+           if(tag1&&tag2){
+               rl_empty.setVisibility(View.VISIBLE);
+           }
+        }
+
+
     }
 
     @Subscriber(tag = SPConstant.GROUPMESSAGE)
     public void receivegroupmsg(List<MyGroup> data) {
-        myGroupListAdapter.setNewData(data);
+
+        if(data!=null&&data.size()>0){
+            tag2=false;
+            myGroupListAdapter.setNewData(data);
+        }else {
+            tag2=true;
+            if(tag1&&tag2){
+                rl_empty.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 

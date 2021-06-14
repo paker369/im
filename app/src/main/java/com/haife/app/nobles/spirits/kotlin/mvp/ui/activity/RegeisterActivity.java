@@ -150,7 +150,7 @@ public class RegeisterActivity extends BaseActivity<RegeisterPresenter> implemen
                     ToastUtils.showShort("密码不能为空");
                     return;
                 }
-                mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString());
+//                mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString());
                 break;
 
 

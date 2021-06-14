@@ -62,6 +62,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     EditText edt_acc;
     @BindView(R.id.edt_remark)
     EditText edt_pwd;
+    @BindView(R.id.edt_invitecode)
+    EditText edt_invitecode;
+    @BindView(R.id.ll_invitecode)
+    LinearLayout ll_invitecode;
+
     @BindView(R.id.tv_login)
     TextView tv_login;
     @BindView(R.id.tv_register)
@@ -184,6 +189,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         switch (view.getId()) {
             case R.id.tv_login:
              login=true;
+                ll_invitecode.setVisibility(View.GONE);
                 tv_login.setBackground(getResources().getDrawable(R.drawable.home_radio_bg_left));
                 tv_register.setBackground(null);
                 if(SPUtils.getInstance().getLong(SPConstant.REMEBERID,0)!=0){
@@ -197,6 +203,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 break;
             case R.id.tv_register:
                login=false;
+                ll_invitecode.setVisibility(View.VISIBLE);
                 tv_register.setBackground(getResources().getDrawable(R.drawable.home_radio_bg));
                 tv_login.setBackground(null);
                 edt_acc.setHint("请输入用户名");
@@ -235,7 +242,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                         ToastUtils.showShort("密码不能为空");
                         return;
                     }
-                    mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString());
+                    if (TextUtils.isEmpty(edt_invitecode.getText().toString())) {
+                        ToastUtils.showShort("用户名不能为空");
+                        return;
+                    }
+                    mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString(),edt_invitecode.getText().toString());
                 }
 
 
