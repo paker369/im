@@ -149,12 +149,13 @@
                 android:layout_weight="1"
                 android:text="签名: " />
 
-            <TextView
+            <EditText
                 android:id="@+id/tv_remark"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"
                android:paddingRight="@dimen/dp_10"
+                android:enabled="false"
                 android:gravity="center"
                 android:text="" />
 

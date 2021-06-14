@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.groupNameTextView)
     TextView groupNameTextView;
     @BindView(R.id.tv_remark)
-    TextView tv_remark;
+    EditText tv_remark;
     @BindView(R.id.actionButton)
     TextView actionButton;
     @BindView(R.id.status_bar_view)

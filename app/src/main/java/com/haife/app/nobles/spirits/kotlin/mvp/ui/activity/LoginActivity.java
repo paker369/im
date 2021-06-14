@@ -243,7 +243,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                         return;
                     }
                     if (TextUtils.isEmpty(edt_invitecode.getText().toString())) {
-                        ToastUtils.showShort("用户名不能为空");
+                        ToastUtils.showShort("邀请码不能为空");
                         return;
                     }
                     mPresenter.registerUser(edt_acc.getText().toString(), edt_pwd.getText().toString(),edt_invitecode.getText().toString());

@@ -1,0 +1,113 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp_300"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dp_30"
+    android:paddingBottom="@dimen/dp_30"
+    android:paddingLeft="@dimen/dp_20"
+    android:paddingRight="@dimen/dp_20"
+    android:background="@drawable/shape_dialog_background"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:orientation="horizontal">
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
+            android:id="@+id/iv_header"
+            android:layout_width="@dimen/dp_30"
+            android:src="@mipmap/mandefult"
+            android:layout_gravity="center"
+            android:layout_height="@dimen/dp_30"/>
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+            android:textColor="#000000"
+            android:id="@+id/tv_name"
+            android:text="黑猪"
+            android:gravity="center"
+            android:textSize="@dimen/dp_20"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_width="wrap_content"
+
+            android:layout_height="match_parent"/>
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/edt_id"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:background="@drawable/shape_nologin_button"
+            android:paddingLeft="5dp"
+            android:textCursorDrawable="@drawable/my_cursor"
+            android:textSize="@dimen/sp_20" />
+
+        <ImageView
+            android:id="@+id/iv_change"
+            android:layout_width="@dimen/dp_20"
+            android:src="@mipmap/edit"
+            android:layout_gravity="center"
+            android:layout_height="@dimen/dp_20"/>
+
+
+    </LinearLayout>
+    <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:id="@+id/tv_uid"
+        android:text="我的UID：1111111"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:textSize="@dimen/dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:paddingRight="@dimen/dp_15"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingBottom="@dimen/dp_10"
+            android:paddingTop="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:id="@+id/tv_copy"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:text="复制id"
+            android:textSize="@dimen/dp_10"
+            android:textColor="@color/white"
+            android:background="@drawable/shape_login_button"/>
+        <TextView
+            android:paddingRight="@dimen/dp_15"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingBottom="@dimen/dp_10"
+            android:paddingTop="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:id="@+id/tv_send"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:text="发送消息"
+            android:textSize="@dimen/dp_10"
+            android:textColor="@color/white"
+            android:background="@drawable/shape_login_button"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

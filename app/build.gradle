@@ -163,5 +163,7 @@ dependencies {
 
 
     implementation 'com.github.chaychan:BottomBarLayout:2.0.2'
+    implementation project(path:':image-viewer')
+//    implementation 'indi.liyi.view:image-viewer:3.0.1'
 
 }

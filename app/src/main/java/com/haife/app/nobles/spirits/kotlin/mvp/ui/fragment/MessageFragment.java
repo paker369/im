@@ -288,6 +288,7 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     public void receivefriendmsg(List<FriendBean> data) {
         if(data!=null&&data.size()>0){
             tag1=false;
+            rl_empty.setVisibility(View.GONE);
             friendListAdapter.setNewData(data);
         }else {
            tag1=true;
@@ -304,6 +305,7 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
 
         if(data!=null&&data.size()>0){
             tag2=false;
+            rl_empty.setVisibility(View.GONE);
             myGroupListAdapter.setNewData(data);
         }else {
             tag2=true;
@@ -319,6 +321,7 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
    long id=data.getSenderUid();
         for(int    i=0;    i<friendListAdapter.getData().size();    i++)    {
             if(friendListAdapter.getData().get(i).getFriendUid()==id) {
+                rl_empty.setVisibility(View.GONE);
                 friendListAdapter.getData().get(i).setLastMsgContent(data.getMsgContent());
                 friendListAdapter.getData().get(i).setUnMsgCount(1);
                 friendListAdapter.notifyItemChanged(i);

@@ -25,9 +25,7 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-
 import java.lang.reflect.Field;
-
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
 import me.yokeyword.fragmentation.Fragmentation;
@@ -89,7 +87,6 @@ public class AppLifecyclesImpl implements AppLifecycles {
 
     @Override
     public void onCreate(Application application) {
-
         initTimber();
 //        initTextFaceType(application);
         initLeakCanary(application);

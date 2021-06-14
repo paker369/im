@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
@@ -321,12 +323,15 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
             return;
         }
         dia3 = new Dialog(getActivity(), R.style.edit_AlertDialog_style);
-        dia3.setContentView(R.layout.dialog_show_info);
+        dia3.setContentView(R.layout.dialog_friend_show);
         tv_uid = dia3.findViewById(R.id.tv_uid);
-        TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
+        TextView tv_copy = dia3.findViewById(R.id.tv_copy);
+        TextView tv_send = dia3.findViewById(R.id.tv_send);
+        EditText edt_id = dia3.findViewById(R.id.edt_id);
+        ImageView iv_change = dia3.findViewById(R.id.iv_change);
         tv_name = dia3.findViewById(R.id.tv_name);
         iv_header1 = dia3.findViewById(R.id.iv_header);
-        tv_cofirm.setText("复制ID");
+        tv_copy.setText("复制ID");
         Glide.with(this)
                 .asBitmap()
                 .thumbnail(0.6f)
@@ -335,7 +340,7 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
                 .into(iv_header1);
         tv_name.setText(name);
         tv_uid.setText("UID： " + uid);
-        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+        tv_copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -344,7 +349,22 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
                 ToastUtils.showShort("复制成功");
             }
         });
-
+        tv_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FriendChatActivity.class);
+                intent.putExtra("senderUid",uid);
+                intent.putExtra("avatar", avatar);
+                startActivity(intent);
+            }
+        });
+        iv_change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_name.setVisibility(View.GONE);
+                edt_id.setVisibility(View.VISIBLE);
+            }
+        });
 
         dia3.show();
     }

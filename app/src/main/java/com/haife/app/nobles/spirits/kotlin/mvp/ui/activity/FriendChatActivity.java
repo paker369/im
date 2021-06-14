@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,9 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
-import com.haife.app.nobles.spirits.kotlin.app.utils.KeyBoardListener;
 import com.haife.app.nobles.spirits.kotlin.app.view.ChatInputLayout;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerFriendChatComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendChatContract;
@@ -45,7 +47,6 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yescpu.keyboardchangelib.KeyboardChangeListener;
 
-
 import org.simple.eventbus.Subscriber;
 
 import java.io.File;
@@ -54,6 +55,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import indi.liyi.viewer.ImageLoader;
+import indi.liyi.viewer.ImageViewer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -99,6 +102,9 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @BindView(R.id.status_bar_view)
     View status_bar_view;
+
+    @BindView(R.id.photo_view)
+    ImageViewer photo_view;
 
 
     ChatMessageAdapter chatMessageAdapter;
@@ -160,6 +166,11 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
         input_layout.bindInputLayout(this, rll);
         mPresenter.friendList(page, limit, senderUid);
         mPresenter.read(senderUid);
+        // 一般来讲， ImageWatcher 需要占据全屏的位置
+
+        // 如果不是透明状态栏，你需要给ImageWatcher标记 一个偏移值，以修正点击ImageView查看的启动动画的Y轴起点的不正确
+
+
     }
 
     @Override
@@ -271,6 +282,52 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
         chatMessageAdapter = new ChatMessageAdapter(listBeans, avatar);
         chatMessageAdapter.setEmptyView(R.layout.empty_placehold, color_recycler);
         color_recycler.setAdapter(chatMessageAdapter);
+        chatMessageAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                MessageBean listBean = chatMessageAdapter.getData().get(position);
+                if (view.getId() == R.id.me_img || view.getId() == R.id.other_img) {
+                    LogUtils.debugInfo("测试点击了图片");
+                    String filePath = listBean.getMsgContent() != null ? listBean.getMsgContent() : "";
+                    List<String> image = new ArrayList<>();
+                    image.add(filePath);
+                    photo_view.overlayStatusBar(false)// ImageViewer 是否会占据 StatusBar 的空间
+                            .imageData(image) // 图片数据
+                            .imageLoader(new ImageLoader() {
+                                @Override
+                                public void displayImage(Object src, ImageView imageView, LoadCallback callback) {
+                                    if (!FriendChatActivity.this.isFinishing())
+                                        Glide.with(imageView.getContext())
+                                                .asBitmap().thumbnail(0.6f)
+                                                .load(src)
+                                                .into(imageView);
+//                .into(imageView);
+                                }
+                            }) // 设置图片加载方式
+                            .draggable(false)
+                            .playEnterAnim(false) // 是否开启进场动画，默认为true
+                            .playExitAnim(false) // 是否开启退场动画，默认为true
+                            // 是否显示图片索引，默认为true
+//                            .setOnItemLongPressListener(new OnItemLongPressListener() {
+//                                @Override
+//                                public boolean onItemLongPress(int position, ImageView imageView) {
+//                                    save(imageUrllist.get(position));
+//                                    return false;
+//                                }
+//                            })
+
+//                            .setOnItemClickListener(new OnItemClickListener() {
+//                                @Override
+//                                public boolean onItemClick(int position, ImageView imageView) {
+//                                    finish();
+//                                    return true;
+//                                }
+//                            })
+                            .loadProgressUI(null) // 自定义图片加载进度样式，内置默认样式
+                            .watch(0); // 开启浏览
+                }
+            }
+        });
     }
 
     private Handler getHandler() {

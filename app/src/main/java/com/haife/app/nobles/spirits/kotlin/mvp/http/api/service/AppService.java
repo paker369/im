@@ -212,4 +212,21 @@ public interface AppService {
      */
     @POST(SPConstant.qianzhui + "/group/user/clearUnMsgCount")
     Observable<BaseResponse> cleargroupMsg(@Query("groupId") long groupid);
+
+
+    /*
+     * 修改用户信息
+     */
+    @POST(SPConstant.qianzhui + "/user/write")
+    Observable<BaseResponse> changeinfo(@Body RequestBody body);
+
+
+    /*
+     * 修改备注
+     */
+    @POST(SPConstant.qianzhui + "/user/friend/updateName")
+    Observable<BaseResponse> changenickname(@Query("friendName") String groupid,@Query("fId") long fId);
+
+
+
 }
