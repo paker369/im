@@ -52,7 +52,6 @@ public class MessageModel extends BaseModel implements MessageContract.Model {
     @Override
     public Observable<BaseResponse> clearfriendMsg(RequestBody body) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).clearfriendMsg(body);
-
     }
 
     @Override

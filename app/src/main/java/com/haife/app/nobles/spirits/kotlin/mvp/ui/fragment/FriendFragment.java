@@ -33,6 +33,7 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.FriendPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
+import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
@@ -172,12 +173,13 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
         friendListAdapter.setEmptyView(emptyView_noinfo);
         friendListAdapter.setOnItemClickListener((adapter, view, position) -> {
             FriendBean listBean = friendListAdapter.getData().get(position);
-//            Intent intent = new Intent(getActivity(), FriendChatActivity.class);
-//            intent.putExtra("senderUid", listBean.getFriendUid());
-//            intent.putExtra("avatar", listBean.getUser().getAvatar());
-//            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
-//            startActivity(intent);
-            shwoDialog3(listBean.getUser().getAvatar(), listBean.getUser().getName(), listBean.getUser().getUid());
+            Intent intent = new Intent(getActivity(), MineInfoActivity.class);
+            intent.putExtra("uid", listBean.getFriendUid());
+            intent.putExtra("avatar", listBean.getUser().getAvatar());
+            intent.putExtra("name", listBean.getUser().getName());
+            intent.putExtra("friendName", listBean.getFriendName());
+            startActivity(intent);
+//            shwoDialog3(listBean.getUser().getAvatar(), listBean.getUser().getName(), listBean.getUser().getUid());
         });
         friendListAdapter.setOnItemLongClickListener((adapter, view, position) -> {
             FriendBean listBean = friendListAdapter.getData().get(position);
@@ -387,7 +389,6 @@ public class FriendFragment extends BaseFragment<FriendPresenter> implements Fri
                 EventBus.getDefault().post(1, SPConstant.SHOWINFO);
                 break;
             case R.id.iv_more:
-
                 EventBus.getDefault().post(1, SPConstant.OPENSLIDE);
 //                showPopup(iv_more, new PopupFriendCircle.ClickLisetener() {
 //

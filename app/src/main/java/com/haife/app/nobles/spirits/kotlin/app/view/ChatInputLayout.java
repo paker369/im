@@ -240,9 +240,12 @@ public class ChatInputLayout extends RelativeLayout {
     @OnClick(R.id.tv_btn_send)
     public void sendTextMessage() {
         String text = mEtInput.getText().toString();
-        mEtInput.getText().clear();
+
         if (mLayoutListener != null) {
-            mLayoutListener.sendBtnClick(text);
+            if( mLayoutListener.sendBtnClick(text)){
+                mEtInput.getText().clear();
+            }
+
         }
     }
 
@@ -346,7 +349,7 @@ public class ChatInputLayout extends RelativeLayout {
     }
 
     public interface OnInputLayoutListener {
-        void sendBtnClick(CharSequence textMessage);
+        boolean sendBtnClick(CharSequence textMessage);
 
         void photoBtnClick();
 

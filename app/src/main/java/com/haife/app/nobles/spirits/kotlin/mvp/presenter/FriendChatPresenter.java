@@ -9,6 +9,7 @@ import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.RxUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.FriendChatContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ClearBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_FriendMsgBean;
@@ -155,6 +156,26 @@ public class FriendChatPresenter extends BasePresenter<FriendChatContract.Model,
 
                         mRootView.uploadSuccess( aboutBeanBaseResponse.getData());
 
+                    }
+                });
+    }
+
+    public void clearfriendMsg(long senderid) {
+
+        ClearBean userInfoBean = new ClearBean(senderid);
+        RequestBody body = FormBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(userInfoBean));
+        mModel.clearfriendMsg(body)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.clearfriendMsgSuccess();
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
                     }
                 });
     }

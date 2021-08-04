@@ -137,6 +137,32 @@
 
 
         <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:orientation="horizontal">
+
+        <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="签名: " />
+
+        <TextView
+            android:id="@+id/tv_remark"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:paddingRight="@dimen/dp_10"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="" />
+
+
+    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_invitecode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_10"
@@ -146,21 +172,33 @@
             <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="签名: " />
+                android:layout_weight="3"
+                android:text="我的邀请码: " />
 
-            <EditText
-                android:id="@+id/tv_remark"
+            <TextView
+                android:id="@+id/tv_invitecode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"
-               android:paddingRight="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="" />
 
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/tv_xiugaiziliao"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:textColor="#2196F3"
+            android:textSize="16sp"
+            android:text="修改资料"  />
         <TextView
             android:id="@+id/actionButton"
             android:layout_width="match_parent"

@@ -33,7 +33,7 @@
             android:id="@+id/iv_tb_emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/smile"
+            android:src="@drawable/face1_000"
             android:padding="5dp"/>
 
         <View

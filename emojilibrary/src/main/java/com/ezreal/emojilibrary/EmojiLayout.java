@@ -28,7 +28,7 @@ public class EmojiLayout extends RelativeLayout {
     private List<EmojiBean> mEmojiBeans;
     private List<View> mViewPageItems;
     private static final int COLUMNS = 7;
-    private static final int ROWS = 3;
+    private static final int ROWS = 5;
     private OnEmojiSelectListener mSelectListener;
 
     public EmojiLayout(Context context) {
@@ -42,7 +42,6 @@ public class EmojiLayout extends RelativeLayout {
     public EmojiLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mEmojiBeans = EmojiUtils.getEmojiBeans();
-        Log.e("测试","mEmojiBeans的大小"+mEmojiBeans.size());
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_emoji, this,
                 true);
         mViewPager = (ViewPager) rootView.findViewById(R.id.view_page);

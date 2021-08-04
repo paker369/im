@@ -28,7 +28,6 @@ android {
     }
 
 
-
     defaultConfig {
         applicationId "com.networkheizhu.chat"
         minSdkVersion rootProject.ext.android["minSdkVersion"]
@@ -38,24 +37,39 @@ android {
         renderscriptTargetApi 19
         renderscriptSupportModeEnabled true
     }
+    signingConfigs {
+        debug {
+            storeFile file('heizhuchat.jks')
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+        release {
+            storeFile file('heizhuchat.jks')
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+    }
     buildTypes {
         debug {
             buildConfigField "boolean", "LOG_DEBUG", "true"
             buildConfigField "boolean", "USE_CANARY", "true"
-
-
+            buildConfigField "boolean", "USE_BUGLY", "true"
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false"
             buildConfigField "boolean", "USE_CANARY", "false"
-
+            buildConfigField "boolean", "USE_BUGLY", "false"
             minifyEnabled false
             shrinkResources false
             zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
         }
-
     }
 }
 
@@ -85,10 +99,15 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //lib
+    implementation project(path:':image-viewer')
     implementation project(path: ':websocketlib')
     implementation project(path: ':emojilibrary')
     implementation project(":keyboardchangelib")
     implementation project(path: ':picture_library')
+//    //版本更新库
+//    implementation project(path:':appupdateX')
+
+    implementation 'com.github.azhon:AppUpdate:3.0.4'
 
 
     //support
@@ -163,7 +182,7 @@ dependencies {
 
 
     implementation 'com.github.chaychan:BottomBarLayout:2.0.2'
-    implementation project(path:':image-viewer')
+
 //    implementation 'indi.liyi.view:image-viewer:3.0.1'
 
 }

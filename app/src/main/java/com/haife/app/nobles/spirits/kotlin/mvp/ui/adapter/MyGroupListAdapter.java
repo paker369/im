@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.ezreal.emojilibrary.EmojiUtils;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
+import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 
 import java.text.ParseException;
@@ -43,7 +44,7 @@ public class MyGroupListAdapter  extends BaseQuickAdapter<MyGroup, BaseViewHolde
             }
             if(item.getLastMsgTime()!=null){
                 Date date=null;
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000+0000'", Locale.CHINA);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
                 try {
                     date=  simpleDateFormat.parse(item.getLastMsgTime());
                 } catch (ParseException e) {
@@ -66,17 +67,16 @@ public class MyGroupListAdapter  extends BaseQuickAdapter<MyGroup, BaseViewHolde
                 .load(item.getGroup().getAvatar())
                 .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
                 .into(portraitImageView);
-
         if(showtype==1){
-            if(item.getLastMsgContent()==null){return;}
-            SpannableString msg = EmojiUtils.text2Emoji(mContext, item.getLastMsgContent(), descTextView.getTextSize());
-            descTextView.setText(msg);
-
+            if(item.getLastMsgContent()!=null){
+                SpannableString msg = EmojiUtils.text2Emoji(mContext, item.getLastMsgContent(), descTextView.getTextSize());
+                descTextView.setText(msg);
+            }
         }else {
             descTextView.setVisibility(View.GONE);
-
         }
 
         nameTextView.setText(item.getGroup().getName());
+
     }
 }

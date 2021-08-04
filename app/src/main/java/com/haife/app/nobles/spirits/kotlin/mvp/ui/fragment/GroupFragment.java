@@ -89,6 +89,8 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     MyGroupListAdapter myGroupListAdapter;
     private View emptyView_noinfo;
     private Dialog dia;
+    private TextView tv_send;
+    private TextView tv_copy;
 
     public static GroupFragment newInstance() {
         GroupFragment fragment = new GroupFragment();
@@ -156,7 +158,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 //            intent.putExtra("remark", listBean.getGroup().getRemark());
 //            intent.putExtra("ismine", (listBean.getGroup().getUid() == SPUtils.getInstance().getLong(SPConstant.UID)));
 //            startActivity(intent);
-            shwoDialog3(listBean.getGroup().getAvatar(), listBean.getGroup().getName(), listBean.getGroupId());
+            shwoDialog3(listBean.getGroup().getAvatar(), listBean.getGroup().getName(), listBean.getGroupId(),listBean.getGroup().getRemark(),(listBean.getGroup().getUid() == SPUtils.getInstance().getLong(SPConstant.UID)));
 
         });
         myGroupListAdapter.setOnItemLongClickListener((adapter, view, position) -> {
@@ -166,7 +168,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
 //            intent.putExtra("avatar", listBean.getUser().getAvatar());
 //            LogUtils.debugInfo("测试发送朋友的头像是" + listBean.getUser().getAvatar());
 //            startActivity(intent);
-            if(listBean.getUid()==SPUtils.getInstance().getLong(SPConstant.UID)){
+            if(listBean.getGroup().getUid()==SPUtils.getInstance().getLong(SPConstant.UID)){
                 SelectDialog.show(getActivity(), "提示", "确认解散该群吗", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -194,7 +196,7 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
     /**
      * 弹出添加好友dialog
      */
-    public void shwoDialog3(String avatar, String name, long groupid) {
+    public void shwoDialog3(String avatar, String name, long groupid,String remark, boolean ismine) {
         if (dia3 != null) {
             Glide.with(this)
                     .asBitmap()
@@ -204,16 +206,42 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
                     .into(iv_header1);
             tv_name.setText(name);
             tv_uid.setText("群号： " + groupid);
+            tv_copy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
+                    cmb.setText(groupid + "");
+                    ToastUtils.showShort("复制成功");
+                    dia3.dismiss();
+                }
+            });
+            tv_send.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dia3.dismiss();
+                    Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+                    intent.putExtra("groupid", groupid);
+                    intent.putExtra("avatar", avatar);
+                    intent.putExtra("name", name);
+                    intent.putExtra("remark", remark);
+                    intent.putExtra("ismine", ismine);
+                    startActivity(intent);
+
+                }
+            });
             dia3.show();
             return;
         }
         dia3 = new Dialog(getActivity(), R.style.edit_AlertDialog_style);
-        dia3.setContentView(R.layout.dialog_show_info);
+        dia3.setContentView(R.layout.dialog_friend_show);
         tv_uid = dia3.findViewById(R.id.tv_uid);
-        TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
+         tv_copy = dia3.findViewById(R.id.tv_copy);
+         tv_send = dia3.findViewById(R.id.tv_send);
+
         tv_name = dia3.findViewById(R.id.tv_name);
         iv_header1 = dia3.findViewById(R.id.iv_header);
-        tv_cofirm.setText("复制群号");
+        tv_copy.setText("复制群号");
         Glide.with(this)
                 .asBitmap()
                 .thumbnail(0.6f)
@@ -222,13 +250,27 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
                 .into(iv_header1);
         tv_name.setText(name);
         tv_uid.setText("群号： " + groupid);
-        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+        tv_copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
                 cmb.setText(groupid + "");
                 ToastUtils.showShort("复制成功");
+                dia3.dismiss();
+            }
+        });
+        tv_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dia3.dismiss();
+                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+                intent.putExtra("groupid", groupid);
+                intent.putExtra("avatar", avatar);
+                intent.putExtra("name", name);
+                intent.putExtra("remark", remark);
+                intent.putExtra("ismine", ismine);
+                startActivity(intent);
             }
         });
 
@@ -252,7 +294,8 @@ public class GroupFragment extends BaseFragment<GroupPresenter> implements Group
         TextView tv_title = dia.findViewById(R.id.tv_title);
         EditText edt_id = dia.findViewById(R.id.edt_id);
         EditText edt_remark = dia.findViewById(R.id.edt_remark);
-        edt_id.setHint("请输入群名");
+        edt_id.setHint("设置群名");
+        edt_remark.setHint("设置群签名");
         tv_cofirm.setText("确认创建");
         tv_cancel.setText("取消创建");
         tv_title.setText("创建群");

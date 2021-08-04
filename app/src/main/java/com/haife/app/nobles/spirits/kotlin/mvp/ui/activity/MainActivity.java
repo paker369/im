@@ -1,13 +1,19 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.ui.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -22,27 +29,30 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.azhon.appupdate.config.UpdateConfiguration;
+import com.azhon.appupdate.listener.OnButtonClickListener;
+import com.azhon.appupdate.manager.DownloadManager;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.chaychan.library.BottomBarItem;
 import com.chaychan.library.BottomBarLayout;
 import com.example.songzeceng.studyofretrofit.item.PersonProto;
-import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView;
+import com.haife.app.nobles.spirits.kotlin.app.view.PopupArrow;
 import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerMainComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MainContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ChangeInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMsgBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
-import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_Ws;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.UserBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.VersionBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MainPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment.FriendFragment;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.fragment.GroupFragment;
@@ -72,18 +82,18 @@ import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import razerdp.basepopup.BasePopupWindow;
 
+import static com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant.curVersionCode;
+import static com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle.blur;
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
 
@@ -114,7 +124,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.groupNameTextView)
     TextView groupNameTextView;
     @BindView(R.id.tv_remark)
-    EditText tv_remark;
+    TextView tv_remark;
+    @BindView(R.id.tv_invitecode)
+    TextView tv_invitecode;
     @BindView(R.id.actionButton)
     TextView actionButton;
     @BindView(R.id.status_bar_view)
@@ -133,6 +145,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     long mPressedTime;
     //选择的图片集合
     private List<LocalMedia> mSelectList = new ArrayList<>();
+    private Dialog dia4;
+    private WebSocketManager manager;
+    private PopupArrow mPopupArrow;
+    private String apkUrl;
+    private String message;
+    private String versionname;
+    private DownloadManager manager1;
+    private int versioncode;
 
     //选择头像图片之后的回调
     @Override
@@ -187,7 +207,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         setting.setConnectTimeout(8 * 1000);
 
         //设置心跳间隔时间
-        setting.setConnectionLostTimeout(3);
+        setting.setConnectionLostTimeout(0);
 
         //设置断开后的重连次数，可以设置的很大，不会有什么性能上的影响
         setting.setReconnectFrequency(10);
@@ -197,7 +217,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         setting.setReconnectWithNetworkChanged(true);
 
         //通过 init 方法初始化默认的 WebSocketManager 对象
-        WebSocketManager manager = WebSocketHandler.init(setting);
+        manager = WebSocketHandler.init(setting);
         //启动连接
         manager.start();
 
@@ -210,23 +230,42 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
 
+    //    public  String transferTime (String s){
+//
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.CHINA);
+//        Date date = new Date();
+//        try{
+//            date = sdf.parse(s);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        String formatStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+//return  formatStr;
+//
+//
+//
+//    }
+    private Runnable heartBeatRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (manager.isConnect()) {
 
-    public  String transferTime (String s){
+                PersonProto.WSBaseReqProto.Builder builder = PersonProto.WSBaseReqProto.newBuilder();
+                builder.setUid(SPUtils.getInstance().getLong(SPConstant.UID));
+                builder.setSid(SPUtils.getInstance().getString(SPConstant.SID));
+                builder.setType(0);
+                PersonProto.WSBaseReqProto person = builder.build();
+                manager.send(person.toByteArray());
+
+            }
 
 
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.CHINA);
-        Date date = new Date();
-        try{
-            date = sdf.parse(s);
-        }catch (Exception e){
-            e.printStackTrace();
+            mHandler.postDelayed(this, 5000);
         }
-        String formatStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-return  formatStr;
+    };
 
 
-
-    }
     private SocketListener socketListener = new SimpleListener() {
         @Override
         public void onConnected() {
@@ -237,9 +276,8 @@ return  formatStr;
             builder.setSid(SPUtils.getInstance().getString(SPConstant.SID));
             builder.setType(1);
             PersonProto.WSBaseReqProto person = builder.build();
-            R_Ws userInfoBean = new R_Ws(SPUtils.getInstance().getLong(SPConstant.UID), SPUtils.getInstance().getString(SPConstant.SID), 1);
-            byte[] i = new Gson().toJson(userInfoBean).getBytes();
-            WebSocketHandler.getDefault().send(person.toByteArray());
+            manager.send(person.toByteArray());
+            getHandler().post(heartBeatRunnable);
 //            WebSocketHandler.getDefault().send(person.toString());
         }
 
@@ -329,6 +367,7 @@ return  formatStr;
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        boolean regiester = getIntent().getBooleanExtra("regiester", false);
         drawerlayout.closeDrawers();
         ImmersionBar.with(this)
                 .statusBarView(status_bar_view)
@@ -337,7 +376,16 @@ return  formatStr;
         initFragment();
         initWebSocket();
         WebSocketHandler.getDefault().addListener(socketListener);
-
+        getCurrentVersion();
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            String[] mPermissionList = new String[]{
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                    , Manifest.permission.CAMERA
+//                    , Manifest.permission.READ_EXTERNAL_STORAGE
+//            };
+//            ActivityCompat.requestPermissions(this, mPermissionList, 123);
+//        }
+        mPresenter.getversion(2, SPConstant.curVersionName);
 
     }
     @Override
@@ -355,6 +403,15 @@ return  formatStr;
     protected void onResume() {
         super.onResume();
         mPresenter.loginInfo();
+        getHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                    LogUtils.debugInfo("测试检查下掉线没"+manager.isConnect());
+                if (manager.needReConnect()) {
+                    manager.reconnect();
+                }
+            }
+        }, 1000);
     }
 
     @Override
@@ -419,6 +476,7 @@ return  formatStr;
 //        tv_remark.setText(data.getRemark());
         SPUtils.getInstance().put(SPConstant.HEADER, data.getAvatar());
         SPUtils.getInstance().put(SPConstant.USERNAME, data.getName());
+        SPUtils.getInstance().put(SPConstant.REMARKE, data.getRemark());
         Glide.with(this)
                 .asBitmap()
                 .thumbnail(0.6f)
@@ -427,6 +485,7 @@ return  formatStr;
                 .into(portraitImageView);
         groupNameTextView.setText(data.getName());
         tv_remark.setText(data.getRemark());
+        tv_invitecode.setText(data.getInvitationCode());
         EventBus.getDefault().post(data, SPConstant.loginInfoSuccess);
     }
 
@@ -446,6 +505,13 @@ return  formatStr;
     }
 
     @Override
+    public void changeinfoSuccess(ChangeInfoBean data) {
+        ToastUtils.showShort("修改资料成功");
+        groupNameTextView.setText(data.getName());
+        tv_remark.setText(data.getRemark());
+    }
+
+    @Override
     public void uploadAvatarSuccess(String data) {
         ToastUtils.showShort("更换成功");
 //        avatar=data;
@@ -459,11 +525,94 @@ return  formatStr;
         mPresenter.loginInfo();
     }
 
-//    @Override
+    @Override
+    public void getInvitationCodeSuccess() {
+        ToastUtils.showShort("获取成功");
+    }
+
+    @Override
+    public void getversionSuccess(VersionBean data) {
+        if (data != null) {
+            com.luck.picture.lib.tools.SPUtils.getInstance().put(SPConstant.Version, data.getVersionCurrent());
+            com.luck.picture.lib.tools.SPUtils.getInstance().put(SPConstant.ApkUrl, data.getApkUrl());
+            switch (data.getType()) {
+                case 0:
+
+                    break;
+                case 1:
+                    apkUrl = data.getApkUrl();
+                    message = data.getUpgradeMsg();
+                    versionname = data.getVersionCurrent();
+                    startUpdate3();
+                    break;
+
+                case 2:
+                    apkUrl = data.getApkUrl();
+                    message = data.getUpgradeMsg();
+                    versionname = data.getVersionCurrent();
+                    startUpdate3();
+                    break;
+
+            }
+
+        }
+    }
+
+    //    @Override
 //    public void addfriend() {
 //        shwoDialog1();
 //    }
+    private void startUpdate3() {
+        /*
+         * 整个库允许配置的内容
+         * 非必选
+         */
+        UpdateConfiguration configuration = new UpdateConfiguration()
+                //输出错误日志
+                .setEnableLog(true)
+                //设置自定义的下载
+                //.setHttpManager()
+                //下载完成自动跳动安装页面
+                .setJumpInstallPage(true)
+                //设置对话框背景图片 (图片规范参照demo中的示例图)
+                //.setDialogImage(R.drawable.ic_dialog)
+                //设置按钮的颜色
+                //.setDialogButtonColor(Color.parseColor("#E743DA"))
+                //设置对话框强制更新时进度条和文字的颜色
+                //.setDialogProgressBarColor(Color.parseColor("#E743DA"))
+                //设置按钮的文字颜色
+                .setDialogButtonTextColor(Color.WHITE)
+                //设置是否显示通知栏进度
+                .setShowNotification(true)
+                //设置是否提示后台下载toast
+//            .setShowBgdToast(true)
+                //设置是否上报数据
+                .setUsePlatform(true)
+                //设置强制更新
 
+                .setForcedUpgrade(false)
+
+
+                //设置对话框按钮的点击监听
+                .setButtonClickListener(new OnButtonClickListener() {
+                    @Override
+                    public void onButtonClick(int id) {
+
+                    }
+                });
+        //设置下载过程的监听
+//                .setOnDownloadListener(listenerAdapter);
+        manager1 = DownloadManager.getInstance(this);
+        manager1.setApkName("zhuge" + com.luck.picture.lib.tools.SPUtils.getInstance().getString(SPConstant.Version) + ".apk")
+                .setApkUrl(apkUrl)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setShowNewerToast(true)
+                .setConfiguration(configuration)
+                .setApkVersionCode(100000)
+                .setApkVersionName(versionname)
+                .setApkDescription(message)
+                .download();
+    }
     private Handler getHandler() {
         if (mHandler == null) {
             mHandler = new Handler();
@@ -509,6 +658,16 @@ return  formatStr;
 
     }
 
+
+    public void toShow(View v) {
+        if (mPopupArrow == null) {
+            mPopupArrow = new PopupArrow(v.getContext());
+        }
+        mPopupArrow.setBlurBackgroundEnable(blur);
+        mPopupArrow.setPopupGravity(BasePopupWindow.GravityMode.RELATIVE_TO_ANCHOR, Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+        mPopupArrow.showPopupWindow(v);
+    }
+
     /**
      * 弹出添加好友dialog
      */
@@ -530,11 +689,11 @@ return  formatStr;
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(edt_id.getText().toString())) {
-                    ToastUtils.showShort("账号不能为空");
+                    ToastUtils.showShort("黑猪号不能为空");
                     return;
                 }
                 if (!AppValidationMgr.isNumber(edt_id.getText().toString())) {
-                    ToastUtils.showShort("账号不能非数字");
+                    ToastUtils.showShort("黑猪号不能非数字");
                     return;
                 }
 //                if (TextUtils.isEmpty(edt_remark.getText().toString())) {
@@ -572,7 +731,7 @@ return  formatStr;
         TextView tv_title = dia2.findViewById(R.id.tv_title);
         EditText edt_id = dia2.findViewById(R.id.edt_id);
         EditText edt_remark = dia2.findViewById(R.id.edt_remark);
-        edt_id.setHint("请输入群id");
+        edt_id.setHint("请输入群号");
         edt_remark.setVisibility(View.GONE);
         tv_title.setText("添加群组");
         tv_cofirm.setOnClickListener(new View.OnClickListener() {
@@ -606,6 +765,51 @@ return  formatStr;
         dia2.show();
     }
 
+    /**
+     * 弹出修改信息dialog
+     */
+    public void shwoDialog4() {
+        if (dia4 != null) {
+            dia4.show();
+            return;
+        }
+        dia4 = new Dialog(this, R.style.edit_AlertDialog_style);
+        dia4.setContentView(R.layout.dialog_add);
+        TextView tv_cofirm = dia4.findViewById(R.id.tv_cofirm);
+        TextView tv_cancel = dia4.findViewById(R.id.tv_cancel);
+        TextView tv_title = dia4.findViewById(R.id.tv_title);
+        EditText edt_id = dia4.findViewById(R.id.edt_id);
+        EditText edt_remark = dia4.findViewById(R.id.edt_remark);
+        edt_id.setText(SPUtils.getInstance().getString(SPConstant.USERNAME));
+        edt_remark.setText(SPUtils.getInstance().getString(SPConstant.REMARKE));
+        tv_title.setText("修改资料");
+        tv_cofirm.setText("确认修改");
+        tv_cofirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(edt_id.getText().toString())) {
+                    ToastUtils.showShort("昵称不能为空");
+                    return;
+                }
+
+//                if (TextUtils.isEmpty(edt_remark.getText().toString())) {
+//                    ToastUtils.showShort("密码不能为空");
+//                    return;
+//                }
+                mPresenter.changeinfo(edt_id.getText().toString(), SPUtils.getInstance().getString(SPConstant.HEADER), edt_remark.getText().toString());
+                dia4.dismiss();
+            }
+        });
+
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dia4.dismiss();
+            }
+        });
+        dia4.show();
+    }
+
 
     /**
      * 弹出添加好友dialog
@@ -621,21 +825,21 @@ return  formatStr;
         TextView tv_cofirm = dia3.findViewById(R.id.tv_cofirm);
         TextView tv_name = dia3.findViewById(R.id.tv_name);
         CircleImageView iv_header = dia3.findViewById(R.id.iv_header);
-        tv_cofirm.setText("复制ID");
+        tv_cofirm.setText("复制黑猪号");
         Glide.with(this)
                 .asBitmap()
                 .thumbnail(0.6f)
                 .load(SPUtils.getInstance().getString(SPConstant.HEADER))
-.apply(new RequestOptions().placeholder(R.mipmap.mandefult))
+                .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
                 .into(iv_header);
         tv_name.setText(SPUtils.getInstance().getString(SPConstant.USERNAME));
-        tv_uid.setText("UID： "+SPUtils.getInstance().getLong(SPConstant.UID));
+        tv_uid.setText("黑猪号： " + SPUtils.getInstance().getLong(SPConstant.UID));
         tv_cofirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-                cmb.setText(SPUtils.getInstance().getLong(SPConstant.UID)+"");
+                cmb.setText(SPUtils.getInstance().getLong(SPConstant.UID) + "");
                 ToastUtils.showShort("复制成功");
             }
         });
@@ -651,18 +855,39 @@ return  formatStr;
 //        shwoDialog2();
 //    }
 
-    @OnClick({R.id.actionButton, R.id.portraitImageView})
+    @OnClick({R.id.actionButton, R.id.portraitImageView, R.id.tv_xiugaiziliao, R.id.ll_invitecode})
     public void onViewClick(View view) {
         switch (view.getId()) {
 
             case R.id.actionButton:
                 receivelogout(1);
                 break;
+            case R.id.tv_xiugaiziliao:
+                shwoDialog4();
+                break;
             case R.id.portraitImageView:
                 PhotoSelectSingleUtile.selectPhoto(this, mSelectList, 1);
 
                 break;
+            case R.id.ll_invitecode:
+                ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                cmb.setText(tv_invitecode.getText().toString());
+                toShow(tv_invitecode);
+                break;
 
+        }
+    }
+
+    /**
+     * 获取当前客户端版本信息
+     */
+    private void getCurrentVersion() {
+        try {
+            PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            SPConstant.curVersionName = info.versionName;
+            curVersionCode = info.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace(System.err);
         }
     }
 

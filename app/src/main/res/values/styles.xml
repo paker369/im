@@ -83,6 +83,12 @@
         <item name="android:layout_margin">3dp</item>
     </style>
 
+    <!--选项条目样式-->
+    <style name="OptionItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <!--SwipeBackTheme-->
     <style name="SwipeBackStyle" parent="QMUI.Compat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>

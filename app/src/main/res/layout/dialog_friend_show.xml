@@ -61,7 +61,7 @@
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginBottom="@dimen/dp_30"
         android:id="@+id/tv_uid"
-        android:text="我的UID：1111111"
+        android:text="群号：1111111"
         android:textColor="#000000"
         android:gravity="center"
         android:textSize="@dimen/dp_20"
@@ -84,7 +84,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="复制id"
+            android:text="复制群号"
             android:textSize="@dimen/dp_10"
             android:textColor="@color/white"
             android:background="@drawable/shape_login_button"/>

@@ -157,4 +157,21 @@ public class GroupChatPresenter extends BasePresenter<GroupChatContract.Model, G
                     }
                 });
     }
+
+    public void cleargroupMsg(long groupid) {
+        mModel.cleargroupMsg(groupid)
+                .compose(RxUtils.applySchedulers(mRootView))
+                .subscribe(new ErrorHandleSubscriber<BaseResponse>(mErrorHandler) {
+                    @Override
+                    public void onNext(BaseResponse aboutBeanBaseResponse) {
+                        if (aboutBeanBaseResponse.isSuccess()) {
+
+                            mRootView.cleargroupMsgSuccess();
+                        } else {
+
+                            mRootView.showMessage(aboutBeanBaseResponse.getMessage());
+                        }
+                    }
+                });
+    }
 }

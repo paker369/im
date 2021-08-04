@@ -77,6 +77,7 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
     int limit = 20;
     private AskFriendAdapter askFriendAdapter;
     private View emptyView_noinfo;
+    private TextView tv_empty;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -148,7 +149,7 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
         askFriendAdapter = new AskFriendAdapter();
         rv_message_list.setAdapter(askFriendAdapter);
         emptyView_noinfo = LayoutInflater.from(this).inflate(R.layout.empty_placehold, (ViewGroup) rv_message_list.getParent(), false);
-        TextView tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
+         tv_empty = emptyView_noinfo.findViewById(R.id.tv_empty);
         askFriendAdapter.setEmptyView(emptyView_noinfo);
         askFriendAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             click(0, askFriendAdapter.getItem(position), view, position);
@@ -199,6 +200,9 @@ public class AskFriendListActivity extends BaseActivity<AskFriendListPresenter> 
 
     @Override
     public void addFriendListSuccess(List<FriendAskBean> data) {
+        if(tv_empty!=null){
+            tv_empty.setText("暂无数据");
+        }
         if (data != null && data.size() > 0) {
             if (page == 1) {
                 askFriendAdapter.setNewData(data);

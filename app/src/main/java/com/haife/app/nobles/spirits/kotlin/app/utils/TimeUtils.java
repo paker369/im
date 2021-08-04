@@ -1,12 +1,17 @@
 package com.haife.app.nobles.spirits.kotlin.app.utils;
 
 
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -180,7 +185,7 @@ public class TimeUtils {
         if (ms == 0)
             return "";
         Date date = new Date(ms);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = simpleDateFormat.format(date);
         return dateStr;
     }
@@ -211,5 +216,55 @@ public class TimeUtils {
             return true;
         }
         return false;
+    }
+
+    public static List<FriendBean> ListSort(List<FriendBean> list) {
+        Collections.sort(list, new Comparator<FriendBean>() {
+            @Override
+            //定义一个比较器
+            public int compare(FriendBean o1, FriendBean o2) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                try {
+                    Date dt1 = simpleDateFormat.parse(o1.getModifiedTime());
+                    Date dt2 = simpleDateFormat.parse(o2.getModifiedTime());
+                    if (dt1.getTime() > dt2.getTime()) {
+                        return -1;
+                    } else if (dt1.getTime() < dt2.getTime()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }
+        });
+        return  list;
+    }
+
+    public static List<MyGroup> ListgroupSort(List<MyGroup> list) {
+        Collections.sort(list, new Comparator<MyGroup>() {
+            @Override
+            //定义一个比较器
+            public int compare(MyGroup o1, MyGroup o2) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                try {
+                    Date dt1 = simpleDateFormat.parse(o1.getLastMsgTime());
+                    Date dt2 = simpleDateFormat.parse(o2.getLastMsgTime());
+                    if (dt1.getTime() > dt2.getTime()) {
+                        return -1;
+                    } else if (dt1.getTime() < dt2.getTime()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }
+        });
+        return  list;
     }
 }

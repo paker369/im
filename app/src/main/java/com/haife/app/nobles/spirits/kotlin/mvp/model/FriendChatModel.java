@@ -80,4 +80,10 @@ public class FriendChatModel extends BaseModel implements FriendChatContract.Mod
     public Observable<BaseResponse<String>> upload(List<MultipartBody.Part> parts) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).upload(parts);
     }
+
+    @Override
+    public Observable<BaseResponse> clearfriendMsg(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).clearfriendMsg(body);
+    }
+
 }

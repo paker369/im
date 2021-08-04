@@ -105,7 +105,7 @@ public class GroupSetPresenter extends BasePresenter<GroupSetContract.Model, Gro
                     @Override
                     public void onNext(BaseResponse aboutBeanBaseResponse) {
                         if (aboutBeanBaseResponse.isSuccess()) {
-                            mRootView.groupUpdateSuccess( );
+                            mRootView.groupUpdateSuccess(userInfoBean );
                         } else {
 
                             mRootView.showMessage(aboutBeanBaseResponse.getMessage());

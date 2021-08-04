@@ -88,4 +88,9 @@ public class GroupChatModel extends BaseModel implements GroupChatContract.Model
     public Observable<BaseResponse<String>> upload(List<MultipartBody.Part> parts) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).upload(parts);
     }
+
+    @Override
+    public Observable<BaseResponse> cleargroupMsg(long groupid) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).cleargroupMsg(groupid);
+    }
 }

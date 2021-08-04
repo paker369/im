@@ -7,6 +7,7 @@ import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.entity.result.HomeRecommendData;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.entity.result.RestaurantUnionBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ChangeInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendAskBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.FriendBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMemberBean;
@@ -15,7 +16,9 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_ChangeNameBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ReadOtherInfoBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.VersionBean;
 
 
 import java.util.List;
@@ -218,14 +221,28 @@ public interface AppService {
      * 修改用户信息
      */
     @POST(SPConstant.qianzhui + "/user/write")
-    Observable<BaseResponse> changeinfo(@Body RequestBody body);
+    Observable<BaseResponse<ChangeInfoBean>> changeinfo(@Body RequestBody body);
 
 
     /*
      * 修改备注
      */
     @POST(SPConstant.qianzhui + "/user/friend/updateName")
-    Observable<BaseResponse> changenickname(@Query("friendName") String groupid,@Query("fId") long fId);
+    Observable<R_ChangeNameBean> changenickname(@Body RequestBody body);
+
+    /*
+     *获取邀请码
+     */
+    @POST(SPConstant.qianzhui + "/user/getInvitationCode")
+    Observable<BaseResponse> getInvitationCode();
+
+
+
+    /*
+     *获取邀请码
+     */
+    @GET(SPConstant.qianzhui + "/app/version")
+    Observable<BaseResponse<VersionBean>> getversion(@Query("type") int type, @Query("version") String version);
 
 
 

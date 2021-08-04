@@ -41,7 +41,7 @@ public interface FriendChatContract {
 
         void uploadSuccess(String data);
 
-
+        void clearfriendMsgSuccess();
     }
 
     //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
@@ -55,5 +55,8 @@ public interface FriendChatContract {
         Observable<BaseResponse> deleteFriend (RequestBody body);
 
         Observable<BaseResponse<String>> upload (List<MultipartBody.Part> parts);
+
+
+        Observable<BaseResponse> clearfriendMsg(RequestBody body );
     }
 }

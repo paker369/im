@@ -1,5 +1,7 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.model.bean;
 
+import android.text.TextUtils;
+
 public class FriendBean {
 
 
@@ -19,9 +21,32 @@ public class FriendBean {
     private Object remark;
     private int unMsgCount;
     private String lastMsgContent;
+    private String lastMsgTime;
     private String modifiedTime;
+    private String friendName;
     private UserBean user;
     private Object isFriend;
+
+    public String getFriendName() {
+        if(TextUtils.isEmpty(friendName)){
+            return user.name;
+        }else {
+            return friendName;
+        }
+
+    }
+
+    public String getLastMsgTime() {
+        return lastMsgTime;
+    }
+
+    public void setLastMsgTime(String lastMsgTime) {
+        this.lastMsgTime = lastMsgTime;
+    }
+
+    public void setFriendName(String friendName) {
+        this.friendName = friendName;
+    }
 
     public long getUid() {
         return uid;

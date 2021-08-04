@@ -56,5 +56,20 @@
       <option name="name" value="maven2" />
       <option name="url" value="http://maven.aliyun.com/nexus/content/repositories/jcenter" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="D:\sdk\extras\google\m2repository" />
+      <option name="name" value="D:\sdk\extras\google\m2repository" />
+      <option name="url" value="file:/D:/sdk/extras/google/m2repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="D:\sdk\extras\android\m2repository" />
+      <option name="name" value="D:\sdk\extras\android\m2repository" />
+      <option name="url" value="file:/D:/sdk/extras/android/m2repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="D:\sdk\extras\m2repository" />
+      <option name="name" value="D:\sdk\extras\m2repository" />
+      <option name="url" value="file:/D:/sdk/extras/m2repository" />
+    </remote-repository>
   </component>
 </project>

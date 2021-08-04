@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,19 +22,21 @@ import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupSetComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupSetContract;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_UpdateGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupSetPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.ImageUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.PhotoSelectSingleUtile;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
-import com.kongzue.dialog.v2.DialogSettings;
-import com.kongzue.dialog.v2.MessageDialog;
 import com.kongzue.dialog.v2.SelectDialog;
 import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
+
+import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +49,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
-import static com.kongzue.dialog.v2.DialogSettings.THEME_LIGHT;
 
 
 /**
@@ -234,22 +236,23 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
         EditText edt_remark = dia.findViewById(R.id.edt_remark);
         edt_id.setHint("输入新群名");
         edt_remark.setHint("输入新签名");
+        edt_id.setText(name);
+        edt_remark.setText(remark);
         tv_title.setText("修改群信息");
         tv_cofirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (TextUtils.isEmpty(edt_id.getText().toString())) {
-//                    ToastUtils.showShort("账号不能为空");
-//                    return;
-//                }
-//                if (!AppValidationMgr.isInteger(edt_id.getText().toString())) {
-//                    ToastUtils.showShort("账号不能非数字");
-//                    return;
-//                }
-//                if (TextUtils.isEmpty(edt_remark.getText().toString())) {
-//                    ToastUtils.showShort("密码不能为空");
-//                    return;
-//                }
+                dia.dismiss();
+                if (TextUtils.isEmpty(edt_id.getText().toString())) {
+                    ToastUtils.showShort("群名不能为空");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(edt_remark.getText().toString())) {
+                    ToastUtils.showShort("群签名不能为空");
+                    return;
+                }
+
                 mPresenter.groupUpdate(edt_id.getText().toString(), avatar, edt_remark.getText().toString(), groupid);
 
             }
@@ -300,9 +303,11 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
     }
 
     @Override
-    public void groupUpdateSuccess() {
+    public void groupUpdateSuccess(R_UpdateGroup userInfoBean) {
         ToastUtils.showShort("修改信息成功");
-
+        groupNameTextView.setText(userInfoBean.getName());
+        tv_remark.setText(userInfoBean.getRemark());
+        EventBus.getDefault().post(userInfoBean, SPConstant.GROUPINFOUPDATE);
     }
 
     @Override
@@ -310,16 +315,18 @@ public class GroupSetActivity extends BaseActivity<GroupSetPresenter> implements
 
     }
 
+
     @Override
     public void uploadAvatarSuccess(String data) {
-ToastUtils.showShort("更换成功");
-        avatar=data;
+        ToastUtils.showShort("更换成功");
+        avatar = data;
         Glide.with(this)
                 .asBitmap()
                 .thumbnail(0.6f)
                 .load(data)
                 .apply(new RequestOptions().placeholder(R.mipmap.mandefult))
                 .into(portraitImageView);
+        EventBus.getDefault().post(data, SPConstant.GROUPHEADUPDATE);
 
     }
 

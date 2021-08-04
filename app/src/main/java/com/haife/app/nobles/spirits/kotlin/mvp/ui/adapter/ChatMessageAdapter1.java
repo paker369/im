@@ -23,8 +23,14 @@ import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
 import com.haife.app.nobles.spirits.kotlin.app.utils.TimeUtils;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMsgBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
+import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
+import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean, BaseViewHolder> {
 
@@ -46,6 +52,8 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
     protected void convert(BaseViewHolder helper, GroupMsgBean item) {
         ImageView otherheader=helper.getView(R.id.other_header);
         TextView othername=helper.getView(R.id.other_name);
+        TextView other_time = helper.getView(R.id.other_time);
+        TextView me_time = helper.getView(R.id.me_time);
 //        othername.setVisibility(View.GONE);
         switch (helper.getItemViewType()) {
             case 1:
@@ -65,16 +73,44 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                             .into((ImageView) helper.getView(R.id.me_header));
 
                     helper.setText(R.id.me_name, SPUtils.getInstance().getString(SPConstant.USERNAME));
-                    helper.setText(R.id.me_time, TimeUtils.progressDate(item.getCreateTime()) );
-                    String content = item.getMsgContent();
+                    if (AppValidationMgr.isNumber(item.getCreateTime())) {
+                        me_time.setText(TimeUtils.progressDateUseMSReturnWithYear(item.getCreateTime()));
+                    } else if (TextUtils.isEmpty(item.getCreateTime())) {
+                        helper.setText(R.id.me_time, AppDateMgr.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    } else {
+                        Date date = null;
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                        try {
+                            date = simpleDateFormat.parse(item.getCreateTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (date != null) {
+                            me_time.setText(AppDateMgr.formatDateTime(date, "yyyy-MM-dd HH:mm:ss"));
+                        }
+                    }                    String content = item.getMsgContent();
                     TextView tvMsg = helper.getView(R.id.me_content);
                     SpannableString msg = EmojiUtils.text2Emoji(mContext, content, tvMsg.getTextSize());
                     helper.setText(R.id.me_content, msg);
                 } else {
                     rl_other.setVisibility(View.VISIBLE);
                     rl_me.setVisibility(View.GONE);
-                    helper.setText(R.id.other_time, TimeUtils.progressDate(item.getCreateTime()));
-                    TextView tvMsg = helper.getView(R.id.other_content);
+                    if (AppValidationMgr.isNumber(item.getCreateTime())) {
+                        other_time.setText(TimeUtils.progressDateUseMSReturnWithYear(item.getCreateTime()));
+                    } else  if (TextUtils.isEmpty(item.getCreateTime())) {
+                        helper.setText(R.id.other_time, AppDateMgr.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    } else {
+                        Date date = null;
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                        try {
+                            date = simpleDateFormat.parse(item.getCreateTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (date != null) {
+                            other_time.setText(AppDateMgr.formatDateTime(date, "yyyy-MM-dd HH:mm:ss"));
+                        }
+                    }                    TextView tvMsg = helper.getView(R.id.other_content);
                     Glide.with(mContext)
                             .asBitmap()
                             .thumbnail(0.6f)
@@ -110,7 +146,23 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                             )
                             .into((ImageView) helper.getView(R.id.me_header));
                     helper.setText(R.id.me_name,SPUtils.getInstance().getString(SPConstant.USERNAME));
-                    helper.setText(R.id.me_time,TimeUtils.progressDate(item.getCreateTime()));
+                    if (AppValidationMgr.isNumber(item.getCreateTime())) {
+                        me_time.setText(TimeUtils.progressDateUseMSReturnWithYear(item.getCreateTime()));
+                    } else if (TextUtils.isEmpty(item.getCreateTime())) {
+                        helper.setText(R.id.me_time, AppDateMgr.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    } else {
+                        Date date = null;
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                        try {
+                            date = simpleDateFormat.parse(item.getCreateTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (date != null) {
+                            me_time.setText(AppDateMgr.formatDateTime(date, "yyyy-MM-dd HH:mm:ss"));
+                        }
+                    }
+//
 //                    Picasso.with(mContext)
 //                            .load(item.getPicture().getFilePath())
 //                                    .error(R.mipmap.ic_error)
@@ -130,8 +182,22 @@ public class ChatMessageAdapter1 extends BaseMultiItemQuickAdapter<GroupMsgBean,
                 } else {
                     rlOthers.setVisibility(View.VISIBLE);
                     rlMes.setVisibility(View.GONE);
-                    helper.setText(R.id.other_time,TimeUtils.progressDate(item.getCreateTime()));
-//                    Glide.with(mContext)
+                    if (AppValidationMgr.isNumber(item.getCreateTime())) {
+                        other_time.setText(TimeUtils.progressDateUseMSReturnWithYear(item.getCreateTime()));
+                    } else  if (TextUtils.isEmpty(item.getCreateTime())) {
+                        helper.setText(R.id.other_time, AppDateMgr.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    } else {
+                        Date date = null;
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.CHINA);
+                        try {
+                            date = simpleDateFormat.parse(item.getCreateTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (date != null) {
+                            other_time.setText(AppDateMgr.formatDateTime(date, "yyyy-MM-dd HH:mm:ss"));
+                        }
+                    }//                    Glide.with(mContext)
 //                            .load(item.getPicture().getFilePath())
 //
 //                                    .error(R.mipmap.ic_error)

@@ -5,8 +5,10 @@ import android.app.Application;
 import com.google.gson.Gson;
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
 import com.haife.app.nobles.spirits.kotlin.mvp.http.api.service.AppService;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.ChangeInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.VersionBean;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
 
@@ -72,8 +74,25 @@ public class MainModel extends BaseModel implements MainContract.Model {
     }
 
     @Override
+    public Observable<BaseResponse<ChangeInfoBean>> changeinfo(RequestBody body) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).changeinfo(body);
+
+    }
+
+    @Override
     public Observable<BaseResponse<String>> uploadAvatar(List<MultipartBody.Part> parts) {
         return mRepositoryManager.obtainRetrofitService(AppService.class).uploadAvatar(parts);
 
+    }
+
+    @Override
+    public Observable<BaseResponse> getInvitationCode() {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).getInvitationCode();
+
+    }
+
+    @Override
+    public Observable<BaseResponse<VersionBean>> getversion(int type, String version) {
+        return mRepositoryManager.obtainRetrofitService(AppService.class).getversion(type, version);
     }
 }

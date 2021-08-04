@@ -56,6 +56,8 @@
         </LinearLayout>
 
         <TextView
+            android:autoLink="web"
+            android:textIsSelectable="true"
             android:id="@+id/other_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,6 +123,8 @@
         </LinearLayout>
 
         <TextView
+            android:autoLink="web"
+            android:textIsSelectable="true"
             android:id="@+id/me_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

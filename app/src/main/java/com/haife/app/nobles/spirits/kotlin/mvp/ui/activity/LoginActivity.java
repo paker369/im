@@ -9,9 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,15 +25,12 @@ import com.haife.app.nobles.spirits.kotlin.di.component.DaggerLoginComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.LoginContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.LoginPresenter;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.utlis.BarUtils;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
-import com.jess.arms.utils.LogUtils;
 import com.jingewenku.abrahamcaijin.commonutil.AppValidationMgr;
 import com.kongzue.dialog.v2.TipDialog;
 import com.yescpu.keyboardchangelib.KeyboardChangeListener;
-import com.zhy.autolayout.attr.MaxHeightAttr;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -108,13 +103,13 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         ImmersionBar.with(this)
                 .statusBarView(status_bar_view)
                 .init();
-//        KeyBoardListener.getInstance(this).init();
+
         drawablebutton = getResources().getDrawable(R.drawable.shape_login_button);
         drawablebuttonno = getResources().getDrawable(R.drawable.shape_nologin_button);
         if(SPUtils.getInstance().getLong(SPConstant.REMEBERID,0)!=0){
             edt_acc.setText(SPUtils.getInstance().getLong(SPConstant.REMEBERID)+"");
         }else {
-            edt_acc.setHint("请输入uid");
+            edt_acc.setHint("请输入黑猪号");
         }
         initEditview();
         mKeyboardChangeListener = KeyboardChangeListener.create(this);
@@ -166,6 +161,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 } else {
                     tv_operate.setBackground(drawablebuttonno);
                 }
+                if(!login&&charSequence.length()>8){
+                    edt_acc.setError("昵称过长");
+                }else {
+                    edt_acc.setError(null);
+                }
             }
 
             @Override
@@ -192,11 +192,14 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 ll_invitecode.setVisibility(View.GONE);
                 tv_login.setBackground(getResources().getDrawable(R.drawable.home_radio_bg_left));
                 tv_register.setBackground(null);
+                edt_acc.setHint("请输入黑猪号");
                 if(SPUtils.getInstance().getLong(SPConstant.REMEBERID,0)!=0){
                     edt_acc.setText(SPUtils.getInstance().getLong(SPConstant.REMEBERID)+"");
                 }else {
-                    edt_acc.setHint("请输入uid");
+                    edt_acc.getText().clear();
                 }
+                edt_pwd.setHint("请输入密码");
+                edt_pwd.getText().clear();
                 tv_login.setTextColor(Color.WHITE);
                 tv_register.setTextColor(Color.BLACK);
                 tv_operate.setText("登录");
@@ -206,7 +209,8 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 ll_invitecode.setVisibility(View.VISIBLE);
                 tv_register.setBackground(getResources().getDrawable(R.drawable.home_radio_bg));
                 tv_login.setBackground(null);
-                edt_acc.setHint("请输入用户名");
+                edt_acc.setHint("设置用户名");
+                edt_pwd.setHint("设置密码");
                 edt_acc.getText().clear();
                 edt_pwd.getText().clear();
                 tv_login.setTextColor(Color.BLACK);
@@ -217,11 +221,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
             case R.id.tv_operate:
                 if(login){
                     if (TextUtils.isEmpty(edt_acc.getText().toString())) {
-                        ToastUtils.showShort("id不能为空");
+                        ToastUtils.showShort("黑猪号不能为空");
                         return;
                     }
                     if (!AppValidationMgr.isNumber(edt_acc.getText().toString())) {
-                        ToastUtils.showShort("id输入错误");
+                        ToastUtils.showShort("黑猪号格式错误");
                         return;
                     }
                     if (TextUtils.isEmpty(edt_pwd.getText().toString())) {
@@ -292,10 +296,12 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
     @Override
     public void registerUserSuccess(LoginBean data) {
-        SPUtils.getInstance().put(SPConstant.UID,data.getUid());
-        SPUtils.getInstance().put(SPConstant.SID,data.getSid());
-        SPUtils.getInstance().put(SPConstant.REMEBERID,data.getUid());
-        launchActivity(new Intent(LoginActivity.this,MainActivity.class));
+        SPUtils.getInstance().put(SPConstant.UID, data.getUid());
+        SPUtils.getInstance().put(SPConstant.SID, data.getSid());
+        SPUtils.getInstance().put(SPConstant.REMEBERID, data.getUid());
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.getBooleanExtra("regiester", true);
+        launchActivity(intent);
     }
 
     @Override

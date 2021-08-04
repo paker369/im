@@ -29,16 +29,28 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:orientation="vertical">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/dp_20"
+    android:orientation="horizontal">
 
-            <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
-                android:id="@+id/nameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                tools:text="imndx" />
+    <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        tools:text="imndx" />
+
+    <TextView
+        android:id="@+id/tv_realname"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:singleLine="true"
+        android:textSize="12sp"
+        tools:text="()" />
+</LinearLayout>
 
             <TextView
                 android:id="@+id/descTextView"
@@ -47,8 +59,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textSize="12sp"
-                tools:text=""
-               />
+                android:text="" />
         </LinearLayout>
 
     </LinearLayout>

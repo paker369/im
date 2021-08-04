@@ -19,6 +19,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
+import com.haife.app.nobles.spirits.kotlin.app.utils.TimeUtils;
 import com.haife.app.nobles.spirits.kotlin.app.view.PopupFriendCircle;
 import com.haife.app.nobles.spirits.kotlin.di.component.DaggerMessageComponent;
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.MessageContract;
@@ -28,10 +29,8 @@ import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.LoginInfoBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MessageBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.MyGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.MessagePresenter;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.AskFriendListActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.FriendChatActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.GroupChatActivity;
-import com.haife.app.nobles.spirits.kotlin.mvp.ui.activity.MineInfoActivity;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.FriendListAdapter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.MyGroupListAdapter;
 import com.jess.arms.base.BaseFragment;
@@ -48,6 +47,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -90,7 +90,8 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     boolean tag1=false;
 
     boolean tag2=false;
-
+    List<FriendBean> friendBeandata=new ArrayList<>();
+    List<MyGroup> myGroupdata=new ArrayList<>();
     MyGroupListAdapter myGroupListAdapter;
     FriendListAdapter friendListAdapter;
     private View emptyView_noinfo;
@@ -169,10 +170,11 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
             FriendBean listBean = friendListAdapter.getData().get(position);
             listBean.setUnMsgCount(0);
             friendListAdapter.notifyItemChanged(position);
-            mPresenter.clearfriendMsg(listBean.getFriendUid());
+//            mPresenter.clearfriendMsg(listBean.getFriendUid());
             Intent intent = new Intent(getActivity(), FriendChatActivity.class);
             intent.putExtra("senderUid", listBean.getFriendUid());
             intent.putExtra("avatar", listBean.getUser().getAvatar());
+            intent.putExtra("friendName", listBean.getFriendName());
             startActivity(intent);
         });
 
@@ -284,12 +286,18 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
         popupFriendCircle.setClickcollectLisetener(lisetener);
         popupFriendCircle.showPopupWindow(v);
     }
+
     @Subscriber(tag = SPConstant.FRIENDMESSAGE)
     public void receivefriendmsg(List<FriendBean> data) {
+
+        friendBeandata.clear();
+        friendBeandata.addAll(data);
+
+
         if(data!=null&&data.size()>0){
             tag1=false;
             rl_empty.setVisibility(View.GONE);
-            friendListAdapter.setNewData(data);
+            friendListAdapter.setNewData(TimeUtils.ListSort(friendBeandata));
         }else {
            tag1=true;
            if(tag1&&tag2){
@@ -302,11 +310,13 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
 
     @Subscriber(tag = SPConstant.GROUPMESSAGE)
     public void receivegroupmsg(List<MyGroup> data) {
-
-        if(data!=null&&data.size()>0){
-            tag2=false;
+        myGroupdata.clear();
+        myGroupdata.addAll(data);
+        if(data!=null&&data.size()>0) {
+            tag2 = false;
             rl_empty.setVisibility(View.GONE);
-            myGroupListAdapter.setNewData(data);
+
+            myGroupListAdapter.setNewData(TimeUtils.ListgroupSort(myGroupdata));
         }else {
             tag2=true;
             if(tag1&&tag2){
@@ -319,16 +329,17 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     @Subscriber(tag = SPConstant.RECEIVEWSSINGLECHATE)
     public void wsreceivemsg(MessageBean data) {
    long id=data.getSenderUid();
-        for(int    i=0;    i<friendListAdapter.getData().size();    i++)    {
-            if(friendListAdapter.getData().get(i).getFriendUid()==id) {
+        List<FriendBean> list=friendListAdapter.getData();
+        for(int    i=0;    i<list.size();    i++)    {
+            if(list.get(i).getFriendUid()==id) {
                 rl_empty.setVisibility(View.GONE);
-                friendListAdapter.getData().get(i).setLastMsgContent(data.getMsgContent());
-                friendListAdapter.getData().get(i).setUnMsgCount(1);
+                list.get(i).setLastMsgContent(data.getMsgContent());
+                list.get(i).setUnMsgCount(1);
+                list.get(i).setModifiedTime(data.getCreateTime());
+                list.get(i).setLastMsgTime(data.getCreateTime());
                 friendListAdapter.notifyItemChanged(i);
             }
-
         }
-
     }
 
     @Subscriber(tag = SPConstant.RECEIVEWSGROUPCHATE)
@@ -338,8 +349,10 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
             if(myGroupListAdapter.getData().get(i).getGroupId()==id) {
                 myGroupListAdapter.getData().get(i).setLastMsgContent(data.getMsgContent());
                 myGroupListAdapter.getData().get(i).setUnMsgCount(1);
-                myGroupListAdapter.getData().get(i).setLastMsgTime("");
-                myGroupListAdapter.notifyItemChanged(i);
+                myGroupListAdapter.getData().get(i).setLastMsgTime(data.getCreateTime());
+               TimeUtils.ListgroupSort(myGroupListAdapter.getData());
+                myGroupListAdapter.notifyDataSetChanged();
+
             }
 
         }
@@ -353,4 +366,6 @@ public class MessageFragment extends BaseFragment<MessagePresenter> implements M
     public void clearfriendMsgSuccess() {
 
     }
+
+
 }

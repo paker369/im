@@ -1,6 +1,7 @@
 package com.haife.app.nobles.spirits.kotlin.mvp.contract;
 
 import com.haife.app.nobles.spirits.kotlin.app.base.BaseResponse;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_UpdateGroup;
 import com.jess.arms.mvp.IView;
 import com.jess.arms.mvp.IModel;
 
@@ -30,7 +31,7 @@ public interface GroupSetContract {
         void deleteGroupSuccess();
         void deleteMyGroupSuccess();
 
-        void groupUpdateSuccess();
+        void groupUpdateSuccess( R_UpdateGroup userInfoBean);
 
         void uploadSuccess(String data);
 

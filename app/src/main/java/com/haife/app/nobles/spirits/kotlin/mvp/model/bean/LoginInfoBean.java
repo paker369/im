@@ -12,11 +12,29 @@ public class LoginInfoBean {
      */
 
     private long uid;
+    private int isAllow;
+    String invitationCode;
     private String name;
     private String avatar;
     private String remark;
     private String createTime;
     private ProfileBean profile;
+
+    public int getIsAllow() {
+        return isAllow;
+    }
+
+    public void setIsAllow(int isAllow) {
+        this.isAllow = isAllow;
+    }
+
+    public String getInvitationCode() {
+        return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
+    }
 
     public long getUid() {
         return uid;

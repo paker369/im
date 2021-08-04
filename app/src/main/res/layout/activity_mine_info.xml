@@ -1,8 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+    <include layout="@layout/common_title_bar"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp">
 
+        <com.haife.app.nobles.spirits.kotlin.app.view.CircleImageView
+            android:id="@+id/portraitImageView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="14dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/mandefult" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="18dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.haife.app.nobles.spirits.kotlin.app.view.MediumBoldTextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="wfc"
+                    android:textSize="20sp"
+                   />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="用户名 ： 小强"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tv_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="U I D ： 11111"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/favContactTextView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:text="☆"-->
+<!--            android:textColor="#FDBE2D" />-->
+    </LinearLayout>
+
+    <View style="@style/Line" />
+
+    <LinearLayout
+        android:id="@+id/down_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/round1"
+        android:layout_margin="@dimen/dp_8"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rl_change_name"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginBottom="9dp"
+            android:background="@drawable/selector_common_item"
+            android:elevation="1dp">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:drawablePadding="@dimen/dp_16"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_4"
+                android:paddingRight="7dp"
+                android:text="修改备注"
+               />
+
+            <TextView
+                android:id="@+id/tv_collet_num"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/dp_8"
+                android:layout_toLeftOf="@+id/image1"
+                android:gravity="center_vertical"
+           />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_8"
+                android:src="@mipmap/ic_right_arrow" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/chatButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+
+       >
+
+        <View style="@style/Line" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/selector_common_item">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:drawableLeft="@mipmap/ic_start_message"
+                android:drawablePadding="6dp"
+                android:text="发送消息"
+                android:textSize="16sp"
+                android:textColor="@color/color_009AFC"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/delete_Button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/white"
+        android:text="删除好友"
+        android:textColor="@color/app_color_theme_1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+       />
 </LinearLayout>

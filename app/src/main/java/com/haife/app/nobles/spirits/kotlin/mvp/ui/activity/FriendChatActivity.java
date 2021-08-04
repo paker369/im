@@ -35,7 +35,6 @@ import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LogUtils;
-import com.jingewenku.abrahamcaijin.commonutil.AppDateMgr;
 import com.kongzue.dialog.v2.SelectDialog;
 import com.kongzue.dialog.v2.TipDialog;
 import com.luck.picture.lib.PictureSelector;
@@ -51,6 +50,7 @@ import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -119,6 +119,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     private List<MessageBean> listBeans = new ArrayList<>();
     private String avatar = "";
     private KeyboardChangeListener mKeyboardChangeListener;
+    private String friendName;
 
 
     @Override
@@ -140,6 +141,8 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     public void initData(@Nullable Bundle savedInstanceState) {
         senderUid = getIntent().getLongExtra("senderUid", 0);
         avatar = getIntent().getStringExtra("avatar");
+        friendName = getIntent().getStringExtra("friendName");
+        tv_nickname.setText(friendName);
         BarUtils.setStatusBarAlpha(this, 0, true);
         BarUtils.setStatusBarLightMode(this, true);
         View mFaceTextEmotionTrigger = input_layout.findViewById(R.id.iv_expression);
@@ -169,7 +172,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
         // 一般来讲， ImageWatcher 需要占据全屏的位置
 
         // 如果不是透明状态栏，你需要给ImageWatcher标记 一个偏移值，以修正点击ImageView查看的启动动画的Y轴起点的不正确
-
+//        mPresenter.clearfriendMsg(senderUid);
 
     }
 
@@ -206,7 +209,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
                 });
                 break;
             case R.id.iv_back:
-                finish();
+                mPresenter.clearfriendMsg(senderUid);
                 break;
 
             case R.id.newmessege:
@@ -233,6 +236,17 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+      if(photo_view.getViewStatus()==0)  {
+          mPresenter.clearfriendMsg(senderUid);
+      }else{
+          photo_view.cancel();
+      }
+
+    }
+
     private void initRecycler() {
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableLoadMore(false);
@@ -287,7 +301,6 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 MessageBean listBean = chatMessageAdapter.getData().get(position);
                 if (view.getId() == R.id.me_img || view.getId() == R.id.other_img) {
-                    LogUtils.debugInfo("测试点击了图片");
                     String filePath = listBean.getMsgContent() != null ? listBean.getMsgContent() : "";
                     List<String> image = new ArrayList<>();
                     image.add(filePath);
@@ -391,8 +404,13 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     }
 
     @Override
-    public void sendBtnClick(CharSequence textMessage) {
+    public boolean sendBtnClick(CharSequence textMessage) {
+      if(textMessage.length()>250){
+          ToastUtils.showShort("字数超限");
+          return false;
+      }
         mPresenter.sendMsg(textMessage.toString(), 0, senderUid);
+        return true;
     }
 
     @Override
@@ -436,7 +454,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void sendMsgtSuccess(int type, String content) {
-        MessageBean data = new MessageBean(SPUtils.getInstance().getLong(SPConstant.UID), senderUid, SPUtils.getInstance().getLong(SPConstant.UID), type, content.toString(), AppDateMgr.todayYyyyMmDdHhMmSs());
+        MessageBean data = new MessageBean(SPUtils.getInstance().getLong(SPConstant.UID), senderUid, SPUtils.getInstance().getLong(SPConstant.UID), type, content.toString(), new Date().getTime() + "");
 
         input_layout.hideOverView();
 
@@ -468,7 +486,7 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
 
     @Override
     public void readSuccess(ReadOtherInfoBean data) {
-        tv_nickname.setText(data.getName());
+
     }
 
     @Override
@@ -481,6 +499,11 @@ public class FriendChatActivity extends BaseActivity<FriendChatPresenter> implem
     @Override
     public void uploadSuccess(String data) {
         mPresenter.sendMsg(data, 1, senderUid);
+    }
+
+    @Override
+    public void clearfriendMsgSuccess() {
+        finish();
     }
 
 

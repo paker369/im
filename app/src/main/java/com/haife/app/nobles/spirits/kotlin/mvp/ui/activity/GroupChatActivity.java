@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.zhouwei.library.CustomPopWindow;
 import com.haife.app.nobles.spirits.kotlin.R;
 import com.haife.app.nobles.spirits.kotlin.app.constant.SPConstant;
@@ -32,6 +33,7 @@ import com.haife.app.nobles.spirits.kotlin.di.component.DaggerGroupChatComponent
 import com.haife.app.nobles.spirits.kotlin.mvp.contract.GroupChatContract;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMemberBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.GroupMsgBean;
+import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.R_UpdateGroup;
 import com.haife.app.nobles.spirits.kotlin.mvp.model.bean.UserBean;
 import com.haife.app.nobles.spirits.kotlin.mvp.presenter.GroupChatPresenter;
 import com.haife.app.nobles.spirits.kotlin.mvp.ui.adapter.ChatMessageAdapter1;
@@ -64,6 +66,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import indi.liyi.viewer.ImageLoader;
+import indi.liyi.viewer.ImageViewer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -111,7 +115,8 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     View status_bar_view;
     @BindView(R.id.iv_setting)
     ImageView iv_setting;
-
+    @BindView(R.id.photo_view)
+    ImageViewer photo_view;
     @BindView(R.id.rl_top)
     RelativeLayout rl_top;
 
@@ -134,6 +139,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     private Dialog dia;
    boolean ismine;
     private KeyboardChangeListener mKeyboardChangeListener;
+
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -193,6 +199,16 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (photo_view.getViewStatus() == 0) {
+            mPresenter.cleargroupMsg(groupid);
+        } else {
+            photo_view.cancel();
+        }
+
+    }
+
     private void initRecycler() {
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableLoadMore(false);
@@ -241,7 +257,51 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
         chatMessageAdapter = new ChatMessageAdapter1(listBeans);
         chatMessageAdapter.setEmptyView(R.layout.empty_placehold, color_recycler);
         color_recycler.setAdapter(chatMessageAdapter);
+        chatMessageAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                GroupMsgBean listBean = chatMessageAdapter.getData().get(position);
+                if (view.getId() == R.id.me_img || view.getId() == R.id.other_img) {
+                    String filePath = listBean.getMsgContent() != null ? listBean.getMsgContent() : "";
+                    List<String> image = new ArrayList<>();
+                    image.add(filePath);
+                    photo_view.overlayStatusBar(false)// ImageViewer 是否会占据 StatusBar 的空间
+                            .imageData(image) // 图片数据
+                            .imageLoader(new ImageLoader() {
+                                @Override
+                                public void displayImage(Object src, ImageView imageView, LoadCallback callback) {
+                                    if (!GroupChatActivity.this.isFinishing())
+                                        Glide.with(imageView.getContext())
+                                                .asBitmap().thumbnail(0.6f)
+                                                .load(src)
+                                                .into(imageView);
+//                .into(imageView);
+                                }
+                            }) // 设置图片加载方式
+                            .draggable(false)
+                            .playEnterAnim(false) // 是否开启进场动画，默认为true
+                            .playExitAnim(false) // 是否开启退场动画，默认为true
+                            // 是否显示图片索引，默认为true
+//                            .setOnItemLongPressListener(new OnItemLongPressListener() {
+//                                @Override
+//                                public boolean onItemLongPress(int position, ImageView imageView) {
+//                                    save(imageUrllist.get(position));
+//                                    return false;
+//                                }
+//                            })
 
+//                            .setOnItemClickListener(new OnItemClickListener() {
+//                                @Override
+//                                public boolean onItemClick(int position, ImageView imageView) {
+//                                    finish();
+//                                    return true;
+//                                }
+//                            })
+                            .loadProgressUI(null) // 自定义图片加载进度样式，内置默认样式
+                            .watch(0); // 开启浏览
+                }
+            }
+        });
 
     }
 
@@ -312,7 +372,7 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
     public void onViewClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                finish();
+                mPresenter.cleargroupMsg(groupid);
                 break;
             case R.id.tv_groupname:
                 DialogSettings.dialog_theme = THEME_LIGHT;
@@ -497,6 +557,19 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
             });
         }
     }
+    @Subscriber(tag = SPConstant.GROUPINFOUPDATE)
+    public void groupinfoupdate(R_UpdateGroup i) {
+        avatar = i.getAvatar();
+        name = i.getName();
+        remark = i.getRemark();
+        groupid = i.getGroupId();
+        tv_nickname.setText(name);
+    }
+
+    @Subscriber(tag = SPConstant.GROUPHEADUPDATE)
+    public void groupheadupdate(String head) {
+        avatar = head;
+    }
 
 
 
@@ -528,6 +601,11 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
 
     }
 
+    @Override
+    public void cleargroupMsgSuccess() {
+        finish();
+    }
+
     //选择的图片集合
     private List<LocalMedia> mSelectList = new ArrayList<>();
 
@@ -552,15 +630,20 @@ public class GroupChatActivity extends BaseActivity<GroupChatPresenter> implemen
                         mPresenter.upload(parts);
 //                        upload(file,AppConstants.qiniutoken);
                     }
-                    break;
             }
         }
     }
 
 
     @Override
-    public void sendBtnClick(CharSequence textMessage) {
+    public boolean sendBtnClick(CharSequence textMessage) {
+        if(textMessage.length()>250){
+            ToastUtils.showShort("字数超限");
+            return false;
+        }
         mPresenter.sendGroupMsg(textMessage.toString(), 0, groupid);
+
+        return true;
     }
 
     @Override
